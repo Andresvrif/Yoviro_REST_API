@@ -1,4 +1,4 @@
-package com.yoviro.yoviro_rest_api;
+package com.yoviro.rest;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

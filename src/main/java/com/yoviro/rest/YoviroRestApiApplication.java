@@ -1,4 +1,4 @@
-package com.yoviro.yoviro_rest_api;
+package com.yoviro.rest;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
