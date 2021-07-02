@@ -1,2 +1,3 @@
-# Yoviro_Web_App
-Yoviro web app to handle administration of both campus
+# Yoviro_REST_API
+
+Yoviro rest api to handle administration of Yoviro
