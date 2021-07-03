@@ -17,12 +17,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 
+/**
+ * Author : Andrés V.
+ * Desc   : Creates and handle Json Web Token (JWt)
+ */
 @Component
 public class JWTServiceImpl implements IJWTService {
 
     public final static String SECRET = "dSpIF2zjKPWJ8dBuULPiu7@M$n$A5%fmRbuk6d";
     public final static Key SECRET_KEY = Keys.hmacShaKeyFor(SECRET.getBytes());
-    public final static long EXPIRATION_DATE = 3600000L;
+    public final static long EXPIRATION_DATE = 3600000L; //1hr
     public final static String TOKEN_PREFIX = "Bearer ";
     public final static String HEADER_STRING = "Authorization";
 

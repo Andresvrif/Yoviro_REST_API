@@ -13,8 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-@Configuration
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
+@Configuration
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
