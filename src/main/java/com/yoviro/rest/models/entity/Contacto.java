@@ -3,7 +3,6 @@ package com.yoviro.rest.models.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -13,6 +12,7 @@ import java.util.Date;
 @Entity
 @Table(name = "contactos")
 public class Contacto {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
