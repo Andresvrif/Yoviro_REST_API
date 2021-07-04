@@ -16,17 +16,11 @@ public class Residente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //Datos de información del residente
+    //Datos de contacto del residente
     @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contacto_id")
-    private Contacto PAM; //Paciente Adulto Mayor
-
-    //Datos de información del residente
-    @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contratante_id")
-    private Contacto Contratante; //Paciente Adulto Mayor
+    private Contacto contacto; //Paciente Adulto Mayor
 
     @NotNull
     @Column(name = "create_at")
@@ -46,20 +40,12 @@ public class Residente {
         this.id = id;
     }
 
-    public Contacto getPAM() {
-        return PAM;
+    public Contacto getContacto() {
+        return contacto;
     }
 
-    public void setPAM(Contacto PAM) {
-        this.PAM = PAM;
-    }
-
-    public Contacto getContratante() {
-        return Contratante;
-    }
-
-    public void setContratante(Contacto contratante) {
-        Contratante = contratante;
+    public void setContacto(Contacto contacto) {
+        this.contacto = contacto;
     }
 
     public Date getCreateAt() {

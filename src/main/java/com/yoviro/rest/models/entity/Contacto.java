@@ -37,7 +37,6 @@ public class Contacto {
     @Temporal(TemporalType.DATE)
     private Date fechaNacimiento;
 
-    @NotEmpty
     @Email
     private String email;
 
