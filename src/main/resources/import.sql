@@ -1,3 +1,7 @@
+/* TRIGGERS */
+drop trigger if exists before_insert_contratante;
+create trigger before_insert_contratante before insert on contratantes for each row begin IF (NEW.numero_de_contratante IS NULL) THEN SELECT MAX(numero_de_contratante) INTO @max_label FROM contratantes;IF (@max_label IS NULL) THEN SET NEW.numero_de_contratante = CONCAT('CTE000001');ELSE SET NEW.numero_de_contratante = CONCAT(SUBSTR(@max_label, 1, 3), LPAD(SUBSTR(@max_label, 4) + 1, 6, '0'));END IF;END IF;end
+
 /* Creamos algunos usuarios */
 INSERT INTO users (username, password, enabled) VALUES('andres', '$2a$10$debpqzhpXFd4O/Lx3kAhX.KeOqhesTfrJMStixsYSqcQFvIXicHbC', 1);
 INSERT INTO users (username, password, enabled) VALUES('admin', '$2a$10$X.1R6428OlgxcWCEpX2SSuFKMIBPpQ/EFG/e3GTZm57BWvzZEzdAO', 1);
@@ -32,3 +36,8 @@ INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_
 INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Joe', 'Bloggs', 'Wing', 'joe.bloggs@gmail.com', '2017-08-23', '', NOW());
 INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('John', 'Stiles', 'Wing', 'john.stiles@gmail.com', '2017-08-24', '', NOW());
 INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Richard', 'Roe', 'Wing' , 'stiles.roe@gmail.com', '2017-08-25', '', NOW());
+INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Andrés', 'Vila', 'Román' , 'andresvrif@gmail.com', '1990-08-23', '', NOW());
+INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Robinzon', 'Vila', 'Zevallos' , null, '1990-08-23', '', NOW());
+
+/* CONTRATANTES */
+INSERT INTO contratantes (contacto_id) VALUES(26);

@@ -1,16 +1,21 @@
 package com.yoviro.rest.models.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "solicitudes", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"contratos_id", "residente_id", "id"})
 })//Asegurar que solo exista esta solicitud para el contrato con el residente
+@DiscriminatorColumn(name = "tipo_solicitud", discriminatorType = DiscriminatorType.STRING)
 public class Solicitud {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -60,6 +65,13 @@ public class Solicitud {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "residente_id")
     private Residente residente; //Contacto de referencia del PAM
+
+    @NotNull
+    @Column(name = "create_at")
+    @ColumnDefault("CURRENT_TIMESTAMP(6)")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createAt;
 
     public Long getId() {
         return id;
@@ -115,6 +127,14 @@ public class Solicitud {
 
     public void setResidente(Residente residente) {
         this.residente = residente;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
     }
 
     private static final long serialVersionUID = 1L;
