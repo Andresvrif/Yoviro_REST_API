@@ -14,9 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import java.util.Arrays;
 
 @Configuration
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
@@ -29,9 +27,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    private CorsConfiguration corsConfiguration;
-
-    @Autowired
     private IJWTService jwtService;
 
     @Override
@@ -40,7 +35,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
             .permitAll()
             .anyRequest().authenticated()
             .and()
-            .cors().configurationSource(request -> corsConfiguration)
+            .cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
             .and()
             .addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtService))
             .addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtService))
@@ -54,4 +49,13 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         build.userDetailsService(jpaUserDetailsService) //Se obtiene el usuario de BD, al utilizar UserDetailsService se infiere que se va a utilizar un DAOProvider, por ende no es necesario definirlo
              .passwordEncoder(passwordEncoder);    //Se establece el codificador
     }
+
+    /*
+    TODO Check how configure it, for the moment we use default application
+    public CorsConfiguration test() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:8081/"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "PUT", "POST", "PATCH", "DELETE", "OPTIONS"));
+        return configuration;
+    }*/
 }
