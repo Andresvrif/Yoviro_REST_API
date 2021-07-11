@@ -1,4 +1,5 @@
 package com.yoviro.rest.models.entity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,11 +17,11 @@ public class Contrato {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //TODO AGREGAR trigger CTR
     private String numeroContrato;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Contratante.class)
     @JoinColumn(name = "contratantes_id")
     private Contratante contratante;
 

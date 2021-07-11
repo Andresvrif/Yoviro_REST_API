@@ -1,33 +1,32 @@
 package com.yoviro.rest.models.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "contratantes")
-public class Contratante {
-
-    //TODO cambiar a cuenta
-
+public class Contratante implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //TODO cambiar a numeroDeCuenta
     private String numeroDeContratante;
 
-    @NotNull
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contacto_id")
+    @JsonIgnoreProperties(value = {"handler", "hibernateLazyInitializer", "fieldHandler"})
     private Contacto contacto;
 
-    @OneToMany(mappedBy = "contratante", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @OneToMany(mappedBy = "contratante",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
     private List<Contrato> contratos;
 
     @NotNull
@@ -59,6 +58,14 @@ public class Contratante {
 
     public void setContratos(List<Contrato> contratos) {
         this.contratos = contratos;
+    }
+
+    public String getNumeroDeContratante() {
+        return numeroDeContratante;
+    }
+
+    public void setNumeroDeContratante(String numeroDeContratante) {
+        this.numeroDeContratante = numeroDeContratante;
     }
 
     public Date getCreateAt() {

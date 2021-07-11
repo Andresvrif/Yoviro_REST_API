@@ -3,15 +3,18 @@ package com.yoviro.rest.models.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "contactos")
-public class Contacto {
+public class Contacto implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,12 +26,12 @@ public class Contacto {
 
     @NotEmpty
     @NotNull
-    @Column(name="apellido_paterno")
+    @Column(name = "apellido_paterno")
     private String apellidoPaterno;
 
     @NotEmpty
     @NotNull
-    @Column(name="apellido_materno")
+    @Column(name = "apellido_materno")
     private String apellidoMaterno;
 
     @NotNull
@@ -41,6 +44,9 @@ public class Contacto {
     private String email;
 
     private String foto;
+
+    @OneToMany(mappedBy = "contacto", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DocumentoDeIdentidad> documentosDeIdentidad;
 
     @NotNull
     @Column(name = "create_at")

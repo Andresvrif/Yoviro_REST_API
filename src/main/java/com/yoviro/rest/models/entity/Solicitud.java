@@ -25,6 +25,8 @@ public class Solicitud {
     @JoinColumn(name = "contratos_id")
     private Contrato contrato;
 
+    @NotNull
+    @Column(name = "numero_de_solicitud")
     private String numeroDeSolicitud;
 
     /***
