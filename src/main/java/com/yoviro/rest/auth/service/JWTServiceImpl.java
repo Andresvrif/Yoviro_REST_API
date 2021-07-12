@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.security.Key;
 import java.util.Arrays;
@@ -26,7 +27,7 @@ public class JWTServiceImpl implements IJWTService {
 
     public final static String SECRET = "dSpIF2zjKPWJ8dBuULPiu7@M$n$A5%fmRbuk6d";
     public final static Key SECRET_KEY = Keys.hmacShaKeyFor(SECRET.getBytes());
-    public final static long EXPIRATION_DATE = 3600000L; //1hr
+    public final static long EXPIRATION_DATE = 3600000L * 2; //2hr
     public final static String TOKEN_PREFIX = "Bearer ";
     public final static String HEADER_STRING = "Authorization";
 

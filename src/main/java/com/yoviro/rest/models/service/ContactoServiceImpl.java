@@ -20,8 +20,8 @@ public class ContactoServiceImpl implements IContactoService {
     }
 
     @Override
-    public void save(Contacto contacto) {
-        contactoDao.save(contacto);
+    public Contacto save(Contacto contacto) {
+        return contactoDao.save(contacto);
     }
 
     @Override

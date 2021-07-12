@@ -1,11 +1,13 @@
 package com.yoviro.rest.models.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "documentos_de_identidad", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"contacto_id", "numero_de_documento"})
+        @UniqueConstraint(columnNames = {"tipo_de_documento","numero_de_documento"})
 })
 public class DocumentoDeIdentidad {
     @Id
@@ -13,6 +15,7 @@ public class DocumentoDeIdentidad {
     private Long id;
 
     @NotNull
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contacto_id")
     private Contacto contacto;
@@ -24,6 +27,22 @@ public class DocumentoDeIdentidad {
     @NotNull
     @Column(name = "numero_de_documento")
     private String numeroDeDocumento;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Contacto getContacto() {
+        return contacto;
+    }
+
+    public void setContacto(Contacto contacto) {
+        this.contacto = contacto;
+    }
 
     public String getTipoDeDocumento() {
         return tipoDeDocumento;

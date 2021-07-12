@@ -21,5 +21,15 @@ public class Emision extends Solicitud {
         this.id = id;
     }
 
+    String test;
+
+    public String getTest() {
+        return test;
+    }
+
+    public void setTest(String test) {
+        this.test = test;
+    }
+
     private static final long serialVersionUID = 1L;
 }
