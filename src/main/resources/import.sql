@@ -1,8 +1,8 @@
 /* TRIGGERS */
-drop trigger if exists before_insert_contratante;
-create trigger before_insert_contratante before insert on contratantes for each row begin IF (NEW.numero_de_contratante IS NULL) THEN SELECT MAX(numero_de_contratante) INTO @max_label FROM contratantes;IF (@max_label IS NULL) THEN SET NEW.numero_de_contratante = CONCAT('CTE000001');ELSE SET NEW.numero_de_contratante = CONCAT(SUBSTR(@max_label, 1, 3), LPAD(SUBSTR(@max_label, 4) + 1, 6, '0'));END IF;END IF;end
+drop trigger if exists before_insert_contractor;
+create trigger before_insert_contractor before insert on contractor for each row begin IF (NEW.contractor_number IS NULL) THEN SELECT MAX(contractor_number) INTO @max_label FROM contractor;IF (@max_label IS NULL) THEN SET NEW.contractor_number = CONCAT('CTE000001');ELSE SET NEW.contractor_number = CONCAT(SUBSTR(@max_label, 1, 3), LPAD(SUBSTR(@max_label, 4) + 1, 6, '0'));END IF;END IF;end
 drop trigger if exists before_insert_contrato;
-create trigger before_insert_contrato before insert on contratos for each row begin IF (NEW.numero_contrato IS NULL) THEN SELECT MAX(numero_contrato) INTO @max_label FROM contratos; IF (@max_label IS NULL) THEN SET NEW.numero_contrato = CONCAT('APP000001'); ELSE SET NEW.numero_contrato = CONCAT(SUBSTR(@max_label, 1, 3), LPAD(SUBSTR(@max_label, 4) + 1, 6, '0')); END IF; END IF; end
+create trigger before_insert_contrato before insert on agreement for each row begin IF (NEW.agreement_number IS NULL) THEN SELECT MAX(agreement_number) INTO @max_label FROM agreement; IF (@max_label IS NULL) THEN SET NEW.agreement_number = CONCAT('APP000001'); ELSE SET NEW.agreement_number = CONCAT(SUBSTR(@max_label, 1, 3), LPAD(SUBSTR(@max_label, 4) + 1, 6, '0')); END IF; END IF; end
 
 /* USUARIOS */
 INSERT INTO users (username, password, enabled) VALUES('andres', '$2a$10$debpqzhpXFd4O/Lx3kAhX.KeOqhesTfrJMStixsYSqcQFvIXicHbC', 1);
@@ -14,40 +14,40 @@ INSERT INTO authorities (user_id, authority) VALUES(2,'ROLE_USER');
 INSERT INTO authorities (user_id, authority) VALUES(2,'ROLE_ADMIN');
 
 /* CONTACTOS */
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Andres', 'Guzman', 'Canevaro', 'profesor@bolsadeideas.com', '2017-08-01', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('John', 'Doe', 'Law' ,'john.doe@gmail.com', '2017-08-02', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Linus', 'Torvalds', 'Teuva' , 'linus.torvalds@gmail.com', '2017-08-03', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Jane', 'Doe', 'Canario','jane.doe@gmail.com', '2017-08-04', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Rasmus', 'Lerdorf', 'Wing', 'rasmus.lerdorf@gmail.com', '2017-08-05', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Erich', 'Gamma', 'Wing', 'erich.gamma@gmail.com', '2017-08-06', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Richard', 'Helm', 'Wing', 'richard.helm@gmail.com', '2017-08-07', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Ralph', 'Johnson', 'Wing', 'ralph.johnson@gmail.com', '2017-08-08', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('John', 'Vlissides', 'Wing', 'john.vlissides@gmail.com', '2017-08-09', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('James', 'Gosling', 'Wing', 'james.gosling@gmail.com', '2017-08-010', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Bruce', 'Lee', 'Wing', 'bruce.lee@gmail.com', '2017-08-11', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Johnny', 'Doe', 'Wing', 'johnny.doe@gmail.com', '2017-08-12', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('John', 'Roe', 'Wing', 'john.roe@gmail.com', '2017-08-13', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Jane', 'Roe', 'Wing', 'jane.roe@gmail.com', '2017-08-14', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Richard', 'Doe', 'Wing', 'richard.doe@gmail.com', '2017-08-15', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Janie', 'Doe', 'Wing', 'janie.doe@gmail.com', '2017-08-16', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Phillip', 'Webb', 'Wing', 'phillip.webb@gmail.com', '2017-08-17', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Stephane', 'Nicoll', 'Wing', 'stephane.nicoll@gmail.com', '2017-08-18', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Sam', 'Brannen', 'Wing', 'sam.brannen@gmail.com', '2017-08-19', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Juergen', 'Hoeller', 'Wing', 'juergen.Hoeller@gmail.com', '2017-08-20', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Janie', 'Roe', 'Wing', 'janie.roe@gmail.com', '2017-08-21', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('John', 'Smith', 'Wing', 'john.smith@gmail.com', '2017-08-22', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Joe', 'Bloggs', 'Wing', 'joe.bloggs@gmail.com', '2017-08-23', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('John', 'Stiles', 'Wing', 'john.stiles@gmail.com', '2017-08-24', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Richard', 'Roe', 'Wing' , 'stiles.roe@gmail.com', '2017-08-25', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Andrés', 'Vila', 'Román' , 'andresvrif@gmail.com', '1990-08-23', '', NOW());
-INSERT INTO contactos (nombre, apellido_paterno, apellido_materno, email, fecha_nacimiento, foto, create_at) VALUES('Robinzon', 'Vila', 'Zevallos' , null, '1990-08-23', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Andres', null, 'Guzman', 'Canevaro', 'profesor@bolsadeideas.com', '2017-08-01', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('John', null, 'Doe', 'Law' ,'john.doe@gmail.com', '2017-08-02', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Linus', null, 'Torvalds', 'Teuva' , 'linus.torvalds@gmail.com', '2017-08-03', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Jane', null, 'Doe', 'Canario','jane.doe@gmail.com', '2017-08-04', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Rasmus', null, 'Lerdorf', 'Wing', 'rasmus.lerdorf@gmail.com', '2017-08-05', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Erich', null, 'Gamma', 'Wing', 'erich.gamma@gmail.com', '2017-08-06', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Richard', null, 'Helm', 'Wing', 'richard.helm@gmail.com', '2017-08-07', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Ralph',  null,'Johnson', 'Wing', 'ralph.johnson@gmail.com', '2017-08-08', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('John',  null,'Vlissides', 'Wing', 'john.vlissides@gmail.com', '2017-08-09', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('James',  null,'Gosling', 'Wing', 'james.gosling@gmail.com', '2017-08-010', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Bruce',  null,'Lee', 'Wing', 'bruce.lee@gmail.com', '2017-08-11', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Johnny',  null,'Doe', 'Wing', 'johnny.doe@gmail.com', '2017-08-12', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('John',  null,'Roe', 'Wing', 'john.roe@gmail.com', '2017-08-13', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Jane',  null,'Roe', 'Wing', 'jane.roe@gmail.com', '2017-08-14', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Richard',  null,'Doe', 'Wing', 'richard.doe@gmail.com', '2017-08-15', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Janie',  null,'Doe', 'Wing', 'janie.doe@gmail.com', '2017-08-16', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Phillip',  null,'Webb', 'Wing', 'phillip.webb@gmail.com', '2017-08-17', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Stephane',  null,'Nicoll', 'Wing', 'stephane.nicoll@gmail.com', '2017-08-18', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Sam',  null,'Brannen', 'Wing', 'sam.brannen@gmail.com', '2017-08-19', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Juergen',  null,'Hoeller', 'Wing', 'juergen.Hoeller@gmail.com', '2017-08-20', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Janie',  null,'Roe', 'Wing', 'janie.roe@gmail.com', '2017-08-21', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('John',  null,'Smith', 'Wing', 'john.smith@gmail.com', '2017-08-22', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Joe',  null,'Bloggs', 'Wing', 'joe.bloggs@gmail.com', '2017-08-23', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('John',  null,'Stiles', 'Wing', 'john.stiles@gmail.com', '2017-08-24', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Richard',  null,'Roe', 'Wing' , 'stiles.roe@gmail.com', '2017-08-25', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Andrés', 'Antony','Vila', 'Román' , 'andresvrif@gmail.com', '1990-08-23', '', NOW());
+INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Robinzon','Leoncio', 'Vila', 'Zevallos' , null, '1990-08-23', '', NOW());
 
 /* DOCUMENTO DE IDENTIDAD */
-INSERT INTO documentos_de_identidad (tipo_de_documento, numero_de_documento, contacto_id) VALUES('dni', '70007861', 26);
-INSERT INTO documentos_de_identidad (tipo_de_documento, numero_de_documento, contacto_id) VALUES('passport', '116417071', 26);
-INSERT INTO documentos_de_identidad (tipo_de_documento, numero_de_documento, contacto_id) VALUES('dni', '48615978', 27);
+INSERT INTO official_id (official_id_type, official_id_number, contact_id) VALUES('dni', '70007861', 26);
+INSERT INTO official_id (official_id_type, official_id_number, contact_id) VALUES('passport', '116417071', 26);
+INSERT INTO official_id (official_id_type, official_id_number, contact_id) VALUES('dni', '48615978', 27);
 
 /* CONTRATANTES */
-INSERT INTO contratantes (contacto_id) VALUES(26);
-INSERT INTO contratos (contratantes_id) VALUES(1);
-INSERT INTO residentes (habilitado, contacto_id) VALUES (1,27);
+INSERT INTO contractor (contact_id) VALUES(26);
+INSERT INTO agreement (contractor_id) VALUES(1);
+INSERT INTO resident (enable, contact_id) VALUES (1,27);

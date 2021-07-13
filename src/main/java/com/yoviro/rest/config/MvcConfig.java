@@ -1,5 +1,6 @@
 package com.yoviro.rest.config;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Configuration
 public class MvcConfig {
+
     @Value("#{'${allowed.cors}'.split(',')}")
     private List<String> availableCors;
 
@@ -26,5 +28,10 @@ public class MvcConfig {
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
         return configuration.applyPermitDefaultValues();
+    }
+
+    @Bean
+    public ModelMapper modelMapper(){
+        return new ModelMapper();
     }
 }

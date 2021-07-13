@@ -1,9 +1,9 @@
 package com.yoviro.rest.config;
 
-import com.yoviro.rest.auth.filter.JWTAuthenticationFilter;
-import com.yoviro.rest.auth.filter.JWTAuthorizationFilter;
-import com.yoviro.rest.auth.service.IJWTService;
-import com.yoviro.rest.models.service.JpaUserDetailsService;
+import com.yoviro.rest.security.filter.JWTAuthenticationFilter;
+import com.yoviro.rest.security.filter.JWTAuthorizationFilter;
+import com.yoviro.rest.security.service.IJWTService;
+import com.yoviro.rest.service.JpaUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
