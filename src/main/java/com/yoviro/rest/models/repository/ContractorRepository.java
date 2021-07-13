@@ -8,6 +8,6 @@ import java.util.Collection;
 import java.util.List;
 
 public interface ContractorRepository extends PagingAndSortingRepository<Contractor, Long> {
-    <T>Collection<T> findAllById(Long id, Class<T> type);
-    <T> List<T> findAllByContactNotNull(Pageable pageable, Class<T> type);
+/*    <T>Collection<T> findAllById(Long id, Class<T> type);
+    <T> List<T> findAllByContactNotNull(Pageable pageable, Class<T> type);*/
 }

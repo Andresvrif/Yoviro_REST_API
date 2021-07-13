@@ -49,7 +49,13 @@ public class Contact implements Serializable {
 
     @NotNull
     @NotEmpty
-    @OneToMany(mappedBy = "contact", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "contact",
+               fetch = FetchType.LAZY,
+               cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.REMOVE
+               },
+               orphanRemoval = true)
     private List<OfficialId> officialIds;
 
     @NotNull
@@ -132,6 +138,9 @@ public class Contact implements Serializable {
 
     public void setOfficialIds(List<OfficialId> officialIds) {
         this.officialIds = officialIds;
+        for (OfficialId officialId : this.officialIds){
+            officialId.setContact(this);
+        }
     }
 
     public Date getCreateAt() {

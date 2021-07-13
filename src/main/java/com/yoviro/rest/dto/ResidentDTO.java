@@ -1,12 +1,18 @@
 package com.yoviro.rest.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Date;
 
 public class ResidentDTO {
     private Long id;
+
+    @JsonProperty("contactDTO")
     private ContactDTO contact; //Paciente Adulto Mayor
+
     private Date createAt;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Boolean enable;
 

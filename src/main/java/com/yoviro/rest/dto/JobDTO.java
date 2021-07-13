@@ -1,22 +1,33 @@
 package com.yoviro.rest.dto;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
 
 public class JobDTO {
     private Long id;
+
+    @JsonBackReference
     private AgreementDTO agreement;
+
     private String jobNumber;
+
+    @JsonProperty("residentDTO")
     private ResidentDTO resident;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date startDate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date endDate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date effectiveDate;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date createAt;
+
+    /*@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createAt;*/
 
     public Long getId() {
         return id;

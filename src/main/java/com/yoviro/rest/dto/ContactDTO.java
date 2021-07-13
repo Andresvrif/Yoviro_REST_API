@@ -1,26 +1,33 @@
 package com.yoviro.rest.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.thymeleaf.util.DateUtils;
-
 import java.util.Date;
 import java.util.List;
 
 public class ContactDTO {
     private Long id;
+
     private String firstName;
+
     private String secondName;
+
     private String firstLastName;
+
     private String secondLastName;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date birthDate;
+
     private String email;
+
     private String photo;
+
     @JsonManagedReference
+    @JsonProperty("officialIdDTOs")
     private List<OfficialIdDTO> officialIds;
+
     private Date createAt;
 
     public ContactDTO() {
@@ -96,6 +103,9 @@ public class ContactDTO {
 
     public void setOfficialIds(List<OfficialIdDTO> officialIds) {
         this.officialIds = officialIds;
+        for(OfficialIdDTO officialID : this.officialIds){
+            officialID.setContact(this);
+        }
     }
 
     public Date getCreateAt() {

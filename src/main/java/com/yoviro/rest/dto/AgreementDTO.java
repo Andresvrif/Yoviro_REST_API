@@ -2,15 +2,24 @@ package com.yoviro.rest.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Date;
 import java.util.List;
 
 public class AgreementDTO {
     private Long id;
+
     private String agreementNumber;
+
     @JsonBackReference
     private ContractorDTO contractor;
-    private List<JobDTO> solicitudes;
+
+    @JsonProperty("jobDTOs")
+    @JsonManagedReference
+    private List<JobDTO> jobs;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createAt;
 
@@ -38,11 +47,19 @@ public class AgreementDTO {
         this.contractor = contractor;
     }
 
-    public List<JobDTO> getSolicitudes() {
-        return solicitudes;
+    public List<JobDTO> getJobs() {
+        return jobs;
     }
 
-    public void setSolicitudes(List<JobDTO> solicitudes) {
-        this.solicitudes = solicitudes;
+    public void setJobs(List<JobDTO> jobs) {
+        this.jobs = jobs;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
     }
 }

@@ -1,10 +1,9 @@
 package com.yoviro.rest.service.interfaces;
 
-import com.yoviro.rest.dto.AgreementDTO;
-import com.yoviro.rest.dto.ContactDTO;
-import com.yoviro.rest.dto.OfficialIdDTO;
+import com.yoviro.rest.dto.*;
 
-public class IAgreementService {
-
-    /*public AgreementDTO createFullAgreement(OfficialIdDTO officialIdDTO);*/
+public interface IAgreementService {
+    AgreementDTO createNewFullAgreement(ContractorDTO contractorDTO,
+                                        ResidentDTO residentDTO,
+                                        SubmissionDTO submissionDTO);
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/contratantes")
-public class ContratanteRestController {
+public class ContractorRestController {
 
     @Autowired
     private IContractorService contratanteService;
@@ -22,7 +22,8 @@ public class ContratanteRestController {
 
     @GetMapping(value = "/listar")
     public List<ContratanteConContactoProjection> listar() {
-        List<ContratanteConContactoProjection> result = contratanteService.findAllByContactoNotNull();
-        return result;
+/*        List<ContratanteConContactoProjection> result = contratanteService.findAllByContactoNotNull();
+        return result;*/
+        return null;
     }
 }

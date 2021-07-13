@@ -1,10 +1,8 @@
 package com.yoviro.rest.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.yoviro.rest.models.entity.Agreement;
-import com.yoviro.rest.models.entity.Contact;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
 import java.util.List;
 
@@ -12,11 +10,12 @@ public class ContractorDTO {
     private Long id;
     private String contractorNumber;
 
-    @JsonIgnoreProperties(value = {"handler", "hibernateLazyInitializer", "fieldHandler"})
-    private Contact contact;
+    @JsonProperty("contactDTO")
+    //@JsonIgnoreProperties(value = {"handler", "hibernateLazyInitializer", "fieldHandler"})
+    private ContactDTO contact;
 
     @JsonManagedReference
-    private List<Agreement> agreements;
+    private List<AgreementDTO> agreements;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createAt;
@@ -37,19 +36,19 @@ public class ContractorDTO {
         this.contractorNumber = contractorNumber;
     }
 
-    public Contact getContact() {
+    public ContactDTO getContact() {
         return contact;
     }
 
-    public void setContact(Contact contact) {
+    public void setContact(ContactDTO contact) {
         this.contact = contact;
     }
 
-    public List<Agreement> getAgreements() {
+    public List<AgreementDTO> getAgreements() {
         return agreements;
     }
 
-    public void setAgreements(List<Agreement> agreements) {
+    public void setAgreements(List<AgreementDTO> agreements) {
         this.agreements = agreements;
     }
 

@@ -1,7 +1,6 @@
 package com.yoviro.rest.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 public class OfficialIdDTO {
     private Long id;

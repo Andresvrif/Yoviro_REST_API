@@ -1,11 +1,13 @@
 package com.yoviro.rest.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,8 +32,13 @@ public class MvcConfig {
         return configuration.applyPermitDefaultValues();
     }
 
+    /*@Bean
+    public ObjectMapper generalObjectMapper() {
+        return new ObjectMapper();
+    }*/
+
     @Bean
-    public ModelMapper modelMapper(){
+    public ModelMapper modelMapper() {
         return new ModelMapper();
     }
 }
