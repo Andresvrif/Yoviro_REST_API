@@ -8,9 +8,6 @@ import java.util.List;
 
 public class ContactDTO {
 
-    public ContactDTO() {
-    }
-
     private Long id;
 
     private String firstName;

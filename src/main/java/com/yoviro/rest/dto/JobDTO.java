@@ -3,10 +3,9 @@ package com.yoviro.rest.dto;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Date;
 
-public class JobDTO {
+public abstract class JobDTO {
     private Long id;
 
     @JsonBackReference

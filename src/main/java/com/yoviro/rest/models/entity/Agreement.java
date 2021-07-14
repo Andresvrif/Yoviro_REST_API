@@ -26,7 +26,7 @@ public class Agreement {
     private String agreementNumber;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Contractor.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Contractor.class, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "contractor_id")
     private Contractor contractor;
 

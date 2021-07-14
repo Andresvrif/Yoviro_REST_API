@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yoviro.rest.models.entity.Job;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -53,6 +55,11 @@ public class AgreementDTO {
 
     public void setJobs(List<JobDTO> jobs) {
         this.jobs = jobs;
+    }
+
+    public void addJob(JobDTO job) {
+        this.jobs = this.jobs == null? new ArrayList<JobDTO>() : this.jobs;
+        this.jobs.add(job);
     }
 
     public Date getCreateAt() {

@@ -3,6 +3,8 @@ package com.yoviro.rest.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -50,6 +52,11 @@ public class ContractorDTO {
 
     public void setAgreements(List<AgreementDTO> agreements) {
         this.agreements = agreements;
+    }
+
+    public void addAgreement(AgreementDTO agreement) {
+        this.agreements = this.agreements == null? new ArrayList<AgreementDTO>() : this.agreements;
+        this.agreements.add(agreement);
     }
 
     public Date getCreateAt() {
