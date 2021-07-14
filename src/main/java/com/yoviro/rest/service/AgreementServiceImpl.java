@@ -65,7 +65,8 @@ public class AgreementServiceImpl implements IAgreementService {
         submission.setAgreement(agreement);
         agreement.addJob(submission);
         agreement = agreementRepository.save(agreement);
-
-        return null;//modelMapper.map(agreement, AgreementDTO.class);
+        agreement.setJobs(null); //TODO FIX THIS
+        return modelMapper.map(agreement, AgreementDTO.class);
+        //return null;
     }
 }
