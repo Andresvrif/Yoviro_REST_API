@@ -1,9 +1,15 @@
 package com.yoviro.rest.models.entity;
 
+import com.yoviro.rest.dto.JobDTO;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.thymeleaf.util.DateUtils;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +22,7 @@ public class Agreement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Generated(GenerationTime.INSERT)
     private String agreementNumber;
 
     @NotNull
@@ -32,6 +39,11 @@ public class Agreement {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createAt;
     //TODO evaluar establecer una property para definir el estado del contrato (planificado, en vigencia y/o)
+
+    @PrePersist
+    public void PrePersist() {
+        this.createAt = DateUtils.createNow().getTime();
+    }
 
     public Long getId() {
         return id;
@@ -64,6 +76,12 @@ public class Agreement {
     public void setJobs(List<Job> jobs) {
         this.jobs = jobs;
     }
+
+    public void addJob(Job job) {
+        this.jobs = this.jobs == null? new ArrayList<Job>() : this.jobs;
+        this.jobs.add(job);
+    }
+
 
     public Date getCreateAt() {
         return createAt;

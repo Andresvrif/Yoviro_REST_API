@@ -7,6 +7,10 @@ import java.util.Date;
 import java.util.List;
 
 public class ContactDTO {
+
+    public ContactDTO() {
+    }
+
     private Long id;
 
     private String firstName;
@@ -29,9 +33,6 @@ public class ContactDTO {
     private List<OfficialIdDTO> officialIds;
 
     private Date createAt;
-
-    public ContactDTO() {
-    }
 
     public Long getId() {
         return id;

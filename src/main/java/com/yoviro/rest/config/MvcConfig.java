@@ -1,7 +1,12 @@
 package com.yoviro.rest.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yoviro.rest.dto.JobDTO;
+import com.yoviro.rest.dto.SubmissionDTO;
+import com.yoviro.rest.models.entity.Job;
+import com.yoviro.rest.models.entity.Submission;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,11 +36,6 @@ public class MvcConfig {
         configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
         return configuration.applyPermitDefaultValues();
     }
-
-    /*@Bean
-    public ObjectMapper generalObjectMapper() {
-        return new ObjectMapper();
-    }*/
 
     @Bean
     public ModelMapper modelMapper() {

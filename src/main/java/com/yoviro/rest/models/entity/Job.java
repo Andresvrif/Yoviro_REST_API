@@ -1,7 +1,10 @@
 package com.yoviro.rest.models.entity;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.thymeleaf.util.DateUtils;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -12,19 +15,18 @@ import java.util.Date;
         @UniqueConstraint(columnNames = {"agreement_id", "resident_id", "id"})
 })//Asegurar que solo exista esta solicitud para el contrato con el residente
 @DiscriminatorColumn(name = "jobType", discriminatorType = DiscriminatorType.STRING)
-public class Job {
-
+public abstract class Job {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    protected Long id;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "agreement_id")
-    private Agreement agreement;
-
-    @NotNull
-    private String jobNumber;
+    protected Agreement agreement;
+    
+    @Generated(GenerationTime.INSERT)
+    protected String jobNumber;
 
     /***
      * Author : Andrés V.
@@ -32,14 +34,14 @@ public class Job {
      */
     @NotNull
     @Temporal(TemporalType.DATE)
-    private Date startDate;
+    protected Date startDate;
 
     /***
      * Author : Andrés V.
      * Desc : Fecha de fin del contrato
      */
     @Temporal(TemporalType.DATE)
-    private Date endDate;
+    protected Date endDate;
 
     /***
      * Author : Andrés V.
@@ -47,22 +49,27 @@ public class Job {
      */
     @NotNull
     @Temporal(TemporalType.DATE)
-    private Date effectiveDate;
+    protected Date effectiveDate;
 
     /***
      * Author : Andrés V.
      * Desc : Datos del PAM alojado en la residencia
      */
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "resident_id")
-    private Resident resident;
+    protected Resident resident;
 
     @NotNull
     @Column(name = "create_at")
     @ColumnDefault("CURRENT_TIMESTAMP(6)")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date createAt;
+    protected Date createAt;
+
+    @PrePersist
+    public void PrePersist() {
+        this.createAt = DateUtils.createNow().getTime();
+    }
 
     public Long getId() {
         return id;
@@ -128,5 +135,5 @@ public class Job {
         this.createAt = createAt;
     }
 
-    private static final long serialVersionUID = 1L;
+    protected static final long serialVersionUID = 1L;
 }

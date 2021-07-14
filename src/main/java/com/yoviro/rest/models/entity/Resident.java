@@ -29,6 +29,7 @@ public class Resident {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createAt;
 
+    @NotNull
     private Boolean enable;
 
     @PrePersist
