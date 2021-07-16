@@ -13,6 +13,13 @@ import java.util.List;
 @Table(name = "contractor", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"contact_id"})
 })
+@NamedQueries({
+        @NamedQuery(name = "Contractor.findByOfficialID",
+                query = "select cr from Contractor cr \n" +
+                        "inner join Contact c on cr.contact.id = c.id \n" +
+                        "inner join OfficialId o on o.contact.id = c.id \n" +
+                        "where o.officialIdType = ?1 and o.officialIdNumber = ?2")
+})
 public class Contractor implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

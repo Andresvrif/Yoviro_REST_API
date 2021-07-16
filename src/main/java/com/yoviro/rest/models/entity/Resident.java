@@ -11,6 +11,13 @@ import java.util.Date;
 
 @Entity
 @Table(name = "resident")
+@NamedQueries({
+        @NamedQuery(name = "Resident.findByOfficialID",
+                query = "select r from Resident r \n" +
+                        "inner join Contact c on r.contact.id = c.id \n" +
+                        "inner join OfficialId o on o.contact.id = c.id \n" +
+                        "where o.officialIdType = ?1 and o.officialIdNumber = ?2")
+})
 public class Resident {
 
     @Id

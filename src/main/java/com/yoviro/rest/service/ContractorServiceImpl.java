@@ -2,6 +2,7 @@ package com.yoviro.rest.service;
 
 import com.yoviro.rest.dto.ContactDTO;
 import com.yoviro.rest.dto.ContractorDTO;
+import com.yoviro.rest.dto.OfficialIdDTO;
 import com.yoviro.rest.models.entity.Contact;
 import com.yoviro.rest.models.repository.ContractorRepository;
 import com.yoviro.rest.models.repository.projections.ContratanteConContactoProjection;
@@ -25,14 +26,21 @@ public class ContractorServiceImpl implements IContractorService {
     private ContractorRepository contractorRepository;
 
     @Override
-    public ContractorDTO save(ContractorDTO contractorDTO) {
+    public Contractor save(ContractorDTO contractorDTO) {
         Contractor contractor = modelMapper.map(contractorDTO, Contractor.class);
-        contractor = contractorRepository.save(contractor);
-        return modelMapper.map(contractor, ContractorDTO.class);
+        return contractorRepository.save(contractor);
     }
 
     @Override
     public void delete(Long id) {
 
+    }
+
+    @Override
+    public Contractor getOrCreateContractor(ContractorDTO contractorDTO) {
+        ContactDTO contactDTO = contractorDTO.getContact();
+        OfficialIdDTO officialIdDTO = contactDTO.getOfficialIds().get(0);
+        Contractor contractor = contractorRepository.findByOfficialID(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
+        return contractor != null ? contractor : save(contractorDTO);
     }
 }

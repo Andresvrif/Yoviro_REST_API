@@ -7,6 +7,8 @@ import com.yoviro.rest.models.repository.ContractorRepository;
 import com.yoviro.rest.models.repository.JobRepository;
 import com.yoviro.rest.models.repository.ResidentRepository;
 import com.yoviro.rest.service.interfaces.IAgreementService;
+import com.yoviro.rest.service.interfaces.IContractorService;
+import com.yoviro.rest.service.interfaces.IResidentService;
 import org.modelmapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,13 +21,13 @@ public class AgreementServiceImpl implements IAgreementService {
     private ModelMapper modelMapper;
 
     @Autowired
-    private ContractorRepository contractorRepository;
-
-    @Autowired
-    private ResidentRepository residentRepository;
-
-    @Autowired
     private AgreementRepository agreementRepository;
+
+    @Autowired
+    private IContractorService contractorService;
+
+    @Autowired
+    private IResidentService residentService;
 
     @Autowired
     private JobRepository jobRepository;
@@ -40,18 +42,17 @@ public class AgreementServiceImpl implements IAgreementService {
         residentDTO.setEnable(true);
 
         //CREATE CONTRACTOR
-        Contractor contractor = modelMapper.map(contractorDTO, Contractor.class);
-        contractorRepository.save(contractor);
+        Contractor contractor = contractorService.getOrCreateContractor(contractorDTO);
 
         //CREATE RESIDENT
-        Resident resident = modelMapper.map(residentDTO, Resident.class);
-        resident = residentRepository.save(resident);
+        Resident resident = residentService.getOrCreateResident(residentDTO);
 
         //Create SUBMISSION
         Submission submission = modelMapper.map(submissionDTO, Submission.class);
         submission.setResident(resident);
 
         //Create Agreement
+        //TODO Antes de crear el contrato, verificar si existe alguno vigente para el residente
         Agreement agreement = new Agreement();
         agreement.setContractor(contractor);
         submission.setAgreement(agreement);
