@@ -1,16 +1,12 @@
 package com.yoviro.rest.dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yoviro.rest.models.entity.Job;
-
+import com.fasterxml.jackson.annotation.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class AgreementDTO {
+    @JsonIgnore
     private Long id;
 
     private String agreementNumber;

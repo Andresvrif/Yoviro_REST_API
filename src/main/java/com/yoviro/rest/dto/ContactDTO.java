@@ -1,6 +1,7 @@
 package com.yoviro.rest.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.List;
 
 public class ContactDTO {
 
+    @JsonIgnore
     private Long id;
 
     private String firstName;
@@ -101,7 +103,7 @@ public class ContactDTO {
 
     public void setOfficialIds(List<OfficialIdDTO> officialIds) {
         this.officialIds = officialIds;
-        for(OfficialIdDTO officialID : this.officialIds){
+        for (OfficialIdDTO officialID : this.officialIds) {
             officialID.setContact(this);
         }
     }

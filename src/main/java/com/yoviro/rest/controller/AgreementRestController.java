@@ -30,7 +30,9 @@ public class AgreementRestController {
         ResidentDTO residentDTO = objectMapper.readValue(jsonObject.get("residentDTO").toString(), ResidentDTO.class);
         SubmissionDTO submissionDTO = objectMapper.readValue(jsonObject.get("submissionDTO").toString(), SubmissionDTO.class);
 
-        return agreementService.createNewFullAgreement(contractorDTO, residentDTO, submissionDTO);
+        AgreementDTO agreementDTO = agreementService.createNewFullAgreement(contractorDTO, residentDTO, submissionDTO);
+        agreementDTO.setJobs(null);
+        return agreementDTO;
     }
 
 }

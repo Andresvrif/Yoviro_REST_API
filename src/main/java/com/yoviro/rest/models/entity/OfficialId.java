@@ -17,6 +17,9 @@ public class OfficialId {
     @JoinColumn(name = "contact_id")
     private Contact contact;
 
+    @Column(columnDefinition="tinyint(1) default 0")
+    private Boolean primaryOfficialId;
+
     @NotNull
     private String officialIdType;
 
@@ -37,6 +40,14 @@ public class OfficialId {
 
     public void setContact(Contact contact) {
         this.contact = contact;
+    }
+
+    public Boolean getPrimaryOfficialId() {
+        return primaryOfficialId;
+    }
+
+    public void setPrimaryOfficialId(Boolean primaryOfficialId) {
+        this.primaryOfficialId = primaryOfficialId;
     }
 
     public String getOfficialIdType() {

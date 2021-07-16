@@ -1,8 +1,10 @@
 package com.yoviro.rest.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class OfficialIdDTO {
+    @JsonIgnore
     private Long id;
     @JsonBackReference
     private ContactDTO contact;

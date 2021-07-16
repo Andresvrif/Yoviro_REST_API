@@ -45,9 +45,9 @@ INSERT INTO contact (first_name, second_name, first_last_name, second_last_name,
 INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Robinzon','Leoncio', 'Vila', 'Zevallos' , null, '1990-08-23', '', NOW());
 
 /* DOCUMENTO DE IDENTIDAD */
-INSERT INTO official_id (official_id_type, official_id_number, contact_id) VALUES('dni', '70007861', 26);
+INSERT INTO official_id (official_id_type, official_id_number, contact_id, primary_official_id) VALUES('dni', '70007861', 26, 1);
 INSERT INTO official_id (official_id_type, official_id_number, contact_id) VALUES('passport', '116417071', 26);
-INSERT INTO official_id (official_id_type, official_id_number, contact_id) VALUES('dni', '48615978', 27);
+INSERT INTO official_id (official_id_type, official_id_number, contact_id, primary_official_id) VALUES('dni', '48615978', 27, 1);
 
 /* CONTRATANTES */
 INSERT INTO contractor (contact_id) VALUES(26);

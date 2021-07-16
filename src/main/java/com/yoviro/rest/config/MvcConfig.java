@@ -1,12 +1,7 @@
 package com.yoviro.rest.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yoviro.rest.dto.JobDTO;
-import com.yoviro.rest.dto.SubmissionDTO;
-import com.yoviro.rest.models.entity.Job;
-import com.yoviro.rest.models.entity.Submission;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
+import com.yoviro.rest.config.mapper.MapperConfig;
+import org.modelmapper.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +34,6 @@ public class MvcConfig {
 
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper();
+        return MapperConfig.config(new ModelMapper());
     }
 }

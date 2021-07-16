@@ -1,6 +1,7 @@
 package com.yoviro.rest.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -9,13 +10,14 @@ import java.util.Date;
 import java.util.List;
 
 public class ContractorDTO {
+    @JsonIgnore
     private Long id;
     private String contractorNumber;
 
     @JsonProperty("contactDTO")
-    //@JsonIgnoreProperties(value = {"handler", "hibernateLazyInitializer", "fieldHandler"})
     private ContactDTO contact;
 
+    @JsonProperty("agreementDTOs")
     @JsonManagedReference
     private List<AgreementDTO> agreements;
 
