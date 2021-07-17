@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/contacts")
@@ -37,9 +38,10 @@ public class ContactRestController {
     }
 
     @GetMapping("/findContactByOfficialID")
-    public ContactDTO findContactByOfficialID(@RequestBody String json) throws JSONException, JsonProcessingException {
-        JSONObject jsonObject = new JSONObject(json);
-        OfficialIdDTO officialIdDTO = objectMapper.readValue(jsonObject.get("officialIdDTO").toString(), OfficialIdDTO.class);
+    public ContactDTO findContactByOfficialID(@RequestParam Map<String, String> params) throws JSONException, JsonProcessingException {
+        OfficialIdDTO officialIdDTO = new OfficialIdDTO();
+        officialIdDTO.setOfficialIdType(params.get("officialIdType"));
+        officialIdDTO.setOfficialIdNumber(params.get("officialIdNumber"));
         Contact contact = contactService.findContactByOfficialId(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
         return contact != null ? modelMapper.map(contact, ContactDTO.class) : null;
     }
