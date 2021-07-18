@@ -2,6 +2,7 @@ package com.yoviro.rest.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.yoviro.rest.dto.ContactDTO;
 import com.yoviro.rest.dto.OfficialIdDTO;
 import com.yoviro.rest.models.entity.Contact;
@@ -10,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -38,11 +40,15 @@ public class ContactRestController {
     }
 
     @GetMapping("/findContactByOfficialID")
-    public ContactDTO findContactByOfficialID(@RequestParam Map<String, String> params) throws JSONException, JsonProcessingException {
+    public ContactDTO findContactByOfficialID(@RequestParam Map<String, String> params) {
         OfficialIdDTO officialIdDTO = new OfficialIdDTO();
         officialIdDTO.setOfficialIdType(params.get("officialIdType"));
         officialIdDTO.setOfficialIdNumber(params.get("officialIdNumber"));
         Contact contact = contactService.findContactByOfficialId(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
-        return contact != null ? modelMapper.map(contact, ContactDTO.class) : null;
+
+        if (contact == null) {
+            return null;
+        }
+        return modelMapper.map(contact, ContactDTO.class);
     }
 }
