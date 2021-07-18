@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.*;
 import java.util.Date;
 import java.util.List;
 
-@JsonTypeInfo(include= JsonTypeInfo.As.WRAPPER_OBJECT, use= JsonTypeInfo.Id.NAME)
 public class ContactDTO {
 
     @JsonIgnore
