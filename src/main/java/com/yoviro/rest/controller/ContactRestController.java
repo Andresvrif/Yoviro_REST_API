@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.yoviro.rest.config.AppConfig;
+import com.yoviro.rest.config.PropertiesConfig;
 import com.yoviro.rest.dto.ContactDTO;
 import com.yoviro.rest.dto.OfficialIdDTO;
 import com.yoviro.rest.models.entity.Contact;
@@ -24,6 +26,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/contacts")
 public class ContactRestController {
+
+    @Autowired
+    PropertiesConfig propertiesConfig;
 
     @Autowired
     ModelMapper modelMapper;
@@ -51,7 +56,6 @@ public class ContactRestController {
         Contact contact = contactService.findContactByOfficialId(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
 
         if (contact == null) return null;
-
         return JSONUtil.addRootName(modelMapper.map(contact, ContactDTO.class));
     }
 }

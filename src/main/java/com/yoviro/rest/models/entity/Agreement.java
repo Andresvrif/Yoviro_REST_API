@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "agreement", uniqueConstraints = {
@@ -39,6 +40,12 @@ public class Agreement {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createAt;
     //TODO evaluar establecer una property para definir el estado del contrato (planificado, en vigencia y/o)
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "agreements",
+    joinColumns = {@JoinColumn(name = "agreement_id")},
+    inverseJoinColumns = {@JoinColumn(name = "activity_pattern_id")})
+    private Set<ActivityPattern> activityPatterns;
 
     @PrePersist
     public void PrePersist() {

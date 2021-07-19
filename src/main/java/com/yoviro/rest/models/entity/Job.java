@@ -5,6 +5,7 @@ import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.thymeleaf.util.DateUtils;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -34,14 +35,14 @@ public abstract class Job implements Serializable {
      * Desc : Fecha de inicio del contrato
      */
     @NotNull
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     protected Date startDate;
 
     /***
      * Author : Andrés V.
      * Desc : Fecha de fin del contrato
      */
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     protected Date endDate;
 
     /***
@@ -49,7 +50,7 @@ public abstract class Job implements Serializable {
      * Desc : Fecha efectiva de la aplicación de la solicitud
      */
     @NotNull
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     protected Date effectiveDate;
 
     /***
@@ -66,11 +67,6 @@ public abstract class Job implements Serializable {
     @ColumnDefault("CURRENT_TIMESTAMP(6)")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     protected Date createAt;
-
-    @PrePersist
-    public void PrePersist() {
-        this.createAt = DateUtils.createNow().getTime();
-    }
 
     public Long getId() {
         return id;
