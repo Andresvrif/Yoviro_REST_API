@@ -30,7 +30,7 @@ public class OptionTypekey {
     }
 
     //<minute> <hour> <day-of-month> <month> <day-of-week> <command>
-    @Scheduled(cron = "*/60 * * * * *")
+    //@Scheduled(cron = "*/60 * * * * *")
     public void reportCurrentTime() {
         Date date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm");

@@ -1,56 +1,25 @@
-package com.yoviro.rest.models.entity;
+package com.yoviro.rest.dto;
 
-import org.hibernate.annotations.ColumnDefault;
-import org.springframework.format.annotation.DateTimeFormat;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
-
-
-@Entity
-@Table(name = "activity_pattern", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"patternCode"})
-})
-public class ActivityPattern {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ActivityPatternDTO {
     private Long id;
-
-    @NotNull
-    @ColumnDefault("CURRENT_TIMESTAMP(6)")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createAt;
-
     private String patternCode;
-
-    @NotNull
-    private String dayFrequency; //Cada 2 dias, cada 3 dias, etc...
-
-    @NotNull
-    @Temporal(TemporalType.TIME)
+    private String dayFrequency;
     private Date hourFrequency;
 
-    @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm")
     private Date startDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date endDate; //If it's null, end date
-
-    @NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm")
+    private Date endDate;
     private String subject;
-
     private String description;
-
-    @ManyToMany(fetch = FetchType.LAZY,
-                mappedBy = "activityPatterns")
-    private Set<Agreement> agreements; //Contratos vigentes, como regla de negocio los contratos tendran vigencia de medio dia a medio dia
-
-    @NotNull
+    private Set<AgreementDTO> agreements;
     private Boolean enable;
 
     public Long getId() {
@@ -85,20 +54,20 @@ public class ActivityPattern {
         this.dayFrequency = dayFrequency;
     }
 
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
     public Date getHourFrequency() {
         return hourFrequency;
     }
 
     public void setHourFrequency(Date hourFrequency) {
         this.hourFrequency = hourFrequency;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
     public Date getEndDate() {
@@ -125,11 +94,11 @@ public class ActivityPattern {
         this.description = description;
     }
 
-    public Set<Agreement> getAgreements() {
+    public Set<AgreementDTO> getAgreements() {
         return agreements;
     }
 
-    public void setAgreements(Set<Agreement> agreements) {
+    public void setAgreements(Set<AgreementDTO> agreements) {
         this.agreements = agreements;
     }
 
@@ -140,6 +109,4 @@ public class ActivityPattern {
     public void setEnable(Boolean enable) {
         this.enable = enable;
     }
-
-    private static final long serialVersionUID = 1L;
 }

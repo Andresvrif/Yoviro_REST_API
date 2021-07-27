@@ -42,7 +42,7 @@ public class Agreement {
     //TODO evaluar establecer una property para definir el estado del contrato (planificado, en vigencia y/o)
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "agreements",
+    @JoinTable(name = "agreement_activity_pattern",
     joinColumns = {@JoinColumn(name = "agreement_id")},
     inverseJoinColumns = {@JoinColumn(name = "activity_pattern_id")})
     private Set<ActivityPattern> activityPatterns;
