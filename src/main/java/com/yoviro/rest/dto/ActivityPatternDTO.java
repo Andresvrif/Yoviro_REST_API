@@ -1,46 +1,21 @@
-package com.yoviro.rest.models.entity;
+package com.yoviro.rest.dto;
 
-import org.hibernate.annotations.ColumnDefault;
-import org.springframework.format.annotation.DateTimeFormat;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
-@Entity
-
-@Table(name = "activity_pattern", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"patternCode"})
-})
-public class ActivityPattern {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ActivityPatternDTO {
+    @JsonIgnore
     private Long id;
-
-    @NotNull
-    @ColumnDefault("CURRENT_TIMESTAMP(6)")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createAt;
-
-    private String patternCode;
-
+    private String patternCode; //Unique
     private String dayFrequency; //Cada 2 dias, cada 3 dias, etc...
-
     private Date startDate;
-
     private Date endDate; //If it's null, end date
-
     private String subject; //
-
-    private String description; //
-
-    @NotNull
+    private String description;
     private Boolean enable;
-
-    @ManyToMany(fetch = FetchType.LAZY,
-                mappedBy = "activityPatterns")
-    private Set<Agreement> agreements; //Contratos vigentes, como regla de negocio los contratos tendran vigencia de medio dia a medio dia
+    private Set<AgreementDTO> agreements;
 
     public Long getId() {
         return id;
@@ -106,14 +81,6 @@ public class ActivityPattern {
         this.description = description;
     }
 
-    public Set<Agreement> getAgreements() {
-        return agreements;
-    }
-
-    public void setAgreements(Set<Agreement> agreements) {
-        this.agreements = agreements;
-    }
-
     public Boolean getEnable() {
         return enable;
     }
@@ -122,5 +89,11 @@ public class ActivityPattern {
         this.enable = enable;
     }
 
-    private static final long serialVersionUID = 1L;
+    public Set<AgreementDTO> getAgreements() {
+        return agreements;
+    }
+
+    public void setAgreements(Set<AgreementDTO> agreements) {
+        this.agreements = agreements;
+    }
 }
