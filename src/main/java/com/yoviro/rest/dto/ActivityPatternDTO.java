@@ -1,6 +1,7 @@
 package com.yoviro.rest.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 import java.util.Set;
 
@@ -10,12 +11,17 @@ public class ActivityPatternDTO {
     private Date createAt;
     private String patternCode; //Unique
     private String dayFrequency; //Cada 2 dias, cada 3 dias, etc...
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm")
     private Date startDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm")
     private Date endDate; //If it's null, end date
     private String subject; //
     private String description;
     private Boolean enable;
     private Set<AgreementDTO> agreements;
+    private Date hourFrequency;
 
     public Long getId() {
         return id;
@@ -47,6 +53,14 @@ public class ActivityPatternDTO {
 
     public void setDayFrequency(String dayFrequency) {
         this.dayFrequency = dayFrequency;
+    }
+
+    public Date getHourFrequency() {
+        return hourFrequency;
+    }
+
+    public void setHourFrequency(Date hourFrequency) {
+        this.hourFrequency = hourFrequency;
     }
 
     public Date getStartDate() {

@@ -53,3 +53,14 @@ INSERT INTO official_id (official_id_type, official_id_number, contact_id, prima
 INSERT INTO contractor (contact_id) VALUES(26);
 INSERT INTO agreement (contractor_id) VALUES(1);
 INSERT INTO resident (enable, contact_id) VALUES (1,27);
+
+/* ACTIVITY PATTERNS */
+INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 1, 'Desayuno Normal', 'Desayuno sin restricciones', '2020-07-05', null, '07:30:00', 'desayuno_normal', 1);
+INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 1, 'Desayuno celiaco', 'Desayuno con arina arina celiaca', '2020-07-05', null, '07:30:00', 'desayuno_celiaco', 0);
+INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 2, 'Cuidado de hongos', 'Aplicar fungisil en crema', '2020-07-25', null, '07:00:00', 'crema_hongos_mañana', 1);
+INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 2, 'Cuidado de hongos', 'Aplicar fungisil en crema', '2020-07-25', null, '19:00:00', 'crema_hongos_tarde', 0);
+INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 4, 'Paseo al parque', 'Paseo al parque quintana', '2020-07-20', null, '12:00:00', 'paseo_parque', 0);
+INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 1, 'Lonche', 'Lonche sin restricciones', '2020-07-05', null, '07:00:00', 'lonche_normal', 1);
+INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 2, 'Inyección de insulina', 'Aplicar 50 ml de insulina', '2020-07-20', null, '07:00:00', 'inyeccion_insulina_mañana', 1);
+INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 2, 'Inyección de insulina', 'Aplicar 50 ml de insulina', '2020-07-20', null, '15:00:00', 'inyeccion_insulina_tarde', 1);
+INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 2, 'Inyección de insulina', 'Aplicar 50 ml de insulina', '2020-07-20', null, '23:00:00', 'inyeccion_insulina_noche', 1);
