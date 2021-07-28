@@ -2,19 +2,17 @@ package com.yoviro.rest.models.entity;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 @Entity
-
 @Table(name = "activity_pattern", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"patternCode"})
 })
 public class ActivityPattern {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -44,7 +42,6 @@ public class ActivityPattern {
     private String subject;
 
     private String description;
-
     @ManyToMany(fetch = FetchType.LAZY,
                 mappedBy = "activityPatterns")
     private Set<Agreement> agreements; //Contratos vigentes, como regla de negocio los contratos tendran vigencia de medio dia a medio dia
@@ -76,6 +73,14 @@ public class ActivityPattern {
         this.patternCode = patternCode;
     }
 
+    public Date getHourFrequency() {
+        return hourFrequency;
+    }
+
+    public void setHourFrequency(Date hourFrequency) {
+        this.hourFrequency = hourFrequency;
+    }
+
     public String getDayFrequency() {
         return dayFrequency;
     }
@@ -90,14 +95,6 @@ public class ActivityPattern {
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
-    }
-
-    public Date getHourFrequency() {
-        return hourFrequency;
-    }
-
-    public void setHourFrequency(Date hourFrequency) {
-        this.hourFrequency = hourFrequency;
     }
 
     public Date getEndDate() {
