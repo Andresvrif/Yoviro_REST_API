@@ -11,6 +11,8 @@ import java.util.Set;
 @Table(name = "activity_pattern", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"patternCode"})
 })
+@NamedQuery(name = "ActivityPattern.summaryList",
+            query = "select ap.patternCode, ap.enable, ap.subject, ap.startDate, ap.endDate, ap.dayFrequency, ap.hourFrequency from ActivityPattern as ap")
 public class ActivityPattern {
 
     @Id
