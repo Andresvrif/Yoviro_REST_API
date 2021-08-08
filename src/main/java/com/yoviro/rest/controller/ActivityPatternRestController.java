@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yoviro.rest.config.AppConfig;
 import com.yoviro.rest.dto.ActivityPatternDTO;
+import com.yoviro.rest.dto.AgreementDTO;
 import com.yoviro.rest.models.repository.projections.SummaryActivityPatternProjection;
 import com.yoviro.rest.service.interfaces.IActivityPatternService;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
@@ -16,9 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -34,11 +34,22 @@ public class ActivityPatternRestController {
     private IActivityPatternService activityPatternService;
 
     @PostMapping("/newActivityPattern")
-    public ActivityPatternDTO newActivityPattern(@RequestBody String json) throws JSONException, JSONException, JsonProcessingException {
+    public String newActivityPattern(@RequestBody String json) throws JSONException, JSONException, JsonProcessingException {
         JSONObject jsonObject = new JSONObject(json);
-        ActivityPatternDTO activityPatternDTO = objectMapper.readValue(jsonObject.get("activityPatternDTO").toString(), ActivityPatternDTO.class);
+        JSONObject activityPatternDTOJsonObject = (JSONObject) jsonObject.get("activityPatternDTO");
+        List<AgreementDTO> agreementDTOS = retrieveContractNumberAsAgreementDTOs(activityPatternDTOJsonObject.getJSONArray("agreements"));
+        activityPatternDTOJsonObject.remove("agreements");
+        //Define ACtivity Pattern DTO
+        ActivityPatternDTO activityPatternDTO = objectMapper.readValue(activityPatternDTOJsonObject.toString(), ActivityPatternDTO.class);
+        activityPatternDTO.setEnable(true);
+        //Define Agreement related to the Activity Pattern
+        Set<AgreementDTO> agreements = new HashSet<AgreementDTO>(agreementDTOS.size());
+        agreements.addAll(agreementDTOS);
+        activityPatternDTO.setAgreements(agreements);
+
+        //Save it
         activityPatternDTO = modelMapper.map(activityPatternService.save(activityPatternDTO), ActivityPatternDTO.class);
-        return activityPatternDTO;
+        return activityPatternDTO.getPatternCode();
     }
 
     @GetMapping("/summaryList")
@@ -52,8 +63,8 @@ public class ActivityPatternRestController {
         Pageable sortedByDescription = PageRequest.of(pageNumber, AppConfig.PAGE_SIZE, Sort.by("subject").ascending());
         Page<SummaryActivityPatternProjection> page = activityPatternService.summaryList(sortedByDescription);
         List<ActivityPatternDTO> resultDTO = page.stream()
-                                                 .map(activityPattern -> modelMapper.map(activityPattern, ActivityPatternDTO.class))
-                                                 .collect(Collectors.toList());
+                .map(activityPattern -> modelMapper.map(activityPattern, ActivityPatternDTO.class))
+                .collect(Collectors.toList());
 
         Map<String, Object> response = new HashMap<String, Object>();
         response.put(AppConfig.PAGE_RESPONSE_TOTAL_PAGES_NAME, page.getTotalPages());
@@ -62,5 +73,25 @@ public class ActivityPatternRestController {
         response.put("activityPatternDTOs", resultDTO);
 
         return response;
+    }
+
+    @DeleteMapping("")
+    public void deleteActivyPatternByPatternCode(@RequestParam Map<String, String> params) {
+        String patternCode = params.get("patternCode");
+        activityPatternService.deleteActivityPatternByPatternCode(patternCode);
+    }
+
+    private List<AgreementDTO> retrieveContractNumberAsAgreementDTOs(JSONArray jsonArray) throws JSONException {
+        AgreementDTO agreementDTO;
+        List<AgreementDTO> agreementDTOS = new ArrayList<AgreementDTO>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            String contractNumber = jsonArray.get(i).toString();
+            agreementDTO = new AgreementDTO();
+            agreementDTO.setAgreementNumber(contractNumber);
+
+            agreementDTOS.add(agreementDTO);
+        }
+
+        return agreementDTOS;
     }
 }

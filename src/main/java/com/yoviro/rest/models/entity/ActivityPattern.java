@@ -2,6 +2,8 @@ package com.yoviro.rest.models.entity;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.thymeleaf.util.DateUtils;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -12,7 +14,7 @@ import java.util.Set;
         @UniqueConstraint(columnNames = {"patternCode"})
 })
 @NamedQuery(name = "ActivityPattern.summaryList",
-            query = "select ap.patternCode, ap.enable, ap.subject, ap.startDate, ap.endDate, ap.dayFrequency, ap.hourFrequency from ActivityPattern as ap")
+        query = "select ap.patternCode, ap.enable, ap.subject, ap.startDate, ap.endDate, ap.dayFrequency, ap.hourFrequency from ActivityPattern as ap")
 public class ActivityPattern {
 
     @Id
@@ -34,10 +36,10 @@ public class ActivityPattern {
     private Date hourFrequency;
 
     @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     private Date startDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     private Date endDate; //If it's null, end date
 
     @NotNull
@@ -45,11 +47,16 @@ public class ActivityPattern {
 
     private String description;
     @ManyToMany(fetch = FetchType.LAZY,
-                mappedBy = "activityPatterns")
+            mappedBy = "activityPatterns")
     private Set<Agreement> agreements; //Contratos vigentes, como regla de negocio los contratos tendran vigencia de medio dia a medio dia
 
     @NotNull
     private Boolean enable;
+
+    @PrePersist
+    public void PrePersist() {
+        this.createAt = DateUtils.createNow().getTime();
+    }
 
     public Long getId() {
         return id;

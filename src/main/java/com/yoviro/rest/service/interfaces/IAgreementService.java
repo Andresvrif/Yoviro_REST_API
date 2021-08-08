@@ -6,4 +6,7 @@ public interface IAgreementService {
     AgreementDTO createNewFullAgreement(ContractorDTO contractorDTO,
                                         ResidentDTO residentDTO,
                                         SubmissionDTO submissionDTO);
+
+    AgreementDTO cancelAgreement(AgreementDTO agreementDTO,
+                                 CancellationDTO cancellationDTO);
 }

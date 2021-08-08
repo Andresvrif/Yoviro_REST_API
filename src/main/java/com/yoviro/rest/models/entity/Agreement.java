@@ -16,7 +16,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "agreement", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"contractor_id", "id"})
+    @UniqueConstraint(columnNames = {"agreementNumber"}),
+    @UniqueConstraint(columnNames = {"contractor_id", "id"})
 })
 public class Agreement {
     @Id
@@ -43,8 +44,8 @@ public class Agreement {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "agreement_activity_pattern",
-    joinColumns = {@JoinColumn(name = "agreement_id")},
-    inverseJoinColumns = {@JoinColumn(name = "activity_pattern_id")})
+            joinColumns = {@JoinColumn(name = "agreement_id")},
+            inverseJoinColumns = {@JoinColumn(name = "activity_pattern_id")})
     private Set<ActivityPattern> activityPatterns;
 
     @PrePersist
@@ -85,7 +86,7 @@ public class Agreement {
     }
 
     public void addJob(Job job) {
-        this.jobs = this.jobs == null? new ArrayList<Job>() : this.jobs;
+        this.jobs = this.jobs == null ? new ArrayList<Job>() : this.jobs;
         this.jobs.add(job);
     }
 

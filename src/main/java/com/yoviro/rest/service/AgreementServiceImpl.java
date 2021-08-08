@@ -61,4 +61,14 @@ public class AgreementServiceImpl implements IAgreementService {
 
         return modelMapper.map(agreement, AgreementDTO.class);
     }
+
+    @Override
+    public AgreementDTO cancelAgreement(AgreementDTO agreementDTO,
+                                        CancellationDTO cancellationDTO) {
+        Agreement agreement = agreementRepository.findAgreementByAgreementNumber(agreementDTO.getAgreementNumber());
+        if (agreement == null) return null;
+        Cancellation cancellation = modelMapper.map(cancellationDTO, Cancellation.class);
+        agreement.addJob(cancellation);
+        return modelMapper.map(agreement, AgreementDTO.class);
+    }
 }

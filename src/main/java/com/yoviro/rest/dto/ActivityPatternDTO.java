@@ -12,15 +12,17 @@ public class ActivityPatternDTO {
     private String patternCode; //Unique
     private String dayFrequency; //Cada 2 dias, cada 3 dias, etc...
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date startDate;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date endDate; //If it's null, end date
     private String subject; //
     private String description;
     private Boolean enable;
     private Set<AgreementDTO> agreements;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private Date hourFrequency;
 
     public Long getId() {

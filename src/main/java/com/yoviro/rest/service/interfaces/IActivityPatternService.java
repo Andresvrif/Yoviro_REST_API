@@ -9,5 +9,6 @@ import org.springframework.data.domain.Pageable;
 public interface IActivityPatternService {
     public ActivityPattern edit(ActivityPatternDTO activityPatternDTO);
     public ActivityPattern save(ActivityPatternDTO activityPatternDTO);
+    void deleteActivityPatternByPatternCode(String patternCode);
     public Page<SummaryActivityPatternProjection> summaryList(Pageable pageable);
 }

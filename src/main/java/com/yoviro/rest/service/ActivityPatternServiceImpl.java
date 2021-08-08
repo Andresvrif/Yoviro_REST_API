@@ -31,6 +31,13 @@ public class ActivityPatternServiceImpl implements IActivityPatternService {
     }
 
     @Override
+    public void deleteActivityPatternByPatternCode(String patternCode) {
+        activityPatternRepository.deleteActivityPatternByPatternCode(patternCode);
+        //Long result = activityPatternRepository.deleteActivityPatternByPatternCode(patternCode);
+        //System.out.println("result -------------> " + result);
+    }
+
+    @Override
     public Page<SummaryActivityPatternProjection> summaryList(Pageable pageable) {
         return activityPatternRepository.findAllByIdNotNull(pageable);
     }
