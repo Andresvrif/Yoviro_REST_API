@@ -64,3 +64,7 @@ INSERT INTO activity_pattern (create_at, day_frequency, subject, description, st
 INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 2, 'Inyección de insulina', 'Aplicar 50 ml de insulina', '2020-07-20', null, '07:00:00', 'inyeccion_insulina_mañana', 1);
 INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 2, 'Inyección de insulina', 'Aplicar 50 ml de insulina', '2020-07-20', null, '15:00:00', 'inyeccion_insulina_tarde', 1);
 INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 2, 'Inyección de insulina', 'Aplicar 50 ml de insulina', '2020-07-20', null, '23:00:00', 'inyeccion_insulina_noche', 1);
+
+/* Relation between AGREEMENT & ACTIVITY PATTERN */
+INSERT INTO agreement_activity_pattern (agreement_id, activity_pattern_id) VALUES ('2', '3');
+INSERT INTO agreement_activity_pattern (agreement_id, activity_pattern_id) VALUES ('2', '4');
