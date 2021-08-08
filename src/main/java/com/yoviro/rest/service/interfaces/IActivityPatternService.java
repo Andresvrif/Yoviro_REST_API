@@ -10,5 +10,6 @@ public interface IActivityPatternService {
     public ActivityPattern edit(ActivityPatternDTO activityPatternDTO);
     public ActivityPattern save(ActivityPatternDTO activityPatternDTO);
     void deleteActivityPatternByPatternCode(String patternCode);
+    void deleteAllByPatternCodes(String[] patternCodesToDelete);
     public Page<SummaryActivityPatternProjection> summaryList(Pageable pageable);
 }

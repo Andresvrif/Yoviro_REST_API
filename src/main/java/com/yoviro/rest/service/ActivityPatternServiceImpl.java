@@ -10,6 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class ActivityPatternServiceImpl implements IActivityPatternService {
@@ -33,8 +38,11 @@ public class ActivityPatternServiceImpl implements IActivityPatternService {
     @Override
     public void deleteActivityPatternByPatternCode(String patternCode) {
         activityPatternRepository.deleteActivityPatternByPatternCode(patternCode);
-        //Long result = activityPatternRepository.deleteActivityPatternByPatternCode(patternCode);
-        //System.out.println("result -------------> " + result);
+    }
+
+    @Override
+    public void deleteAllByPatternCodes(String[] patternCodesToDelete) {
+        activityPatternRepository.deleteByPatternCodes(Arrays.asList(patternCodesToDelete));
     }
 
     @Override

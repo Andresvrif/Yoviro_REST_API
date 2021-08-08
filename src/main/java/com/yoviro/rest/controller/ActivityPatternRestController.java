@@ -78,7 +78,8 @@ public class ActivityPatternRestController {
     @DeleteMapping("")
     public void deleteActivyPatternByPatternCode(@RequestParam Map<String, String> params) {
         String patternCode = params.get("patternCode");
-        activityPatternService.deleteActivityPatternByPatternCode(patternCode);
+        String[] patternCodesToDelete = patternCode.split(",");
+        activityPatternService.deleteAllByPatternCodes(patternCodesToDelete);
     }
 
     private List<AgreementDTO> retrieveContractNumberAsAgreementDTOs(JSONArray jsonArray) throws JSONException {
