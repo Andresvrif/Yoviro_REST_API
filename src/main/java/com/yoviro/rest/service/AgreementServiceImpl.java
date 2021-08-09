@@ -76,7 +76,11 @@ public class AgreementServiceImpl implements IAgreementService {
         System.out.println("****************** START ******************");
         List<Job> jobs = agreement.getJobs();
         for(Job job : jobs){
-            System.out.println("\t---->" + job.getClass().getName());
+            if(job instanceof Submission){
+                System.out.println("\t----> Submission");
+            } else if(job instanceof Cancellation){
+                System.out.println("\t----> Cancellation");
+            }
         }
         System.out.println("******************  END  ******************");
 

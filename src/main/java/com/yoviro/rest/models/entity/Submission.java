@@ -23,4 +23,13 @@ public class Submission extends Job {
         startDate.setHours(AppConfig.EFFECTIVE_DATE);
         endDate.setHours(AppConfig.EFFECTIVE_DATE);
     }
+
+    @Override
+    public int compareTo(Object o) {
+        if(o instanceof Submission){
+            System.out.println();
+        }
+
+        return 1;
+    }
 }

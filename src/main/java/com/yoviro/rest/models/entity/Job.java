@@ -17,7 +17,7 @@ import java.util.Date;
         @UniqueConstraint(columnNames = {"agreement_id", "resident_id", "id"})
 })//Asegurar que solo exista esta solicitud para el contrato con el residente
 @DiscriminatorColumn(name = "jobType", discriminatorType = DiscriminatorType.STRING)
-public abstract class Job implements Serializable {
+public abstract class Job implements Serializable, Comparable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
