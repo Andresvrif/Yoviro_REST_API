@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Service
 public class AgreementServiceImpl implements IAgreementService {
@@ -66,9 +68,23 @@ public class AgreementServiceImpl implements IAgreementService {
     public AgreementDTO cancelAgreement(AgreementDTO agreementDTO,
                                         CancellationDTO cancellationDTO) {
         Agreement agreement = agreementRepository.findAgreementByAgreementNumber(agreementDTO.getAgreementNumber());
-        if (agreement == null) return null;
+        if (agreement == null) {
+            return null;
+        }
+
+        //Before cancel, can be only Submission, Adjourn, Reinstatement
+        System.out.println("****************** START ******************");
+        List<Job> jobs = agreement.getJobs();
+        for(Job job : jobs){
+            System.out.println("\t---->" + job.getClass().getName());
+        }
+        System.out.println("******************  END  ******************");
+
         Cancellation cancellation = modelMapper.map(cancellationDTO, Cancellation.class);
-        agreement.addJob(cancellation);
+        cancellation.setAgreement(agreement);
+
+        //jobRepository.save(cancellation);
+
         return modelMapper.map(agreement, AgreementDTO.class);
     }
 }

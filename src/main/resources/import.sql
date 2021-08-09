@@ -64,7 +64,21 @@ INSERT INTO activity_pattern (create_at, day_frequency, subject, description, st
 INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 2, 'Inyección de insulina', 'Aplicar 50 ml de insulina', '2020-07-20', null, '07:00:00', 'inyeccion_insulina_mañana', 1);
 INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 2, 'Inyección de insulina', 'Aplicar 50 ml de insulina', '2020-07-20', null, '15:00:00', 'inyeccion_insulina_tarde', 1);
 INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 2, 'Inyección de insulina', 'Aplicar 50 ml de insulina', '2020-07-20', null, '23:00:00', 'inyeccion_insulina_noche', 1);
+INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 1, 'Almuerzo', 'Almuerzo normal', '2020-07-20', null, '15:00:00', 'almuerzo', 1);
+INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 1, 'Almuerzo celiaco', 'Almuerzo celiaco, no harinas', '2020-07-20', null, '23:00:00', 'almuerzo_celiaco', 1);
+INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 1, 'Aseo PAM', 'Aseo y limpieza del PAM (ducha, cepillarse los dientes, vestirlo, etc...)', '2020-07-20', null, '06:00:00', 'aseo_mañana', 1);
+INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 1, 'Cambio de pañal en la mañana', 'Cambio de pañal en la mañana', '2020-07-20', null, '06:30:00', 'cambio_pañal_1', 1);
+INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 1, 'Cambio de pañal en la mañana', 'Cambio de pañal en la mañana', '2020-07-20', null, '10:30:00', 'cambio_pañal_2', 1);
+INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 1, 'Balance hidrico', 'Registro de balance hidrico para pacientes NO postrados', '2020-07-20', null, '07:00:00', 'balance_hidrico_mañana', 1);
+INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 1, 'Balance hidrico postrado', 'Registro de balance hidrico para pacientes postrados', '2020-07-20', null, '08:00:00', 'balance_hidrico_mañana_postrados', 1);
+INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 1, 'Limpieza habitación', 'Limpieza de habitación', '2020-07-20', null, '08:20:00', 'limpieza_habitación', 1);
+INSERT INTO activity_pattern (create_at, day_frequency, subject, description, start_date, end_date, hour_frequency, pattern_code, enable) VALUES (now(), 1, 'Medicación', 'Medicación', '2020-07-20', null, '09:00:00', 'medicación', 1);
+
+/* JOB */
+insert into job (agreement_id, create_at, effective_date, end_date, resident_id, start_date, job_type) values (1, now(), '2021-07-13 12:00:00', '2022-07-13 12:00:00',1, '2021-07-13 12:00:00', 'SUBMISSION');
 
 /* Relation between AGREEMENT & ACTIVITY PATTERN */
-INSERT INTO agreement_activity_pattern (agreement_id, activity_pattern_id) VALUES ('2', '3');
-INSERT INTO agreement_activity_pattern (agreement_id, activity_pattern_id) VALUES ('2', '4');
+INSERT INTO agreement_activity_pattern (agreement_id, activity_pattern_id) VALUES ('1', '1');
+INSERT INTO agreement_activity_pattern (agreement_id, activity_pattern_id) VALUES ('1', '3');
+INSERT INTO agreement_activity_pattern (agreement_id, activity_pattern_id) VALUES ('1', '10');
+INSERT INTO agreement_activity_pattern (agreement_id, activity_pattern_id) VALUES ('1', '6');

@@ -15,6 +15,9 @@ public class AppConfig {
     public static String PAGE_RESPONSE_TOTAL_PAGES_NAME = null;
     public static String PAGE_RESPONSE_CURRENT_PAGE = null;
     public static String PAGE_RESPONSE_TOTAL_ELEMENTS = null;
+    public static String DATE_FORMAT = null;
+    public static String DATE_TIME_FORMAT = null;
+    public static String TIME_FORMAT = null;
 
     @Value("${effectivedate.hour}")
     public String _effectiveDateHour;
@@ -34,6 +37,15 @@ public class AppConfig {
     @Value("${page.response.totalElements.name}")
     public String _pageResponseTotalElements;
 
+    @Value("${spring.mvc.format.date}")
+    public String _dateFormat;
+
+    @Value("${spring.mvc.format.date-time}")
+    public String _dateTimeFormat;
+
+    @Value("${spring.mvc.format.time}")
+    public String _timeFormat;
+
     @Transactional(readOnly = true)
     @EventListener(ApplicationReadyEvent.class)
     public void afterBoot() {
@@ -44,5 +56,8 @@ public class AppConfig {
         AppConfig.PAGE_RESPONSE_TOTAL_PAGES_NAME = _pageResponseTotalPages;
         AppConfig.PAGE_RESPONSE_CURRENT_PAGE = _pageResponseCurrentPage;
         AppConfig.PAGE_RESPONSE_TOTAL_ELEMENTS = _pageResponseTotalElements;
+        AppConfig.DATE_FORMAT = _dateFormat;
+        AppConfig.DATE_TIME_FORMAT = _dateTimeFormat;
+        AppConfig.TIME_FORMAT = _timeFormat;
     }
 }
