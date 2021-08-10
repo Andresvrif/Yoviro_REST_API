@@ -1,6 +1,7 @@
 package com.yoviro.rest.service;
 
 import com.yoviro.rest.dto.*;
+import com.yoviro.rest.handler.JobHandler;
 import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.models.repository.AgreementRepository;
 import com.yoviro.rest.models.repository.ContractorRepository;
@@ -34,6 +35,9 @@ public class AgreementServiceImpl implements IAgreementService {
     @Autowired
     private JobRepository jobRepository;
 
+    @Autowired
+    private JobHandler jobHandler;
+
     @Transactional
     @Override
     public AgreementDTO createNewFullAgreement(ContractorDTO contractorDTO,
@@ -66,28 +70,26 @@ public class AgreementServiceImpl implements IAgreementService {
 
     @Override
     public AgreementDTO cancelAgreement(AgreementDTO agreementDTO,
-                                        CancellationDTO cancellationDTO) {
+                                        CancellationDTO cancellationDTO) throws Exception {
         Agreement agreement = agreementRepository.findAgreementByAgreementNumber(agreementDTO.getAgreementNumber());
         if (agreement == null) {
             return null;
         }
 
-        //Before cancel, can be only Submission, Adjourn, Reinstatement
-        System.out.println("****************** START ******************");
-        List<Job> jobs = agreement.getJobs();
-        for(Job job : jobs){
-            if(job instanceof Submission){
-                System.out.println("\t----> Submission");
-            } else if(job instanceof Cancellation){
-                System.out.println("\t----> Cancellation");
-            }
+        //Before cancel, can be only Submission, Reinstatement and Endorsement
+        if (!jobHandler.canBeCanceled(agreement, cancellationDTO.getEffectiveDate())) {
+            throw new Exception("Se necesita un contrato vigente para realizar una cancelación");
         }
-        System.out.println("******************  END  ******************");
 
+        //Define Cancellation job based en previous Job
+        Job lastJob = jobHandler.lastJobFromAgreement(agreement);
         Cancellation cancellation = modelMapper.map(cancellationDTO, Cancellation.class);
+        cancellation.setStartDate(lastJob.getStartDate());
+        cancellation.setEndDate(lastJob.getEndDate());
+        cancellation.setResident(lastJob.getResident());
         cancellation.setAgreement(agreement);
 
-        //jobRepository.save(cancellation);
+        jobRepository.save(cancellation);
 
         return modelMapper.map(agreement, AgreementDTO.class);
     }

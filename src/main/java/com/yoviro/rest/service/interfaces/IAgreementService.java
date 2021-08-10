@@ -8,5 +8,5 @@ public interface IAgreementService {
                                         SubmissionDTO submissionDTO);
 
     AgreementDTO cancelAgreement(AgreementDTO agreementDTO,
-                                 CancellationDTO cancellationDTO);
+                                 CancellationDTO cancellationDTO) throws Exception;
 }

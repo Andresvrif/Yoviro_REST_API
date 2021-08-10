@@ -40,7 +40,7 @@ public class AgreementRestController {
     }
 
     @PostMapping("/cancel")
-    public AgreementDTO cancelAgreement(@RequestBody String json) throws Exception {
+    public String cancelAgreement(@RequestBody String json) throws Exception {
         JSONObject jsonObject = new JSONObject(json);
         String agreementNumberParam = jsonObject.get("agreementNumber").toString();
         String effectiveDateParam = jsonObject.get("effectiveDate").toString();
@@ -57,6 +57,6 @@ public class AgreementRestController {
         //Register Agreement cancellation
         agreementDTO = agreementService.cancelAgreement(agreementDTO, cancellationDTO);
 
-        return agreementDTO;
+        return agreementDTO.getAgreementNumber();
     }
 }
