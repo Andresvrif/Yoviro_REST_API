@@ -3,13 +3,14 @@ package com.yoviro.rest.handler;
 import com.yoviro.rest.models.entity.Agreement;
 import com.yoviro.rest.models.entity.Job;
 
-import java.util.List;
+import java.util.*;
 
 public class JobHandler {
-    public Job lastJob(Agreement agreement) {
+    public Job lastJob(Agreement agreement, Date effectiveDate) {
         List<Job> jobs = agreement.getJobs();
-        //var x = jobs.stream().sorted(j ->);
-        return null;
-    }
+        if (jobs.isEmpty()) return null;
 
+        jobs.sort(Comparator.comparing(Job::getId));
+        return jobs.get(jobs.size() - 1);
+    }
 }

@@ -13,9 +13,4 @@ public class Cancellation extends Job {
     public void PrePersist() {
         this.createAt = DateUtils.createNow().getTime();
     }
-
-    @Override
-    public int compareTo(Object o) {
-        return 0;
-    }
 }

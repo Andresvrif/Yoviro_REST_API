@@ -2,6 +2,7 @@ package com.yoviro.rest.models.entity;
 
 import com.yoviro.rest.config.AppConfig;
 import com.yoviro.rest.config.PropertiesConfig;
+import com.yoviro.rest.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.thymeleaf.util.DateUtils;
 
@@ -19,17 +20,8 @@ public class Submission extends Job {
         this.createAt = DateUtils.createNow().getTime();
         this.effectiveDate = startDate;
 
-        effectiveDate.setHours(AppConfig.EFFECTIVE_DATE);
-        startDate.setHours(AppConfig.EFFECTIVE_DATE);
-        endDate.setHours(AppConfig.EFFECTIVE_DATE);
-    }
-
-    @Override
-    public int compareTo(Object o) {
-        if(o instanceof Submission){
-            System.out.println();
-        }
-
-        return 1;
+        effectiveDate.setHours(AppConfig.EFFECTIVE_TIME);
+        startDate.setHours(AppConfig.EFFECTIVE_TIME);
+        endDate.setHours(AppConfig.EFFECTIVE_TIME);
     }
 }

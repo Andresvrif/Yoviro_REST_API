@@ -12,4 +12,5 @@ public interface IActivityPatternService {
     void deleteActivityPatternByPatternCode(String patternCode);
     void deleteAllByPatternCodes(String[] patternCodesToDelete);
     public Page<SummaryActivityPatternProjection> summaryList(Pageable pageable);
+    public Page<SummaryActivityPatternProjection> summaryList(Pageable pageable, String subject);
 }

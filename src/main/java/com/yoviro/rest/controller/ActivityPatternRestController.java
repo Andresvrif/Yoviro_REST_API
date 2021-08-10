@@ -7,6 +7,7 @@ import com.yoviro.rest.dto.ActivityPatternDTO;
 import com.yoviro.rest.dto.AgreementDTO;
 import com.yoviro.rest.models.repository.projections.SummaryActivityPatternProjection;
 import com.yoviro.rest.service.interfaces.IActivityPatternService;
+import com.yoviro.rest.util.JSONUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,20 +57,25 @@ public class ActivityPatternRestController {
     public Map<String, Object> summaryList(@RequestParam Map<String, String> params) {
         //Resolve UI Params
         String pageParam = params.get(AppConfig.PAGE_REQUEST_PARAM_NAME);
+        String qryParam = params.get(AppConfig.SEARCH_REQUEST_PARAM_NAME);
+
+        //Define pagination
         pageParam = (pageParam == null || pageParam.compareToIgnoreCase("0") == 0) ? "1" : pageParam;
         Integer pageNumber = Integer.parseInt(pageParam) - 1;
 
-        //Call BD and handle page
+        //Call Service and retrieve data
         Pageable sortedByDescription = PageRequest.of(pageNumber, AppConfig.PAGE_SIZE, Sort.by("subject").ascending());
-        Page<SummaryActivityPatternProjection> page = activityPatternService.summaryList(sortedByDescription);
+        Page<SummaryActivityPatternProjection> page = qryParam != null ? activityPatternService.summaryList(sortedByDescription, qryParam) :
+                                                                         activityPatternService.summaryList(sortedByDescription);
+
+        //Transform projection to DTO
         List<ActivityPatternDTO> resultDTO = page.stream()
                 .map(activityPattern -> modelMapper.map(activityPattern, ActivityPatternDTO.class))
                 .collect(Collectors.toList());
 
+        //Define Response
         Map<String, Object> response = new HashMap<String, Object>();
-        response.put(AppConfig.PAGE_RESPONSE_TOTAL_PAGES_NAME, page.getTotalPages());
-        response.put(AppConfig.PAGE_RESPONSE_CURRENT_PAGE, page.getNumber() + 1);
-        response.put(AppConfig.PAGE_RESPONSE_TOTAL_ELEMENTS, page.getTotalElements());
+        response.put(AppConfig.METADATA_TAG, JSONUtil.pageToJson(page));
         response.put("activityPatternDTOs", resultDTO);
 
         return response;

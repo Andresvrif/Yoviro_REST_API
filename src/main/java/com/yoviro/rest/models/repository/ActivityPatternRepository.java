@@ -10,12 +10,11 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.security.auth.Subject;
 import java.util.List;
 
 @Repository
 public interface ActivityPatternRepository extends PagingAndSortingRepository<ActivityPattern, Long> {
-    Page<SummaryActivityPatternProjection> findAllByIdNotNull(Pageable pageable); //Bring All
-
     @Transactional
     void deleteActivityPatternByPatternCode(String patternCode);
 
@@ -23,4 +22,8 @@ public interface ActivityPatternRepository extends PagingAndSortingRepository<Ac
     @Modifying
     @Query("delete from ActivityPattern as ap where ap.patternCode in (:patternCodes)")
     void deleteByPatternCodes(List<String> patternCodes);
+
+    Page<SummaryActivityPatternProjection> findAllByIdNotNull(Pageable pageable); //Bring All
+
+    Page<SummaryActivityPatternProjection> findAllBySubjectLike(Pageable pageable, String subject); //Bring All
 }
