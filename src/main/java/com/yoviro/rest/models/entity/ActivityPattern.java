@@ -13,8 +13,23 @@ import java.util.Set;
 @Table(name = "activity_pattern", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"patternCode"})
 })
-@NamedQuery(name = "ActivityPattern.summaryList",
-        query = "select ap.patternCode, ap.enable, ap.subject, ap.startDate, ap.endDate, ap.dayFrequency, ap.hourFrequency from ActivityPattern as ap")
+@NamedQueries({
+        @NamedQuery(name = "ActivityPattern.summaryList",
+                query = "select ap.patternCode, ap.enable, ap.subject, ap.startDate, ap.endDate, ap.dayFrequency, ap.hourFrequency from ActivityPattern as ap"),
+        @NamedQuery(name = "ActivityPattern.deleteByPatternCodes",
+                query = "delete from ActivityPattern as ap where ap.patternCode in ?1"),
+        @NamedQuery(name = "ActivityPattern.agreementsResidentRelated",
+                query = "select distinct c.firstName as firstName," +
+                        "c.secondName as secondName," +
+                        "c.firstLastName as firstLastName," +
+                        "c.secondLastName as secondLastName," +
+                        "ag.agreementNumber as agreementNumber from ActivityPattern ap " +
+                        "inner join ap.agreements aap on ap.patternCode = ?1 " +
+                        "inner join Agreement ag on aap.id=ag.id " +
+                        "inner join Job j on j.agreement=ag " +
+                        "inner join Resident r on r=j.resident " +
+                        "inner join Contact c on r.contact=c")
+})
 public class ActivityPattern {
 
     @Id

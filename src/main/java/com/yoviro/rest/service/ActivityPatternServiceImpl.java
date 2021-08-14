@@ -3,6 +3,7 @@ package com.yoviro.rest.service;
 import com.yoviro.rest.dto.ActivityPatternDTO;
 import com.yoviro.rest.models.entity.ActivityPattern;
 import com.yoviro.rest.models.repository.ActivityPatternRepository;
+import com.yoviro.rest.models.repository.projections.AgreementResidentProjection;
 import com.yoviro.rest.models.repository.projections.SummaryActivityPatternProjection;
 import com.yoviro.rest.service.interfaces.IActivityPatternService;
 import org.modelmapper.ModelMapper;
@@ -51,5 +52,10 @@ public class ActivityPatternServiceImpl implements IActivityPatternService {
     public Page<SummaryActivityPatternProjection> summaryList(Pageable pageable, String subject) {
         subject = "%".concat(subject).concat("%");
         return activityPatternRepository.findAllBySubjectLike(pageable, subject);
+    }
+
+    @Override
+    public Page<AgreementResidentProjection> agreementsResidentRelated(Pageable pageable, String patternCode) {
+        return activityPatternRepository.agreementsResidentRelated(pageable, patternCode);
     }
 }
