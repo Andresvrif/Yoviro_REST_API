@@ -16,6 +16,7 @@ import com.yoviro.rest.service.interfaces.IAgreementService;
 import com.yoviro.rest.util.DateUtil;
 import com.yoviro.rest.util.JSONUtil;
 import com.yoviro.rest.util.PageUtil;
+import com.yoviro.rest.util.StringUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
@@ -140,7 +141,7 @@ public class AgreementRestController {
 
             //Put data
             rowData = new HashMap<String, Object>();
-            rowData.put("fullName", contact.getFullName());
+            rowData.put("fullName", StringUtil.capitalizeWord(contact.getFullName()));
             rowData.put("officialIdType", primaryOfficialID.getOfficialIdType());
             rowData.put("officialIdNumber", primaryOfficialID.getOfficialIdNumber());
             rowData.put("agreementNumber", agreement.getAgreementNumber());
