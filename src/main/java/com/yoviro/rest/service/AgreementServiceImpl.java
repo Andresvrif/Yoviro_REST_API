@@ -1,21 +1,34 @@
 package com.yoviro.rest.service;
 
 import com.yoviro.rest.dto.*;
+import com.yoviro.rest.dto.search.SearchAgreementDTO;
+import com.yoviro.rest.dto.search.SearchContactDTO;
+import com.yoviro.rest.dto.search.SearchJobDTO;
+import com.yoviro.rest.dto.search.SearchResidentDTO;
 import com.yoviro.rest.handler.JobHandler;
 import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.models.repository.AgreementRepository;
 import com.yoviro.rest.models.repository.ContractorRepository;
 import com.yoviro.rest.models.repository.JobRepository;
 import com.yoviro.rest.models.repository.ResidentRepository;
+import com.yoviro.rest.models.repository.projections.AgreementResidentProjection;
+import com.yoviro.rest.models.repository.specification.handler.JoinColumnProps;
+import com.yoviro.rest.models.repository.specification.handler.SearchFilter;
+import com.yoviro.rest.models.repository.specification.handler.SearchQuery;
+import com.yoviro.rest.models.repository.specification.handler.SpecificationUtil;
 import com.yoviro.rest.service.interfaces.IAgreementService;
 import com.yoviro.rest.service.interfaces.IContractorService;
 import com.yoviro.rest.service.interfaces.IResidentService;
 import org.modelmapper.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -92,5 +105,45 @@ public class AgreementServiceImpl implements IAgreementService {
         jobRepository.save(cancellation);
 
         return modelMapper.map(agreement, AgreementDTO.class);
+    }
+
+    @Override
+    public Page<Agreement> searchAgreementsByContact(Pageable pageable,
+                                                     SearchAgreementDTO searchAgreementDTO) {
+        SearchJobDTO searchJobDTO = searchAgreementDTO.getSearchJobDTO();
+        SearchResidentDTO searchResidentDTO = searchJobDTO.getSearchResidentDTO();
+        SearchContactDTO searchContactDTO = searchResidentDTO.getSearchContactDTO();
+
+        //Define Search Criteria
+        SearchQuery qry = new SearchQuery();
+        List<SearchFilter> jobCriteria = JobServiceImpl.instanceJobCriteria(searchJobDTO);
+        List<SearchFilter> residentCriteria = ResidentServiceImpl.instanceResidentCriteria(searchResidentDTO); //Contact Filter
+        List<SearchFilter> contactCriteria = ContactServiceImpl.instanceContactCriteria(searchContactDTO); //Contact Filter
+        List<SearchFilter> officialIDCriteria = OfficialIdServiceImpl.instanceContactSearchQry(searchContactDTO); //OfficialID Filter
+
+        JoinColumnProps joinColumnPropsContactOfficialID = new JoinColumnProps();
+        joinColumnPropsContactOfficialID.setJoinColumnName("officialIds");
+        joinColumnPropsContactOfficialID.setSearchFilter(officialIDCriteria);
+
+        JoinColumnProps joinColumnPropsResidentAndContact = new JoinColumnProps();
+        joinColumnPropsResidentAndContact.setJoinColumnName("contact");
+        joinColumnPropsResidentAndContact.setSearchFilter(contactCriteria);
+        joinColumnPropsResidentAndContact.setSubJoinColumnProps(joinColumnPropsContactOfficialID);
+
+        JoinColumnProps joinColumnPropsJobAndResident = new JoinColumnProps();
+        joinColumnPropsJobAndResident.setJoinColumnName("resident");
+        joinColumnPropsJobAndResident.setSearchFilter(residentCriteria);
+        joinColumnPropsJobAndResident.setSubJoinColumnProps(joinColumnPropsResidentAndContact);
+
+        JoinColumnProps joinColumnPropsAgreementAndJob = new JoinColumnProps();
+        joinColumnPropsAgreementAndJob.setJoinColumnName("jobs");
+        joinColumnPropsAgreementAndJob.setSearchFilter(jobCriteria);
+        joinColumnPropsAgreementAndJob.setSubJoinColumnProps(joinColumnPropsJobAndResident);
+
+
+        qry.addJoinColumnProp(joinColumnPropsAgreementAndJob);
+        Specification<Agreement> specification = SpecificationUtil.bySearchQuery(qry, Agreement.class, Boolean.TRUE);
+
+        return agreementRepository.findAll(specification, pageable);
     }
 }

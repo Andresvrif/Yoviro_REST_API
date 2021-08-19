@@ -16,8 +16,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "agreement", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"agreementNumber"}),
-    @UniqueConstraint(columnNames = {"contractor_id", "id"})
+        @UniqueConstraint(columnNames = {"agreementNumber"}),
+        @UniqueConstraint(columnNames = {"contractor_id", "id"})
 })
 public class Agreement {
     @Id

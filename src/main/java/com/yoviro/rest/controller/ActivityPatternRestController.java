@@ -55,27 +55,24 @@ public class ActivityPatternRestController {
     }
 
     @GetMapping("/summaryList")
-    public Map<String, Object> summaryList(@RequestParam Map<String, String> params) {
-        //Resolve UI Params
-        String pageParam = params.get(AppConfig.PAGE_REQUEST_PARAM_NAME);
-        String qryParam = params.get(AppConfig.SEARCH_REQUEST_PARAM_NAME);
-
+    public Map<String, Object> summaryList(@RequestParam(required = false) String search,
+                                           @RequestParam(required = true) String page) {
         //Define pagination
-        Integer pageNumber = PageUtil.definePageNumber(pageParam);
+        Integer pageNumber = PageUtil.definePageNumber(page);
         Pageable sortedByDescription = PageRequest.of(pageNumber, AppConfig.PAGE_SIZE, Sort.by("subject").ascending());
 
         //Call Service and retrieve data
-        Page<SummaryActivityPatternProjection> page = qryParam != null ? activityPatternService.summaryList(sortedByDescription, qryParam) :
+        Page<SummaryActivityPatternProjection> pageSummary = search != null ? activityPatternService.summaryList(sortedByDescription, search) :
                 activityPatternService.summaryList(sortedByDescription);
 
         //Transform projection to DTO
-        List<ActivityPatternDTO> resultDTO = page.stream()
+        List<ActivityPatternDTO> resultDTO = pageSummary.stream()
                 .map(activityPattern -> modelMapper.map(activityPattern, ActivityPatternDTO.class))
                 .collect(Collectors.toList());
 
         //Define Response
         Map<String, Object> response = new HashMap<String, Object>();
-        response.put(AppConfig.METADATA_TAG, JSONUtil.pageToJson(page));
+        response.put(AppConfig.METADATA_TAG, JSONUtil.pageToJson(pageSummary));
         response.put("activityPatternDTOs", resultDTO);
 
         return response;

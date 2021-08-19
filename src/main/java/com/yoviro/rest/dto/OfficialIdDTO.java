@@ -2,14 +2,16 @@ package com.yoviro.rest.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.yoviro.rest.config.enums.OfficialIdType;
 
 public class OfficialIdDTO {
     @JsonIgnore
     private Long id;
     @JsonBackReference
     private ContactDTO contact;
-    private String officialIdType;
+    private OfficialIdType officialIdType;
     private String officialIdNumber;
+    private Boolean primaryOfficialId;
 
     public Long getId() {
         return id;
@@ -27,11 +29,19 @@ public class OfficialIdDTO {
         this.contact = contact;
     }
 
-    public String getOfficialIdType() {
+    public Boolean getPrimaryOfficialId() {
+        return primaryOfficialId;
+    }
+
+    public void setPrimaryOfficialId(Boolean primaryOfficialId) {
+        this.primaryOfficialId = primaryOfficialId;
+    }
+
+    public OfficialIdType getOfficialIdType() {
         return officialIdType;
     }
 
-    public void setOfficialIdType(String officialIdType) {
+    public void setOfficialIdType(OfficialIdType officialIdType) {
         this.officialIdType = officialIdType;
     }
 

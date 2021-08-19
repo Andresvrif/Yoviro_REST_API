@@ -14,5 +14,13 @@ public interface IActivityPatternService {
     void deleteAllByPatternCodes(String[] patternCodesToDelete);
     public Page<SummaryActivityPatternProjection> summaryList(Pageable pageable);
     public Page<SummaryActivityPatternProjection> summaryList(Pageable pageable, String subject);
+
+    /**
+     * Author : Andrés V.
+     * Desc : Returns the agreements and residents, related to the activity pattern
+     * @param pageable
+     * @param patternCode
+     * @return
+     */
     public Page<AgreementResidentProjection> agreementsResidentRelated(Pageable pageable, String patternCode);
 }

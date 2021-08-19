@@ -3,12 +3,17 @@ package com.yoviro.rest.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yoviro.rest.config.AppConfig;
 import com.yoviro.rest.config.enums.OfficialIdType;
+import com.yoviro.rest.dto.CancellationDTO;
 import com.yoviro.rest.dto.ContactDTO;
-import com.yoviro.rest.dto.ResidentDTO;
+import com.yoviro.rest.dto.JobDTO;
+import com.yoviro.rest.dto.SubmissionDTO;
 import com.yoviro.rest.dto.search.SearchContactDTO;
+import com.yoviro.rest.dto.search.SearchJobDTO;
 import com.yoviro.rest.dto.search.SearchResidentDTO;
-import com.yoviro.rest.models.entity.Resident;
-import com.yoviro.rest.service.interfaces.IResidentService;
+import com.yoviro.rest.models.entity.Cancellation;
+import com.yoviro.rest.models.entity.Job;
+import com.yoviro.rest.models.entity.Submission;
+import com.yoviro.rest.service.interfaces.IJobService;
 import com.yoviro.rest.util.JSONUtil;
 import com.yoviro.rest.util.PageUtil;
 import org.json.JSONException;
@@ -29,13 +34,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/residents")
-public class ResidentRestController {
+@RequestMapping("/api/jobs")
+public class JobRestController {
     @Autowired
-    ModelMapper modelMapper;
+    private IJobService jobService;
 
     @Autowired
-    private IResidentService residentService;
+    private ModelMapper modelMapper;
 
     @GetMapping("/search")
     public Map<String, Object> search(@RequestParam(required = false) String firstName,
@@ -46,7 +51,10 @@ public class ResidentRestController {
                                       @RequestParam(required = false) String officialIDNumber,
                                       @RequestParam(required = true) Boolean exactCoincidence,
                                       @RequestParam(required = true) String page) throws JsonProcessingException, JSONException {
+        SearchJobDTO searchJobDTO = new SearchJobDTO();
+        SearchResidentDTO searchResidentDTO = new SearchResidentDTO();
         SearchContactDTO searchContactDTO = new SearchContactDTO();
+
         searchContactDTO.setFirstName(firstName);
         searchContactDTO.setSecondName(secondName);
         searchContactDTO.setFirstLastName(firstLastName);
@@ -55,20 +63,29 @@ public class ResidentRestController {
         searchContactDTO.setOfficialIDNumber(officialIDNumber);
         searchContactDTO.setExactCoincidence(exactCoincidence);
 
-        SearchResidentDTO searchResidentDTO = new SearchResidentDTO();
         searchResidentDTO.setSearchContactDTO(searchContactDTO);
+        searchJobDTO.setSearchResidentDTO(searchResidentDTO);
 
         //Define Pageable
         Integer pageNumber = PageUtil.definePageNumber(page);
-        Pageable sortedByContact = PageRequest.of(pageNumber, AppConfig.PAGE_SIZE, Sort.by("contact").ascending());
 
         //Call Controller
-        Page<Resident> pageResidents = residentService.searchResident(searchResidentDTO, sortedByContact);
+        Pageable sortedByJobNumber = PageRequest.of(pageNumber, AppConfig.PAGE_SIZE, Sort.by("jobNumber").ascending());
+        Page<Job> pageJobs = jobService.search(sortedByJobNumber, searchJobDTO);
 
         //Define Response
         Map<String, Object> response = new HashMap<String, Object>();
-        response.put(AppConfig.METADATA_TAG, JSONUtil.pageToJson(pageResidents));
-        response.put("residents", pageResidents.getContent().stream().map(c -> modelMapper.map(c, ResidentDTO.class)).collect(Collectors.toList()));
+        response.put(AppConfig.METADATA_TAG, JSONUtil.pageToJson(pageJobs));
+        response.put("jobs", pageJobs.getContent().stream().map(c -> {
+            if (c instanceof Submission) {
+                return modelMapper.map(c, SubmissionDTO.class);
+            } else if (c instanceof Cancellation) {
+                return modelMapper.map(c, CancellationDTO.class);
+            } else {
+                return modelMapper.map(c, JobDTO.class);
+            }
+        }).collect(Collectors.toList()));
+
         return response;
     }
 }

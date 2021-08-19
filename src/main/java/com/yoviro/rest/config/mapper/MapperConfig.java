@@ -15,6 +15,10 @@ import org.modelmapper.spi.MappingContext;
 import java.util.LinkedList;
 import java.util.List;
 
+/***
+ * Author : Andrés V.
+ * Desc : Configuration for model mapper at App level
+ */
 public class MapperConfig {
     public static ModelMapper config(ModelMapper modelMapper) {
         //MAPPING JOB to JOB DTO ---------------------------------------------------------------------------------

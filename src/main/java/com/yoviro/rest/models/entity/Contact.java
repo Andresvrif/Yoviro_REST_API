@@ -1,6 +1,5 @@
 package com.yoviro.rest.models.entity;
 
-import com.yoviro.rest.dto.ContactDTO;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.thymeleaf.util.DateUtils;
@@ -15,7 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "contact")
 @NamedQuery(name = "Contact.findByOfficialID",
-            query = "select c from Contact as c inner join OfficialId as o ON o.contact.id=c.id where o.officialIdType=?1 and o.officialIdNumber=?2")
+        query = "select c from Contact as c inner join OfficialId as o ON o.contact.id=c.id where o.officialIdType=?1 and o.officialIdNumber=?2")
 public class Contact implements Serializable {
 
     @Id
@@ -50,12 +49,12 @@ public class Contact implements Serializable {
     @NotNull
     @NotEmpty
     @OneToMany(mappedBy = "contact",
-               fetch = FetchType.LAZY,
-               cascade = {
+            fetch = FetchType.LAZY,
+            cascade = {
                     CascadeType.PERSIST,
                     CascadeType.REMOVE
-               },
-               orphanRemoval = true)
+            },
+            orphanRemoval = true)
     private List<OfficialId> officialIds;
 
     @NotNull
@@ -66,6 +65,28 @@ public class Contact implements Serializable {
     @PrePersist
     public void PrePersist() {
         this.createAt = DateUtils.createNow().getTime();
+        if (this.firstName != null) {
+            this.firstName = this.firstName.toLowerCase();
+        }
+
+        if (this.secondName != null) {
+            this.secondName = this.secondName.toLowerCase();
+        }
+
+        if (this.firstLastName != null) {
+            this.firstLastName = this.firstLastName.toLowerCase();
+        }
+
+        if (this.secondLastName != null) {
+            this.secondLastName = this.secondLastName.toLowerCase();
+        }
+
+        if (this.officialIds != null) {
+            if (this.officialIds.size() == 1) {
+                OfficialId officialId = this.officialIds.get(0);
+                officialId.setPrimaryOfficialId(true);
+            }
+        }
     }
 
     public Long getId() {
@@ -138,7 +159,7 @@ public class Contact implements Serializable {
 
     public void setOfficialIds(List<OfficialId> officialIds) {
         this.officialIds = officialIds;
-        for (OfficialId officialId : this.officialIds){
+        for (OfficialId officialId : this.officialIds) {
             officialId.setContact(this);
         }
     }
@@ -149,6 +170,23 @@ public class Contact implements Serializable {
 
     public void setCreateAt(Date createAt) {
         this.createAt = createAt;
+    }
+
+    public String getFullName() {
+        String fullName = "";
+        String whiteSpace = " ";
+        return fullName.concat(this.firstName).concat(whiteSpace)
+                .concat(this.secondName).concat(whiteSpace)
+                .concat(this.firstLastName).concat(whiteSpace)
+                .concat(this.secondLastName);
+    }
+
+    public OfficialId getPrimaryOfficialID() {
+        if (officialIds == null) return null;
+        for (OfficialId officialId : officialIds) {
+            if (officialId.getPrimaryOfficialId()) return officialId;
+        }
+        return null;
     }
 
     private static final long serialVersionUID = 1L;

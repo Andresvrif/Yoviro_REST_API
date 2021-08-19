@@ -1,5 +1,7 @@
 package com.yoviro.rest.models.entity;
 
+import com.yoviro.rest.config.enums.OfficialIdType;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -21,7 +23,8 @@ public class OfficialId {
     private Boolean primaryOfficialId;
 
     @NotNull
-    private String officialIdType;
+    @Enumerated(EnumType.STRING)
+    private OfficialIdType officialIdType;
 
     @NotNull
     private String officialIdNumber;
@@ -50,11 +53,11 @@ public class OfficialId {
         this.primaryOfficialId = primaryOfficialId;
     }
 
-    public String getOfficialIdType() {
+    public OfficialIdType getOfficialIdType() {
         return officialIdType;
     }
 
-    public void setOfficialIdType(String officialIdType) {
+    public void setOfficialIdType(OfficialIdType officialIdType) {
         this.officialIdType = officialIdType;
     }
 

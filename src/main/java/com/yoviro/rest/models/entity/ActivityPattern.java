@@ -71,6 +71,13 @@ public class ActivityPattern {
     @PrePersist
     public void PrePersist() {
         this.createAt = DateUtils.createNow().getTime();
+        if (this.subject != null) {
+            this.subject = this.subject.toLowerCase();
+        }
+
+        if (this.description != null) {
+            this.description = this.description.toLowerCase();
+        }
     }
 
     public Long getId() {

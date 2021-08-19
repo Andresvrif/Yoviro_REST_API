@@ -1,56 +1,42 @@
 package com.yoviro.rest.service;
 
-import com.yoviro.rest.dto.ContactDTO;
-import com.yoviro.rest.dto.OfficialIdDTO;
-import com.yoviro.rest.dto.ResidentDTO;
 import com.yoviro.rest.dto.search.SearchContactDTO;
+import com.yoviro.rest.dto.search.SearchJobDTO;
 import com.yoviro.rest.dto.search.SearchResidentDTO;
-import com.yoviro.rest.models.entity.Contact;
-import com.yoviro.rest.models.entity.Contractor;
+import com.yoviro.rest.models.entity.Job;
 import com.yoviro.rest.models.entity.Resident;
-import com.yoviro.rest.models.repository.ResidentRepository;
-import com.yoviro.rest.models.repository.specification.handler.*;
-import com.yoviro.rest.service.interfaces.IResidentService;
+import com.yoviro.rest.models.repository.ContractorRepository;
+import com.yoviro.rest.models.repository.JobRepository;
+import com.yoviro.rest.models.repository.specification.handler.JoinColumnProps;
+import com.yoviro.rest.models.repository.specification.handler.SearchFilter;
+import com.yoviro.rest.models.repository.specification.handler.SearchQuery;
+import com.yoviro.rest.models.repository.specification.handler.SpecificationUtil;
+import com.yoviro.rest.service.interfaces.IJobService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-public class ResidentServiceImpl implements IResidentService {
+public class JobServiceImpl implements IJobService {
     @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
-    ResidentRepository residentRepository;
+    private JobRepository jobRepository;
 
     @Override
-    public Resident save(ResidentDTO residentDTO) {
-        Resident resident = modelMapper.map(residentDTO, Resident.class);
-        return residentRepository.save(resident);
-    }
-
-    @Override
-    public Resident getOrCreateResident(ResidentDTO residentDTO) {
-        ContactDTO contactDTO = residentDTO.getContact();
-        OfficialIdDTO officialIdDTO = contactDTO.getOfficialIds().get(0);
-        Resident resident = residentRepository.findByOfficialID(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
-        return resident != null ? resident : save(residentDTO);
-    }
-
-    @Override
-    public Page<Resident> searchResident(SearchResidentDTO searchResidentDTO,
-                                         Pageable pageable) {
+    public Page<Job> search(Pageable pageable, SearchJobDTO searchJobDTO) {
+        SearchResidentDTO searchResidentDTO = searchJobDTO.getSearchResidentDTO();
         SearchContactDTO searchContactDTO = searchResidentDTO.getSearchContactDTO();
 
         //Define Search Criteria
         SearchQuery qry = new SearchQuery();
+        List<SearchFilter> residentCriteria = ResidentServiceImpl.instanceResidentCriteria(searchResidentDTO); //Contact Filter
         List<SearchFilter> contactCriteria = ContactServiceImpl.instanceContactCriteria(searchContactDTO); //Contact Filter
         List<SearchFilter> officialIDCriteria = OfficialIdServiceImpl.instanceContactSearchQry(searchContactDTO); //OfficialID Filter
 
@@ -63,13 +49,19 @@ public class ResidentServiceImpl implements IResidentService {
         joinColumnPropsResidentAndContact.setSearchFilter(contactCriteria);
         joinColumnPropsResidentAndContact.setSubJoinColumnProps(joinColumnPropsContactOfficialID);
 
-        qry.addJoinColumnProp(joinColumnPropsResidentAndContact);
-        Specification<Resident> specification = SpecificationUtil.bySearchQuery(qry, Resident.class, Boolean.TRUE);
+        JoinColumnProps joinColumnPropsJobAndResident = new JoinColumnProps();
+        joinColumnPropsJobAndResident.setJoinColumnName("resident");
+        joinColumnPropsJobAndResident.setSearchFilter(residentCriteria);
+        joinColumnPropsJobAndResident.setSubJoinColumnProps(joinColumnPropsResidentAndContact);
 
-        return residentRepository.findAll(specification, pageable);
+        //Add filters & joins
+        qry.addJoinColumnProp(joinColumnPropsJobAndResident);
+        Specification<Job> specification = SpecificationUtil.bySearchQuery(qry, Job.class, Boolean.TRUE);
+
+        return jobRepository.findAll(specification, pageable);
     }
 
-    static List<SearchFilter> instanceResidentCriteria(SearchResidentDTO searchResidentDTO) {
+    static List<SearchFilter> instanceJobCriteria(SearchJobDTO searchJobDTO) {
         List<SearchFilter> filters = new ArrayList<>();
         return filters;
     }
