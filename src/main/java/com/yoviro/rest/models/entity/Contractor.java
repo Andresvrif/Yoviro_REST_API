@@ -10,9 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "contractor", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"contact_id"})
-})
+@Table(name = "contractor")
 @NamedQueries({
         @NamedQuery(name = "Contractor.findByOfficialID",
                 query = "select cr from Contractor cr \n" +
@@ -27,8 +25,8 @@ public class Contractor implements Serializable {
 
     private String contractorNumber;
 
-    @OneToOne(cascade = CascadeType.PERSIST,fetch = FetchType.LAZY)
-    @JoinColumn(name = "contact_id")
+    @OneToOne(cascade = CascadeType.PERSIST,fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "contact_id", nullable = false)
     private Contact contact;
 
     @OneToMany(mappedBy = "contractor",

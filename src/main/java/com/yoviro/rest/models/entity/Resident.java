@@ -8,7 +8,9 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
-@Table(name = "resident")
+@Table(name = "resident", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"contact_id"})
+})
 @NamedQueries({
         @NamedQuery(name = "Resident.findByOfficialID",
                 query = "select r from Resident r \n" +

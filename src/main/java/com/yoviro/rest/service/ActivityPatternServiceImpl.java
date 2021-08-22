@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class ActivityPatternServiceImpl implements IActivityPatternService {
@@ -21,6 +22,11 @@ public class ActivityPatternServiceImpl implements IActivityPatternService {
 
     @Autowired
     ActivityPatternRepository activityPatternRepository;
+
+    @Override
+    public Iterable<ActivityPattern> findAll() {
+        return activityPatternRepository.findAll();
+    }
 
     @Override
     public ActivityPattern edit(ActivityPatternDTO activityPatternDTO) {

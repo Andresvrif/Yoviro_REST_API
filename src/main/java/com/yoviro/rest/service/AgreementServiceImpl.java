@@ -8,10 +8,7 @@ import com.yoviro.rest.dto.search.SearchResidentDTO;
 import com.yoviro.rest.handler.JobHandler;
 import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.models.repository.AgreementRepository;
-import com.yoviro.rest.models.repository.ContractorRepository;
-import com.yoviro.rest.models.repository.JobRepository;
-import com.yoviro.rest.models.repository.ResidentRepository;
-import com.yoviro.rest.models.repository.projections.AgreementResidentProjection;
+import com.yoviro.rest.models.repository.JobAgreementRepository;
 import com.yoviro.rest.models.repository.specification.handler.JoinColumnProps;
 import com.yoviro.rest.models.repository.specification.handler.SearchFilter;
 import com.yoviro.rest.models.repository.specification.handler.SearchQuery;
@@ -28,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -46,7 +42,7 @@ public class AgreementServiceImpl implements IAgreementService {
     private IResidentService residentService;
 
     @Autowired
-    private JobRepository jobRepository;
+    private JobAgreementRepository jobAgreementRepository;
 
     @Autowired
     private JobHandler jobHandler;
@@ -102,7 +98,7 @@ public class AgreementServiceImpl implements IAgreementService {
         cancellation.setResident(lastJob.getResident());
         cancellation.setAgreement(agreement);
 
-        jobRepository.save(cancellation);
+        jobAgreementRepository.save(cancellation);
 
         return modelMapper.map(agreement, AgreementDTO.class);
     }

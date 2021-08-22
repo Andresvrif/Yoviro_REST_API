@@ -7,6 +7,7 @@ import org.thymeleaf.util.DateUtils;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -61,9 +62,15 @@ public class ActivityPattern {
     private String subject;
 
     private String description;
+
     @ManyToMany(fetch = FetchType.LAZY,
             mappedBy = "activityPatterns")
     private Set<Agreement> agreements; //Contratos vigentes, como regla de negocio los contratos tendran vigencia de medio dia a medio dia
+
+
+    @OneToMany(mappedBy = "activityPattern",
+               fetch = FetchType.LAZY)
+    private Set<Activity> activities;
 
     @NotNull
     private Boolean enable;
@@ -158,6 +165,14 @@ public class ActivityPattern {
 
     public void setAgreements(Set<Agreement> agreements) {
         this.agreements = agreements;
+    }
+
+    public Set<Activity> getActivities() {
+        return activities;
+    }
+
+    public void setActivities(Set<Activity> activities) {
+        this.activities = activities;
     }
 
     public Boolean getEnable() {

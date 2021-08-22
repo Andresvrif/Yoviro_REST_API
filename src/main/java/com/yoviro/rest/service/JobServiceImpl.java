@@ -4,9 +4,7 @@ import com.yoviro.rest.dto.search.SearchContactDTO;
 import com.yoviro.rest.dto.search.SearchJobDTO;
 import com.yoviro.rest.dto.search.SearchResidentDTO;
 import com.yoviro.rest.models.entity.Job;
-import com.yoviro.rest.models.entity.Resident;
-import com.yoviro.rest.models.repository.ContractorRepository;
-import com.yoviro.rest.models.repository.JobRepository;
+import com.yoviro.rest.models.repository.JobAgreementRepository;
 import com.yoviro.rest.models.repository.specification.handler.JoinColumnProps;
 import com.yoviro.rest.models.repository.specification.handler.SearchFilter;
 import com.yoviro.rest.models.repository.specification.handler.SearchQuery;
@@ -27,7 +25,7 @@ public class JobServiceImpl implements IJobService {
     private ModelMapper modelMapper;
 
     @Autowired
-    private JobRepository jobRepository;
+    private JobAgreementRepository jobAgreementRepository;
 
     @Override
     public Page<Job> search(Pageable pageable, SearchJobDTO searchJobDTO) {
@@ -58,7 +56,7 @@ public class JobServiceImpl implements IJobService {
         qry.addJoinColumnProp(joinColumnPropsJobAndResident);
         Specification<Job> specification = SpecificationUtil.bySearchQuery(qry, Job.class, Boolean.TRUE);
 
-        return jobRepository.findAll(specification, pageable);
+        return jobAgreementRepository.findAll(specification, pageable);
     }
 
     static List<SearchFilter> instanceJobCriteria(SearchJobDTO searchJobDTO) {
