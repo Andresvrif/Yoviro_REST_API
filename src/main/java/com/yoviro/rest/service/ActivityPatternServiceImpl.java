@@ -1,8 +1,11 @@
 package com.yoviro.rest.service;
 
 import com.yoviro.rest.dto.ActivityPatternDTO;
+import com.yoviro.rest.dto.AgreementDTO;
 import com.yoviro.rest.models.entity.ActivityPattern;
+import com.yoviro.rest.models.entity.Agreement;
 import com.yoviro.rest.models.repository.ActivityPatternRepository;
+import com.yoviro.rest.models.repository.AgreementRepository;
 import com.yoviro.rest.models.repository.projections.AgreementResidentProjection;
 import com.yoviro.rest.models.repository.projections.SummaryActivityPatternProjection;
 import com.yoviro.rest.service.interfaces.IActivityPatternService;
@@ -12,8 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ActivityPatternServiceImpl implements IActivityPatternService {
@@ -22,6 +25,9 @@ public class ActivityPatternServiceImpl implements IActivityPatternService {
 
     @Autowired
     ActivityPatternRepository activityPatternRepository;
+
+    @Autowired
+    AgreementRepository agreementRepository;
 
     @Override
     public Iterable<ActivityPattern> findAll() {
@@ -63,5 +69,24 @@ public class ActivityPatternServiceImpl implements IActivityPatternService {
     @Override
     public Page<AgreementResidentProjection> agreementsResidentRelated(Pageable pageable, String patternCode) {
         return activityPatternRepository.agreementsResidentRelated(pageable, patternCode);
+    }
+
+    @Override
+    public Iterable<ActivityPattern> findAllByEnable(Boolean enable) {
+        return activityPatternRepository.enableActivityPatterns(enable);
+    }
+
+    @Override
+    public ActivityPattern saveActivityPatternWithAgreements(ActivityPatternDTO activityPatternDTO,
+                                                             Set<AgreementDTO> agreementDTOS) {
+        ActivityPattern activityPattern = activityPatternRepository.save(modelMapper.map(activityPatternDTO, ActivityPattern.class));
+        Set<Agreement> agreements = new HashSet<>();
+        for (AgreementDTO agreementDTO : agreementDTOS) {
+            agreements.add(modelMapper.map(agreementDTO, Agreement.class));
+        }
+        activityPattern.setAgreements(agreements);
+        activityPatternRepository.save(activityPattern);
+
+        return activityPattern;
     }
 }

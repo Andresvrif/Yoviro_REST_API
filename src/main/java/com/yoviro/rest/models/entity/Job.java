@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -67,6 +68,9 @@ public abstract class Job implements Serializable{
     @ColumnDefault("CURRENT_TIMESTAMP(6)")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     protected Date createAt;
+
+    @OneToMany(mappedBy = "job", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Activity> activities;
 
     public Long getId() {
         return id;
@@ -130,6 +134,14 @@ public abstract class Job implements Serializable{
 
     public void setCreateAt(Date createAt) {
         this.createAt = createAt;
+    }
+
+    public List<Activity> getActivities() {
+        return activities;
+    }
+
+    public void setActivities(List<Activity> activities) {
+        this.activities = activities;
     }
 
     protected static final long serialVersionUID = 1L;

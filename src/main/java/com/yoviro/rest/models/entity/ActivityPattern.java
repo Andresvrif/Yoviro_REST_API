@@ -1,5 +1,6 @@
 package com.yoviro.rest.models.entity;
 
+import com.yoviro.rest.config.enums.StatusTerm;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.thymeleaf.util.DateUtils;
@@ -19,6 +20,8 @@ import java.util.Set;
                 query = "select ap.patternCode, ap.enable, ap.subject, ap.startDate, ap.endDate, ap.dayFrequency, ap.hourFrequency from ActivityPattern as ap"),
         @NamedQuery(name = "ActivityPattern.deleteByPatternCodes",
                 query = "delete from ActivityPattern as ap where ap.patternCode in ?1"),
+        @NamedQuery(name = "ActivityPattern.enableActivityPatterns",
+                query = "select ap from ActivityPattern as ap where ap.enable = ?1"),
         @NamedQuery(name = "ActivityPattern.agreementsResidentRelated",
                 query = "select distinct c.firstName as firstName," +
                         "c.secondName as secondName," +
@@ -67,9 +70,8 @@ public class ActivityPattern {
             mappedBy = "activityPatterns")
     private Set<Agreement> agreements; //Contratos vigentes, como regla de negocio los contratos tendran vigencia de medio dia a medio dia
 
-
     @OneToMany(mappedBy = "activityPattern",
-               fetch = FetchType.LAZY)
+            fetch = FetchType.LAZY)
     private Set<Activity> activities;
 
     @NotNull
@@ -181,6 +183,10 @@ public class ActivityPattern {
 
     public void setEnable(Boolean enable) {
         this.enable = enable;
+    }
+
+    public Boolean hasAgreements() {
+        return agreements != null && agreements.size() > 0;
     }
 
     private static final long serialVersionUID = 1L;

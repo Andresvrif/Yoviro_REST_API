@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 @Service
 public class AgreementServiceImpl implements IAgreementService {
     @Autowired
@@ -43,9 +42,6 @@ public class AgreementServiceImpl implements IAgreementService {
 
     @Autowired
     private JobAgreementRepository jobAgreementRepository;
-
-    @Autowired
-    private JobHandler jobHandler;
 
     @Transactional
     @Override
@@ -86,12 +82,12 @@ public class AgreementServiceImpl implements IAgreementService {
         }
 
         //Before cancel, can be only Submission, Reinstatement and Endorsement
-        if (!jobHandler.canBeCanceled(agreement, cancellationDTO.getEffectiveDate())) {
+        if (!JobHandler.canBeCanceled(agreement, cancellationDTO.getEffectiveDate())) {
             throw new Exception("Se necesita un contrato vigente para realizar una cancelación");
         }
 
         //Define Cancellation job based en previous Job
-        Job lastJob = jobHandler.lastJobFromAgreement(agreement);
+        Job lastJob = JobHandler.lastJobFromAgreement(agreement);
         Cancellation cancellation = modelMapper.map(cancellationDTO, Cancellation.class);
         cancellation.setStartDate(lastJob.getStartDate());
         cancellation.setEndDate(lastJob.getEndDate());
@@ -141,5 +137,11 @@ public class AgreementServiceImpl implements IAgreementService {
         Specification<Agreement> specification = SpecificationUtil.bySearchQuery(qry, Agreement.class, Boolean.TRUE);
 
         return agreementRepository.findAll(specification, pageable);
+    }
+
+    @Override
+    public Agreement findAgreementByAgreementNumber(String agreementNumber) {
+        var x = agreementRepository.findAgreementByAgreementNumber(agreementNumber);
+        return x;
     }
 }

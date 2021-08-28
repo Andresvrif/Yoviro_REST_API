@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yoviro.rest.config.AppConfig;
 import com.yoviro.rest.dto.ActivityPatternDTO;
 import com.yoviro.rest.dto.AgreementDTO;
+import com.yoviro.rest.models.entity.Agreement;
 import com.yoviro.rest.models.repository.projections.AgreementResidentProjection;
 import com.yoviro.rest.models.repository.projections.SummaryActivityPatternProjection;
 import com.yoviro.rest.service.interfaces.IActivityPatternService;
+import com.yoviro.rest.service.interfaces.IAgreementService;
 import com.yoviro.rest.util.JSONUtil;
 import com.yoviro.rest.util.PageUtil;
 import org.json.JSONArray;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,23 +38,41 @@ public class ActivityPatternRestController {
     @Autowired
     private IActivityPatternService activityPatternService;
 
+    @Autowired
+    private IAgreementService agreementService;
+
     @PostMapping("/newActivityPattern")
     public String newActivityPattern(@RequestBody String json) throws JSONException, JSONException, JsonProcessingException {
         JSONObject jsonObject = new JSONObject(json);
         JSONObject activityPatternDTOJsonObject = (JSONObject) jsonObject.get("activityPatternDTO");
-        List<AgreementDTO> agreementDTOS = retrieveContractNumberAsAgreementDTOs(activityPatternDTOJsonObject.getJSONArray("agreements"));
+        Set<AgreementDTO> agreementDTOS = retrieveAgreementByContractNumberAsDTOs(activityPatternDTOJsonObject.getJSONArray("agreements"));
         activityPatternDTOJsonObject.remove("agreements");
+
         //Define ACtivity Pattern DTO
         ActivityPatternDTO activityPatternDTO = objectMapper.readValue(activityPatternDTOJsonObject.toString(), ActivityPatternDTO.class);
         activityPatternDTO.setEnable(true);
-        //Define Agreement related to the Activity Pattern
-        Set<AgreementDTO> agreements = new HashSet<AgreementDTO>(agreementDTOS.size());
-        agreements.addAll(agreementDTOS);
-        activityPatternDTO.setAgreements(agreements);
+
 
         //Save it
-        activityPatternDTO = modelMapper.map(activityPatternService.save(activityPatternDTO), ActivityPatternDTO.class);
-        return activityPatternDTO.getPatternCode();
+        var x = activityPatternService.saveActivityPatternWithAgreements(activityPatternDTO, agreementDTOS);
+        return x.getId().toString();
+    }
+
+    private Set<AgreementDTO> retrieveAgreementByContractNumberAsDTOs(JSONArray jsonArray) throws JSONException {
+        Agreement agreement;
+        Set<AgreementDTO> agreementDTOS = new HashSet<AgreementDTO>();
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            String contractNumber = jsonArray.get(i).toString();
+            if (contractNumber == null) continue;
+
+            agreement = agreementService.findAgreementByAgreementNumber(contractNumber);
+            if (agreement != null) {
+                agreementDTOS.add(modelMapper.map(agreement, AgreementDTO.class));
+            }
+        }
+
+        return agreementDTOS;
     }
 
     @GetMapping("/summaryList")
@@ -83,20 +104,6 @@ public class ActivityPatternRestController {
         String patternCode = params.get("patternCode");
         String[] patternCodesToDelete = patternCode.split(",");
         activityPatternService.deleteAllByPatternCodes(patternCodesToDelete);
-    }
-
-    private List<AgreementDTO> retrieveContractNumberAsAgreementDTOs(JSONArray jsonArray) throws JSONException {
-        AgreementDTO agreementDTO;
-        List<AgreementDTO> agreementDTOS = new ArrayList<AgreementDTO>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            String contractNumber = jsonArray.get(i).toString();
-            agreementDTO = new AgreementDTO();
-            agreementDTO.setAgreementNumber(contractNumber);
-
-            agreementDTOS.add(agreementDTO);
-        }
-
-        return agreementDTOS;
     }
 
     @GetMapping("/agreementResidentRelated")

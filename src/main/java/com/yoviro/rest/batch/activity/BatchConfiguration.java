@@ -4,14 +4,16 @@ import com.yoviro.rest.models.entity.Activity;
 import com.yoviro.rest.models.entity.ActivityPattern;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 import java.util.function.Function;
 
 @Configuration
@@ -33,14 +35,16 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public ActivityPatternItemWriter writer() {
+    public ItemWriter writer() {
         return new ActivityPatternItemWriter();
     }
 
     @Bean
     public Job job() {
         Job job = jobBuilderFactory.get("job1")
-                //.listener(jobExecutionListener)
+                .incrementer(new RunIdIncrementer())
+                .listener(new ActivityPatternJobExecutionListener())
+                .preventRestart()
                 .flow(step())
                 .end()
                 .build();
@@ -49,15 +53,14 @@ public class BatchConfiguration {
 
     @Bean
     public Step step() {
-
         TaskletStep step = stepBuilderFactory.get("step1")
-                .<ActivityPattern, Activity>chunk(100)
+                .<ActivityPattern, List<Activity>>chunk(1)
                 .reader(reader())
                 .processor(processor())
                 .writer(writer())
-/*                .listener(readerListener)
-                .listener(creditCardItemProcessListener)
-                .listener(writerListener)*/
+                .listener(new ActivityPatternItemReaderListener())
+                .listener(new ActivityPatternItemProcessListener())
+                .listener(new ActivityPatternItemWriterListener())
                 .build();
 
         return step;

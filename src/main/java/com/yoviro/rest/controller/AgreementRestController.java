@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yoviro.rest.config.AppConfig;
 import com.yoviro.rest.config.enums.OfficialIdType;
-import com.yoviro.rest.config.enums.StatusTerm;
 import com.yoviro.rest.dto.*;
 import com.yoviro.rest.dto.search.SearchAgreementDTO;
 import com.yoviro.rest.dto.search.SearchContactDTO;
@@ -44,9 +43,6 @@ public class AgreementRestController {
 
     @Autowired
     private IAgreementService agreementService;
-
-    @Autowired
-    private JobHandler jobHandler;
 
     @PostMapping("/newFullAgreement")
     public AgreementDTO newFullAgreement(@RequestBody String json) throws IOException, JSONException {
@@ -135,7 +131,7 @@ public class AgreementRestController {
         List<Map<String, Object>> dataContainer = new ArrayList<Map<String, Object>>();
 
         for (Agreement agreement : agreements) {
-            Job job = jobHandler.lastJobFromAgreement(agreement);
+            Job job = JobHandler.lastJobFromAgreement(agreement);
             Contact contact = job.getResident().getContact();
             OfficialId primaryOfficialID = contact.getPrimaryOfficialID();
 
@@ -145,7 +141,7 @@ public class AgreementRestController {
             rowData.put("officialIdType", primaryOfficialID.getOfficialIdType());
             rowData.put("officialIdNumber", primaryOfficialID.getOfficialIdNumber());
             rowData.put("agreementNumber", agreement.getAgreementNumber());
-            rowData.put("status", jobHandler.getStatusTerm(job, new Date()));
+            rowData.put("status", JobHandler.getStatusTerm(job, new Date()));
 
             dataContainer.add(rowData);
         }

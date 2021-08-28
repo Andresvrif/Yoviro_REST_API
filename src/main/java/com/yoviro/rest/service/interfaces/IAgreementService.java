@@ -17,4 +17,6 @@ public interface IAgreementService {
                                  CancellationDTO cancellationDTO) throws Exception;
 
     Page<Agreement> searchAgreementsByContact(Pageable pageable, SearchAgreementDTO searchAgreementDTO);
+
+    Agreement findAgreementByAgreementNumber(String agreementNumber);
 }

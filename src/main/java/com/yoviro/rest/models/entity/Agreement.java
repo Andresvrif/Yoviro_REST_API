@@ -1,6 +1,7 @@
 package com.yoviro.rest.models.entity;
 
-import com.yoviro.rest.dto.JobDTO;
+import com.yoviro.rest.config.enums.StatusTerm;
+import com.yoviro.rest.handler.JobHandler;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
@@ -32,7 +33,10 @@ public class Agreement {
     @JoinColumn(name = "contractor_id")
     private Contractor contractor;
 
-    @OneToMany(mappedBy = "agreement", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "agreement",
+            fetch = FetchType.LAZY,
+            orphanRemoval = true
+    )
     private List<Job> jobs;
 
     @NotNull
@@ -97,6 +101,18 @@ public class Agreement {
 
     public void setCreateAt(Date createAt) {
         this.createAt = createAt;
+    }
+
+    public Boolean hasJobs() {
+        return jobs != null && jobs.size() > 0;
+    }
+
+    public StatusTerm getStatus(Date referenceDate) throws Exception {
+        if (!hasJobs()) {
+            throw new Exception("Can't define a status agreement without jobs defined");
+        }
+        Job lastJob = JobHandler.lastJobFromAgreement(this);
+        return JobHandler.getStatusTerm(lastJob, referenceDate);
     }
 
     private static final long serialVersionUID = 1L;

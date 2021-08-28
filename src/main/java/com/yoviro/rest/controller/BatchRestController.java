@@ -1,9 +1,6 @@
 package com.yoviro.rest.controller;
 
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobParameter;
-import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +23,8 @@ public class BatchRestController {
         System.out.println("Batch ejecutado : " + batchName);
 
         Map<String, JobParameter> parameters = new HashMap<>();
-        JobExecution jobExecution = jobLauncher.run(job, new JobParameters(parameters));
-        return "OK";
+        JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis()).toJobParameters();
+        JobExecution jobExecution = jobLauncher.run(job, jobParameters);
+        return jobExecution.getStatus().toString();
     }
 }

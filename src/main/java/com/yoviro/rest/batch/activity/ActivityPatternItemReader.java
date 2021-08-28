@@ -21,15 +21,31 @@ public class ActivityPatternItemReader implements ItemReader<ActivityPattern> {
 
     @BeforeStep
     public void before(StepExecution stepExecution) {
-        activityPatternIterator = activityPatternService.findAll().iterator();
+        activityPatternIterator = activityPatternService.findAllByEnable(Boolean.TRUE).iterator();
     }
 
     @Override
     public ActivityPattern read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
-        if (activityPatternIterator != null && activityPatternIterator.hasNext()) {
-            return activityPatternIterator.next();
-        } else {
-            return null;
+        return processActivityPattern(activityPatternIterator);
+    }
+
+    public ActivityPattern processActivityPattern(Iterator<ActivityPattern> iterator) {
+        while (iterator.hasNext()) {
+            ActivityPattern candidate = activityPatternIterator.next();
+            return applyActivityPattern(candidate) ? candidate : processActivityPattern(iterator);
         }
+        return null;
+    }
+
+    /**
+     * Author : Andrés V.
+     * Desc : Evaluates if the activity Pattern applies or not
+     *
+     * @param candidate
+     * @return
+     */
+    private Boolean applyActivityPattern(ActivityPattern candidate) {
+        if(!candidate.hasAgreements()) return Boolean.FALSE;
+        return Boolean.TRUE;
     }
 }
