@@ -1,7 +1,6 @@
 package com.yoviro.rest.service;
 
 import com.yoviro.rest.dto.ActivityPatternDTO;
-import com.yoviro.rest.dto.AgreementDTO;
 import com.yoviro.rest.models.entity.ActivityPattern;
 import com.yoviro.rest.models.entity.Agreement;
 import com.yoviro.rest.models.repository.ActivityPatternRepository;
@@ -15,8 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ActivityPatternServiceImpl implements IActivityPatternService {
@@ -76,16 +75,27 @@ public class ActivityPatternServiceImpl implements IActivityPatternService {
         return activityPatternRepository.enableActivityPatterns(enable);
     }
 
+    @Transactional
     @Override
-    public ActivityPattern saveActivityPatternWithAgreements(ActivityPatternDTO activityPatternDTO,
-                                                             Set<AgreementDTO> agreementDTOS) {
-        ActivityPattern activityPattern = activityPatternRepository.save(modelMapper.map(activityPatternDTO, ActivityPattern.class));
-        Set<Agreement> agreements = new HashSet<>();
-        for (AgreementDTO agreementDTO : agreementDTOS) {
-            agreements.add(modelMapper.map(agreementDTO, Agreement.class));
+    public ActivityPattern createNewActivityPatternWithAgreements(ActivityPatternDTO activityPatternDTO,
+                                                                  List<String> agreementNumbers) {
+        //Bring all agreements
+        List<Agreement> agreements = agreementRepository.findAgreementByAgreementNumberIn(agreementNumbers);
+
+        //Get or Create activity Pattern
+        ActivityPattern activityPattern = activityPatternRepository.findActivityPatternByPatternCode(activityPatternDTO.getPatternCode());
+        if (activityPattern == null) {
+            //It doesn't exist, create it
+            activityPattern = modelMapper.map(activityPatternDTO, ActivityPattern.class);
+            activityPattern = activityPatternRepository.save(activityPattern);
         }
-        activityPattern.setAgreements(agreements);
-        activityPatternRepository.save(activityPattern);
+
+        //Make relationship between agreements and activity pattern
+
+        //TODO invertir relaciòn (Many to Many) para q se grabe desde activity pattern
+        ActivityPattern finalActivityPattern = activityPattern;
+        agreements.forEach(e -> e.getActivityPatterns().add(finalActivityPattern));
+        agreementRepository.saveAll(agreements);
 
         return activityPattern;
     }

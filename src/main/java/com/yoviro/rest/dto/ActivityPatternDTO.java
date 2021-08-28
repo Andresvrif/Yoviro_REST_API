@@ -2,6 +2,8 @@ package com.yoviro.rest.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.yoviro.rest.models.entity.Agreement;
+
 import java.util.Date;
 import java.util.Set;
 
@@ -24,6 +26,8 @@ public class ActivityPatternDTO {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private Date hourFrequency;
+
+    private Set<AgreementDTO> agreementDTOs;
 
     public Long getId() {
         return id;
@@ -111,5 +115,13 @@ public class ActivityPatternDTO {
 
     public void setAgreements(Set<AgreementDTO> agreements) {
         this.agreements = agreements;
+    }
+
+    public Set<AgreementDTO> getAgreementDTOs() {
+        return agreementDTOs;
+    }
+
+    public void setAgreementDTOs(Set<AgreementDTO> agreementDTOs) {
+        this.agreementDTOs = agreementDTOs;
     }
 }

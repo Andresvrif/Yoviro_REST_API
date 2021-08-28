@@ -37,7 +37,7 @@ public class Agreement {
             fetch = FetchType.LAZY,
             orphanRemoval = true
     )
-    private List<Job> jobs;
+    private List<Job> jobs = new ArrayList<>();
 
     @NotNull
     @Column(name = "create_at")
@@ -50,7 +50,7 @@ public class Agreement {
     @JoinTable(name = "agreement_activity_pattern",
             joinColumns = {@JoinColumn(name = "agreement_id")},
             inverseJoinColumns = {@JoinColumn(name = "activity_pattern_id")})
-    private Set<ActivityPattern> activityPatterns;
+    private List<ActivityPattern> activityPatterns = new ArrayList<>();
 
     @PrePersist
     public void PrePersist() {
@@ -89,11 +89,13 @@ public class Agreement {
         this.jobs = jobs;
     }
 
-    public void addJob(Job job) {
-        this.jobs = this.jobs == null ? new ArrayList<Job>() : this.jobs;
-        this.jobs.add(job);
+    public List<ActivityPattern> getActivityPatterns() {
+        return activityPatterns;
     }
 
+    public void setActivityPatterns(List<ActivityPattern> activityPatterns) {
+        this.activityPatterns = activityPatterns;
+    }
 
     public Date getCreateAt() {
         return createAt;

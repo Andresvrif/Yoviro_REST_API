@@ -22,7 +22,7 @@ public class ActivityPatternItemProcessor implements ItemProcessor<ActivityPatte
 
     public List<Activity> processActivityPattern(ActivityPattern activityPattern) throws Exception {
         List<Activity> toBeCreated = new ArrayList<Activity>();
-        Set<Agreement> agreements = activityPattern.getAgreements();
+        List<Agreement> agreements = activityPattern.getAgreements();
         for (Agreement agreement : agreements) {
             if (!applyToBeCreated(activityPattern, agreement)) continue;
 

@@ -45,7 +45,7 @@ public class ActivityPatternRestController {
     public String newActivityPattern(@RequestBody String json) throws JSONException, JSONException, JsonProcessingException {
         JSONObject jsonObject = new JSONObject(json);
         JSONObject activityPatternDTOJsonObject = (JSONObject) jsonObject.get("activityPatternDTO");
-        Set<AgreementDTO> agreementDTOS = retrieveAgreementByContractNumberAsDTOs(activityPatternDTOJsonObject.getJSONArray("agreements"));
+        JSONArray agreementsJson = activityPatternDTOJsonObject.getJSONArray("agreements");
         activityPatternDTOJsonObject.remove("agreements");
 
         //Define ACtivity Pattern DTO
@@ -53,26 +53,10 @@ public class ActivityPatternRestController {
         activityPatternDTO.setEnable(true);
 
 
-        //Save it
-        var x = activityPatternService.saveActivityPatternWithAgreements(activityPatternDTO, agreementDTOS);
-        return x.getId().toString();
-    }
+        List<String> agreementNodes = JSONUtil.<String>transformToList(agreementsJson);
+        activityPatternService.createNewActivityPatternWithAgreements(activityPatternDTO, agreementNodes);
 
-    private Set<AgreementDTO> retrieveAgreementByContractNumberAsDTOs(JSONArray jsonArray) throws JSONException {
-        Agreement agreement;
-        Set<AgreementDTO> agreementDTOS = new HashSet<AgreementDTO>();
-
-        for (int i = 0; i < jsonArray.length(); i++) {
-            String contractNumber = jsonArray.get(i).toString();
-            if (contractNumber == null) continue;
-
-            agreement = agreementService.findAgreementByAgreementNumber(contractNumber);
-            if (agreement != null) {
-                agreementDTOS.add(modelMapper.map(agreement, AgreementDTO.class));
-            }
-        }
-
-        return agreementDTOS;
+        return null;
     }
 
     @GetMapping("/summaryList")

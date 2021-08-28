@@ -31,4 +31,6 @@ public interface ActivityPatternRepository extends PagingAndSortingRepository<Ac
     Page<AgreementResidentProjection> agreementsResidentRelated(Pageable pageable, String patternCode);
 
     Iterable<ActivityPattern> enableActivityPatterns(Boolean enable);
+
+    ActivityPattern findActivityPatternByPatternCode(String patternCode);
 }

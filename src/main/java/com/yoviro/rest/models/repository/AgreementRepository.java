@@ -14,4 +14,5 @@ import java.util.List;
 public interface AgreementRepository extends PagingAndSortingRepository<Agreement, Long>,
         JpaSpecificationExecutor<Agreement> {
     Agreement findAgreementByAgreementNumber(String agreementNumber);
+    List<Agreement> findAgreementByAgreementNumberIn(List<String> agreementNumbers);
 }

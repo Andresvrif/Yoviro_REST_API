@@ -58,17 +58,20 @@ public class AgreementServiceImpl implements IAgreementService {
         //CREATE RESIDENT
         Resident resident = residentService.getOrCreateResident(residentDTO);
 
+        Agreement agreement = new Agreement();
+        agreement.setContractor(contractor);
+        agreement = agreementRepository.save(agreement);
+
         //Create SUBMISSION
         Submission submission = modelMapper.map(submissionDTO, Submission.class);
         submission.setResident(resident);
+        submission.setAgreement(agreement);
+        submission = jobAgreementRepository.save(submission);
 
         //Create Agreement
         //TODO Antes de crear el contrato, verificar si existe alguno vigente para el residente
-        Agreement agreement = new Agreement();
-        agreement.setContractor(contractor);
-        submission.setAgreement(agreement);
-        agreement.addJob(submission);
-        agreement = agreementRepository.save(agreement);
+
+        agreement.getJobs().add(submission);
 
         return modelMapper.map(agreement, AgreementDTO.class);
     }

@@ -1,16 +1,13 @@
 package com.yoviro.rest.service.interfaces;
 
 import com.yoviro.rest.dto.ActivityPatternDTO;
-import com.yoviro.rest.dto.AgreementDTO;
 import com.yoviro.rest.models.entity.ActivityPattern;
 import com.yoviro.rest.models.repository.projections.AgreementResidentProjection;
 import com.yoviro.rest.models.repository.projections.SummaryActivityPatternProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 public interface IActivityPatternService {
     public Iterable<ActivityPattern> findAll();
@@ -39,6 +36,6 @@ public interface IActivityPatternService {
 
     public Iterable<ActivityPattern> findAllByEnable(Boolean enable);
 
-    public ActivityPattern saveActivityPatternWithAgreements(ActivityPatternDTO activityPatternDTO,
-                                                             Set<AgreementDTO> agreementDTOS);
+    public ActivityPattern createNewActivityPatternWithAgreements(ActivityPatternDTO activityPatternDTO,
+                                                                  List<String> agreementNumbers);
 }

@@ -1,9 +1,9 @@
 package com.yoviro.rest.dto;
 
 import com.fasterxml.jackson.annotation.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.yoviro.rest.models.entity.ActivityPattern;
+
+import java.util.*;
 
 public class AgreementDTO {
     @JsonIgnore
@@ -16,10 +16,13 @@ public class AgreementDTO {
 
     @JsonProperty("jobDTOs")
     @JsonManagedReference
-    private List<JobDTO> jobs;
+    private List<JobDTO> jobs = new ArrayList<>();
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createAt;
+
+    private Set<ActivityPatternDTO> activityPatternDTOs;
+
 
     public Long getId() {
         return id;
@@ -53,9 +56,17 @@ public class AgreementDTO {
         this.jobs = jobs;
     }
 
-    public void addJob(JobDTO job) {
-        this.jobs = this.jobs == null? new ArrayList<JobDTO>() : this.jobs;
-        this.jobs.add(job);
+    public Set<ActivityPatternDTO> getActivityPatternDTOs() {
+        return activityPatternDTOs;
+    }
+
+    public void setActivityPatternDTOs(Set<ActivityPatternDTO> activityPatternDTOs) {
+        this.activityPatternDTOs = activityPatternDTOs;
+    }
+
+    public void addActivityPattern(ActivityPatternDTO activityPatternDTO) {
+        this.activityPatternDTOs = this.activityPatternDTOs == null ? new HashSet<ActivityPatternDTO>() : this.activityPatternDTOs;
+        this.activityPatternDTOs.add(activityPatternDTO);
     }
 
     public Date getCreateAt() {
