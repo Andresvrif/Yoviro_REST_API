@@ -91,12 +91,14 @@ public class ActivityPatternServiceImpl implements IActivityPatternService {
         }
 
         //Make relationship between agreements and activity pattern
-
+        activityPattern.setAgreements(agreements);
+        activityPattern = activityPatternRepository.save(activityPattern);
+/*
         //TODO invertir relaciòn (Many to Many) para q se grabe desde activity pattern
         ActivityPattern finalActivityPattern = activityPattern;
         agreements.forEach(e -> e.getActivityPatterns().add(finalActivityPattern));
         agreementRepository.saveAll(agreements);
-
+*/
         return activityPattern;
     }
 }

@@ -78,7 +78,7 @@ INSERT INTO activity_pattern (create_at, day_frequency, subject, description, st
 insert into job (agreement_id, create_at, effective_date, end_date, resident_id, start_date, job_type) values (1, now(), '2021-07-13 12:00:00', '2022-07-13 12:00:00',1, '2021-07-13 12:00:00', 'SUBMISSION');
 
 /* Relation between AGREEMENT & ACTIVITY PATTERN */
-INSERT INTO agreement_activity_pattern (agreement_id, activity_pattern_id) VALUES ('1', '1');
-INSERT INTO agreement_activity_pattern (agreement_id, activity_pattern_id) VALUES ('1', '3');
-INSERT INTO agreement_activity_pattern (agreement_id, activity_pattern_id) VALUES ('1', '10');
-INSERT INTO agreement_activity_pattern (agreement_id, activity_pattern_id) VALUES ('1', '6');
+INSERT INTO activity_pattern_agreement (agreement_id, activity_pattern_id) VALUES ('1', '1');
+INSERT INTO activity_pattern_agreement (agreement_id, activity_pattern_id) VALUES ('1', '3');
+INSERT INTO activity_pattern_agreement (agreement_id, activity_pattern_id) VALUES ('1', '10');
+INSERT INTO activity_pattern_agreement (agreement_id, activity_pattern_id) VALUES ('1', '6');

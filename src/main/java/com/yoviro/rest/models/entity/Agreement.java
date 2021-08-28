@@ -46,10 +46,7 @@ public class Agreement {
     private Date createAt;
     //TODO evaluar establecer una property para definir el estado del contrato (planificado, en vigencia y/o)
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "agreement_activity_pattern",
-            joinColumns = {@JoinColumn(name = "agreement_id")},
-            inverseJoinColumns = {@JoinColumn(name = "activity_pattern_id")})
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "agreements")
     private List<ActivityPattern> activityPatterns = new ArrayList<>();
 
     @PrePersist

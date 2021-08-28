@@ -67,8 +67,10 @@ public class ActivityPattern {
 
     private String description;
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            mappedBy = "activityPatterns")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "activity_pattern_agreement",
+            joinColumns = {@JoinColumn(name = "activity_pattern_id")},
+            inverseJoinColumns = {@JoinColumn(name = "agreement_id")})
     private List<Agreement> agreements = new ArrayList<>(); //Contratos vigentes, como regla de negocio los contratos tendran vigencia de medio dia a medio dia
 
     @OneToMany(mappedBy = "activityPattern",
