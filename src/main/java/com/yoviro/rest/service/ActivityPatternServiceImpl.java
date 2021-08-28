@@ -88,17 +88,20 @@ public class ActivityPatternServiceImpl implements IActivityPatternService {
             //It doesn't exist, create it
             activityPattern = modelMapper.map(activityPatternDTO, ActivityPattern.class);
             activityPattern = activityPatternRepository.save(activityPattern);
+        } else {
+            //It exist, update it
+            activityPattern.setDayFrequency(activityPatternDTO.getDayFrequency());
+            activityPattern.setHourFrequency(activityPatternDTO.getHourFrequency());
+            activityPattern.setStartDate(activityPatternDTO.getStartDate());
+            activityPattern.setEndDate(activityPatternDTO.getEndDate());
+            activityPattern.setSubject(activityPatternDTO.getSubject());
+            activityPattern.setDescription(activityPatternDTO.getDescription());
         }
 
         //Make relationship between agreements and activity pattern
         activityPattern.setAgreements(agreements);
         activityPattern = activityPatternRepository.save(activityPattern);
-/*
-        //TODO invertir relaciòn (Many to Many) para q se grabe desde activity pattern
-        ActivityPattern finalActivityPattern = activityPattern;
-        agreements.forEach(e -> e.getActivityPatterns().add(finalActivityPattern));
-        agreementRepository.saveAll(agreements);
-*/
+
         return activityPattern;
     }
 }

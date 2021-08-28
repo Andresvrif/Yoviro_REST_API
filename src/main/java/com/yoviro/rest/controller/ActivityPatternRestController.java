@@ -41,7 +41,7 @@ public class ActivityPatternRestController {
     @Autowired
     private IAgreementService agreementService;
 
-    @PostMapping("/newActivityPattern")
+    @PostMapping("/updateOrCreate")
     public String newActivityPattern(@RequestBody String json) throws JSONException, JSONException, JsonProcessingException {
         JSONObject jsonObject = new JSONObject(json);
         JSONObject activityPatternDTOJsonObject = (JSONObject) jsonObject.get("activityPatternDTO");

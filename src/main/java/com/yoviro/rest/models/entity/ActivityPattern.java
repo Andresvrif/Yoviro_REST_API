@@ -49,7 +49,7 @@ public class ActivityPattern {
     private String patternCode;
 
     @NotNull
-    private String dayFrequency; //Cada 2 dias, cada 3 dias, etc...
+    private Integer dayFrequency; //Cada 2 dias, cada 3 dias, etc...
 
     @NotNull
     @Temporal(TemporalType.TIME)
@@ -124,11 +124,11 @@ public class ActivityPattern {
         this.hourFrequency = hourFrequency;
     }
 
-    public String getDayFrequency() {
+    public Integer getDayFrequency() {
         return dayFrequency;
     }
 
-    public void setDayFrequency(String dayFrequency) {
+    public void setDayFrequency(Integer dayFrequency) {
         this.dayFrequency = dayFrequency;
     }
 

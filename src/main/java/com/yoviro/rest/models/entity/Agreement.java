@@ -110,6 +110,7 @@ public class Agreement {
         if (!hasJobs()) {
             throw new Exception("Can't define a status agreement without jobs defined");
         }
+
         Job lastJob = JobHandler.lastJobFromAgreement(this);
         return JobHandler.getStatusTerm(lastJob, referenceDate);
     }

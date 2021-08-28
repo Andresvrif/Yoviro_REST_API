@@ -88,6 +88,6 @@ public class JobHandler {
     public static Boolean hasJobActivityRelated(Job job,
                                                 ActivityPattern activityPattern,
                                                 Date refDate) {
-        return job.getActivities().stream().anyMatch(e -> e.getActivityPattern().getPatternCode() == activityPattern.getPatternCode() || DateUtil.compareIgnoreTime(e.getCreateAt(), refDate) == 0);
+        return job.getActivities().stream().anyMatch(e -> e.getActivityPattern().getPatternCode() == activityPattern.getPatternCode() && DateUtil.compareIgnoreTime(e.getCreateAt(), refDate) == 0);
     }
 }

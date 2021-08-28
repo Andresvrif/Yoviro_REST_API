@@ -12,7 +12,7 @@ public class ActivityPatternDTO {
     private Long id;
     private Date createAt;
     private String patternCode; //Unique
-    private String dayFrequency; //Cada 2 dias, cada 3 dias, etc...
+    private Integer dayFrequency; //Cada 2 dias, cada 3 dias, etc...
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date startDate;
@@ -53,11 +53,11 @@ public class ActivityPatternDTO {
         this.patternCode = patternCode;
     }
 
-    public String getDayFrequency() {
+    public Integer getDayFrequency() {
         return dayFrequency;
     }
 
-    public void setDayFrequency(String dayFrequency) {
+    public void setDayFrequency(Integer dayFrequency) {
         this.dayFrequency = dayFrequency;
     }
 
