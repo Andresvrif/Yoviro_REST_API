@@ -90,6 +90,7 @@ public class ActivityPatternServiceImpl implements IActivityPatternService {
             activityPattern = activityPatternRepository.save(activityPattern);
         } else {
             //It exist, update it
+            activityPattern.setEnable(activityPatternDTO.getEnable());
             activityPattern.setDayFrequency(activityPatternDTO.getDayFrequency());
             activityPattern.setHourFrequency(activityPatternDTO.getHourFrequency());
             activityPattern.setStartDate(activityPatternDTO.getStartDate());

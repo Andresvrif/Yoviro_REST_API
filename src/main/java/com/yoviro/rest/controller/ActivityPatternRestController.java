@@ -5,14 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yoviro.rest.config.AppConfig;
 import com.yoviro.rest.dto.ActivityPatternDTO;
 import com.yoviro.rest.dto.AgreementDTO;
-import com.yoviro.rest.models.entity.ActivityPattern;
-import com.yoviro.rest.models.entity.Agreement;
+import com.yoviro.rest.handler.JobHandler;
+import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.models.repository.projections.AgreementResidentProjection;
 import com.yoviro.rest.models.repository.projections.SummaryActivityPatternProjection;
 import com.yoviro.rest.service.interfaces.IActivityPatternService;
 import com.yoviro.rest.service.interfaces.IAgreementService;
 import com.yoviro.rest.util.JSONUtil;
 import com.yoviro.rest.util.PageUtil;
+import com.yoviro.rest.util.StringUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,7 +52,6 @@ public class ActivityPatternRestController {
 
         //Define ACtivity Pattern DTO
         ActivityPatternDTO activityPatternDTO = objectMapper.readValue(activityPatternDTOJsonObject.toString(), ActivityPatternDTO.class);
-        activityPatternDTO.setEnable(true);
 
         List<String> agreementNodes = JSONUtil.<String>transformToList(agreementsJson);
         ActivityPattern activityPattern = activityPatternService.createNewActivityPatternWithAgreements(activityPatternDTO, agreementNodes);
@@ -106,9 +106,28 @@ public class ActivityPatternRestController {
         //Define Response
         Map<String, Object> response = new HashMap<String, Object>();
         response.put(AppConfig.METADATA_TAG, JSONUtil.pageToJson(page));
-        response.put("residents", page.getContent());
+        response.put("residents", wrapAgreementResidentRelated(page.getContent()));
 
         return response;
+    }
+
+    private List<Map<String, Object>> wrapAgreementResidentRelated(List<AgreementResidentProjection> data) {
+        Map<String, Object> rowData;
+        List<Map<String, Object>> dataContainer = new ArrayList<Map<String, Object>>();
+        for (AgreementResidentProjection item : data){
+            Agreement agreement = agreementService.findAgreementByAgreementNumber(item.getAgreementNumber());
+            Job job = JobHandler.lastJobFromAgreement(agreement);
+
+            //Put data
+            rowData = new HashMap<String, Object>();
+            rowData.put("fullName", StringUtil.capitalizeWord(item.getFullName()));
+            rowData.put("agreementNumber", item.getAgreementNumber());
+            rowData.put("status", JobHandler.getStatusTerm(job, new Date()));
+
+            dataContainer.add(rowData);
+        }
+
+        return dataContainer;
     }
 
     @GetMapping("/{patternCode}")
