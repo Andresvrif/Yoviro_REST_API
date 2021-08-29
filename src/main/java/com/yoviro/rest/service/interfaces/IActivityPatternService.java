@@ -38,4 +38,6 @@ public interface IActivityPatternService {
 
     public ActivityPattern createNewActivityPatternWithAgreements(ActivityPatternDTO activityPatternDTO,
                                                                   List<String> agreementNumbers);
+
+    public ActivityPattern retrieveActivityPatternByPatternCode(String patternCode);
 }

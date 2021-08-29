@@ -104,4 +104,9 @@ public class ActivityPatternServiceImpl implements IActivityPatternService {
 
         return activityPattern;
     }
+
+    @Override
+    public ActivityPattern retrieveActivityPatternByPatternCode(String patternCode) {
+        return activityPatternRepository.findActivityPatternByPatternCode(patternCode);
+    }
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yoviro.rest.config.AppConfig;
 import com.yoviro.rest.dto.ActivityPatternDTO;
 import com.yoviro.rest.dto.AgreementDTO;
+import com.yoviro.rest.models.entity.ActivityPattern;
 import com.yoviro.rest.models.entity.Agreement;
 import com.yoviro.rest.models.repository.projections.AgreementResidentProjection;
 import com.yoviro.rest.models.repository.projections.SummaryActivityPatternProjection;
@@ -41,7 +42,7 @@ public class ActivityPatternRestController {
     @Autowired
     private IAgreementService agreementService;
 
-    @PostMapping("/updateOrCreate")
+    @PostMapping("/createOrupdate")
     public String newActivityPattern(@RequestBody String json) throws JSONException, JSONException, JsonProcessingException {
         JSONObject jsonObject = new JSONObject(json);
         JSONObject activityPatternDTOJsonObject = (JSONObject) jsonObject.get("activityPatternDTO");
@@ -52,11 +53,10 @@ public class ActivityPatternRestController {
         ActivityPatternDTO activityPatternDTO = objectMapper.readValue(activityPatternDTOJsonObject.toString(), ActivityPatternDTO.class);
         activityPatternDTO.setEnable(true);
 
-
         List<String> agreementNodes = JSONUtil.<String>transformToList(agreementsJson);
-        activityPatternService.createNewActivityPatternWithAgreements(activityPatternDTO, agreementNodes);
+        ActivityPattern activityPattern = activityPatternService.createNewActivityPatternWithAgreements(activityPatternDTO, agreementNodes);
 
-        return null;
+        return activityPattern.getPatternCode();
     }
 
     @GetMapping("/summaryList")
@@ -109,5 +109,15 @@ public class ActivityPatternRestController {
         response.put("residents", page.getContent());
 
         return response;
+    }
+
+    @GetMapping("/{patternCode}")
+    public ActivityPatternDTO agreementResidentRelated(@PathVariable String patternCode) throws Exception {
+        ActivityPattern activityPattern = activityPatternService.retrieveActivityPatternByPatternCode(patternCode);
+        ActivityPatternDTO activityPatternDTO = modelMapper.map(activityPattern, ActivityPatternDTO.class);
+
+        activityPatternDTO.setAgreementDTOs(null);
+
+        return activityPatternDTO;
     }
 }

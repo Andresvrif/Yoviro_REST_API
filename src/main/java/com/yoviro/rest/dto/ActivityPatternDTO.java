@@ -109,14 +109,6 @@ public class ActivityPatternDTO {
         this.enable = enable;
     }
 
-    public Set<AgreementDTO> getAgreements() {
-        return agreements;
-    }
-
-    public void setAgreements(Set<AgreementDTO> agreements) {
-        this.agreements = agreements;
-    }
-
     public Set<AgreementDTO> getAgreementDTOs() {
         return agreementDTOs;
     }
