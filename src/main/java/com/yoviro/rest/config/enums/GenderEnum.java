@@ -1,6 +1,6 @@
 package com.yoviro.rest.config.enums;
 
-public enum Gender {
+public enum GenderEnum {
     MALE,
     FEMALE
 }

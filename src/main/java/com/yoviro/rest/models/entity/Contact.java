@@ -36,8 +36,7 @@ public class Contact implements Serializable {
     @Column
     private String secondLastName;
 
-    @NotNull
-    @Column
+    @Column(nullable = false)
     @Temporal(TemporalType.DATE)
     private Date birthDate;
 

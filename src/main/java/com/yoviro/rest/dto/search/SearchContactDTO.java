@@ -1,13 +1,13 @@
 package com.yoviro.rest.dto.search;
 
-import com.yoviro.rest.config.enums.OfficialIdType;
+import com.yoviro.rest.config.enums.OfficialIdTypeEnum;
 
 public class SearchContactDTO {
     private String firstName;
     private String secondName;
     private String firstLastName;
     private String secondLastName;
-    private OfficialIdType officialIDType;
+    private OfficialIdTypeEnum officialIDTypeEnum;
     private String officialIDNumber;
     private String email;
     private Boolean exactCoincidence;
@@ -44,12 +44,12 @@ public class SearchContactDTO {
         this.secondLastName = secondLastName;
     }
 
-    public OfficialIdType getOfficialIDType() {
-        return officialIDType;
+    public OfficialIdTypeEnum getOfficialIDType() {
+        return officialIDTypeEnum;
     }
 
-    public void setOfficialIDType(OfficialIdType officialIDType) {
-        this.officialIDType = officialIDType;
+    public void setOfficialIDType(OfficialIdTypeEnum officialIDTypeEnum) {
+        this.officialIDTypeEnum = officialIDTypeEnum;
     }
 
     public String getOfficialIDNumber() {

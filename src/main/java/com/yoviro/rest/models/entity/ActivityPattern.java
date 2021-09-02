@@ -1,10 +1,8 @@
 package com.yoviro.rest.models.entity;
 
-import com.yoviro.rest.config.enums.StatusTerm;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.thymeleaf.util.DateUtils;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;

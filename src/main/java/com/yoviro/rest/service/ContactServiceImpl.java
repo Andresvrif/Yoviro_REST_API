@@ -1,6 +1,6 @@
 package com.yoviro.rest.service;
 
-import com.yoviro.rest.config.enums.OfficialIdType;
+import com.yoviro.rest.config.enums.OfficialIdTypeEnum;
 import com.yoviro.rest.dto.ContactDTO;
 import com.yoviro.rest.dto.OfficialIdDTO;
 import com.yoviro.rest.dto.search.SearchContactDTO;
@@ -65,8 +65,8 @@ public class ContactServiceImpl implements IContactService {
     }
 
     @Override
-    public Contact findContactByOfficialId(OfficialIdType officialIDType, String officialIDNumber) {
-        return contactRepository.findByOfficialID(officialIDType, officialIDNumber);
+    public Contact findContactByOfficialId(OfficialIdTypeEnum officialIDTypeEnum, String officialIDNumber) {
+        return contactRepository.findByOfficialID(officialIDTypeEnum, officialIDNumber);
     }
 
     @Override

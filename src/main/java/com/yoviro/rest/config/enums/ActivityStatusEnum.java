@@ -1,6 +1,6 @@
 package com.yoviro.rest.config.enums;
 
-public enum ActivityStatus {
+public enum ActivityStatusEnum {
     DEFINED,
     IN_PROGRESS,
     COMPLETED,

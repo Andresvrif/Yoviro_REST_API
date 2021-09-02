@@ -5,12 +5,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yoviro.rest.security.service.IJWTService;
 import com.yoviro.rest.security.service.JWTServiceImpl;
-import com.yoviro.rest.models.entity.Usuario;
+import com.yoviro.rest.models.entity.User;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import javax.servlet.FilterChain;
@@ -46,9 +45,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             logger.info("Username desde request parameter (form-data): " + username);
             logger.info("Password desde request parameter (form-data): " + password);
         } else {
-            Usuario user = null;
+            User user = null;
             try {
-                user = new ObjectMapper().readValue(request.getInputStream(), Usuario.class);
+                user = new ObjectMapper().readValue(request.getInputStream(), User.class);
                 username = user.getUsername();
                 password = user.getPassword();
 
@@ -78,8 +77,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         //Esta instrucción siempre debe ir
         response.addHeader(JWTServiceImpl.HEADER_STRING, JWTServiceImpl.TOKEN_PREFIX + token);
-
-        var user = ((User) authResult.getPrincipal());
+        var user = ((org.springframework.security.core.userdetails.User) authResult.getPrincipal());
         Map<String, Object> body = new HashMap<String, Object>();
         body.put("token", token);
         body.put("user", user);

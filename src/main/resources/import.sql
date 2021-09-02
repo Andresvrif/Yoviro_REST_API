@@ -7,13 +7,18 @@ drop trigger if exists before_insert_job;
 create trigger before_insert_job before insert on job for each row begin IF (NEW.job_number IS NULL) THEN SELECT MAX(job_number) INTO @max_label FROM job; IF (@max_label IS NULL) THEN SET NEW.job_number = CONCAT('JOB000001'); ELSE SET NEW.job_number = CONCAT(SUBSTR(@max_label, 1, 3), LPAD(SUBSTR(@max_label, 4) + 1, 6, '0')); END IF; END IF; end
 
 /* USUARIOS */
-INSERT INTO users (username, password, enabled) VALUES('andres', '$2a$10$debpqzhpXFd4O/Lx3kAhX.KeOqhesTfrJMStixsYSqcQFvIXicHbC', 1);
-INSERT INTO users (username, password, enabled) VALUES('admin', '$2a$10$X.1R6428OlgxcWCEpX2SSuFKMIBPpQ/EFG/e3GTZm57BWvzZEzdAO', 1);
+INSERT INTO users (username, password, first_name, second_name, last_name, second_last_name, birth_date, enabled) VALUES('dvila', '$2a$10$debpqzhpXFd4O/Lx3kAhX.KeOqhesTfrJMStixsYSqcQFvIXicHbC', 'deborah', 'francesca', 'vila', 'roman', '1985-02-21', 1);
+INSERT INTO users (username, password, first_name, last_name, second_last_name, birth_date, enabled) VALUES('admin', '$2a$10$X.1R6428OlgxcWCEpX2SSuFKMIBPpQ/EFG/e3GTZm57BWvzZEzdAO', 'admin', '', '', '1990-08-23', 1);
+
+/* ROLES */
+INSERT INTO role (id, role_code) VALUES(1,'ROLE_ADMIN');
+INSERT INTO role (id, role_code) VALUES(2,'ROLE_USER');
+INSERT INTO role (id, role_code) VALUES(3,'ROLE_NURSE');
 
 /* ROLES PARA USUARIOS */
-INSERT INTO authorities (user_id, authority) VALUES(1,'ROLE_USER');
-INSERT INTO authorities (user_id, authority) VALUES(2,'ROLE_USER');
-INSERT INTO authorities (user_id, authority) VALUES(2,'ROLE_ADMIN');
+INSERT INTO user_role (user_id, role_id) VALUES(1, 1);
+INSERT INTO user_role (user_id, role_id) VALUES(2, 1);
+INSERT INTO user_role (user_id, role_id) VALUES(2, 2);
 
 /* CONTACTOS */
 INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Andres', null, 'Guzman', 'Canevaro', 'profesor@bolsadeideas.com', '2017-08-01', '', NOW());

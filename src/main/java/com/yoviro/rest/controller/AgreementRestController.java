@@ -3,7 +3,7 @@ package com.yoviro.rest.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yoviro.rest.config.AppConfig;
-import com.yoviro.rest.config.enums.OfficialIdType;
+import com.yoviro.rest.config.enums.OfficialIdTypeEnum;
 import com.yoviro.rest.dto.*;
 import com.yoviro.rest.dto.search.SearchAgreementDTO;
 import com.yoviro.rest.dto.search.SearchContactDTO;
@@ -25,10 +25,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
-import org.thymeleaf.util.DateUtils;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -82,7 +80,7 @@ public class AgreementRestController {
                                                           @RequestParam(required = false) String secondName,
                                                           @RequestParam(required = false) String firstLastName,
                                                           @RequestParam(required = false) String secondLastName,
-                                                          @RequestParam(required = false) OfficialIdType officialIDType,
+                                                          @RequestParam(required = false) OfficialIdTypeEnum officialIDTypeEnum,
                                                           @RequestParam(required = false) String officialIDNumber,
                                                           @RequestParam(required = true) Boolean exactCoincidence,
                                                           @RequestParam(required = true) String page) throws JsonProcessingException, JSONException {
@@ -96,7 +94,7 @@ public class AgreementRestController {
         searchContactDTO.setSecondName(secondName);
         searchContactDTO.setFirstLastName(firstLastName);
         searchContactDTO.setSecondLastName(secondLastName);
-        searchContactDTO.setOfficialIDType(officialIDType);
+        searchContactDTO.setOfficialIDType(officialIDTypeEnum);
         searchContactDTO.setOfficialIDNumber(officialIDNumber);
         searchContactDTO.setExactCoincidence(exactCoincidence);
 

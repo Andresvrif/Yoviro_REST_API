@@ -1,6 +1,6 @@
 package com.yoviro.rest.models.entity;
 
-import com.yoviro.rest.config.enums.ActivityStatus;
+import com.yoviro.rest.config.enums.ActivityStatusEnum;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.thymeleaf.util.DateUtils;
@@ -32,11 +32,11 @@ public class Activity {
     private Job job;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
-    private Usuario assignedUser;
+    private User assignedUser;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private ActivityStatus status;
+    private ActivityStatusEnum status;
 
     public Long getId() {
         return id;
@@ -66,11 +66,11 @@ public class Activity {
         this.job = job;
     }
 
-    public Usuario getAssignedUser() {
+    public User getAssignedUser() {
         return assignedUser;
     }
 
-    public void setAssignedUser(Usuario assignedUser) {
+    public void setAssignedUser(User assignedUser) {
         this.assignedUser = assignedUser;
     }
 
@@ -78,11 +78,11 @@ public class Activity {
         this.activityPattern = activityPattern;
     }
 
-    public ActivityStatus getStatus() {
+    public ActivityStatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(ActivityStatus status) {
+    public void setStatus(ActivityStatusEnum status) {
         this.status = status;
     }
 

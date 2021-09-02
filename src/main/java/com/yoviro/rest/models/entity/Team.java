@@ -6,17 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "role")
-public class Role implements Serializable {
+@Table(name = "team")
+public class Team implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String roleCode;
+    @Column(unique = true)
+    private String code;
+    private String name;
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "teams")
     private List<User> users = new ArrayList<>();
 
     public Long getId() {
@@ -27,12 +28,20 @@ public class Role implements Serializable {
         this.id = id;
     }
 
-    public String getRoleCode() {
-        return roleCode;
+    public String getCode() {
+        return code;
     }
 
-    public void setRoleCode(String roleCode) {
-        this.roleCode = roleCode;
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     private static final long serialVersionUID = 1L;

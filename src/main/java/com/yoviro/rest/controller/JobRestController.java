@@ -2,9 +2,8 @@ package com.yoviro.rest.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yoviro.rest.config.AppConfig;
-import com.yoviro.rest.config.enums.OfficialIdType;
+import com.yoviro.rest.config.enums.OfficialIdTypeEnum;
 import com.yoviro.rest.dto.CancellationDTO;
-import com.yoviro.rest.dto.ContactDTO;
 import com.yoviro.rest.dto.JobDTO;
 import com.yoviro.rest.dto.SubmissionDTO;
 import com.yoviro.rest.dto.search.SearchContactDTO;
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -47,7 +45,7 @@ public class JobRestController {
                                       @RequestParam(required = false) String secondName,
                                       @RequestParam(required = false) String firstLastName,
                                       @RequestParam(required = false) String secondLastName,
-                                      @RequestParam(required = false) OfficialIdType officialIDType,
+                                      @RequestParam(required = false) OfficialIdTypeEnum officialIDTypeEnum,
                                       @RequestParam(required = false) String officialIDNumber,
                                       @RequestParam(required = true) Boolean exactCoincidence,
                                       @RequestParam(required = true) String page) throws JsonProcessingException, JSONException {
@@ -59,7 +57,7 @@ public class JobRestController {
         searchContactDTO.setSecondName(secondName);
         searchContactDTO.setFirstLastName(firstLastName);
         searchContactDTO.setSecondLastName(secondLastName);
-        searchContactDTO.setOfficialIDType(officialIDType);
+        searchContactDTO.setOfficialIDType(officialIDTypeEnum);
         searchContactDTO.setOfficialIDNumber(officialIDNumber);
         searchContactDTO.setExactCoincidence(exactCoincidence);
 

@@ -2,11 +2,10 @@ package com.yoviro.rest.service;
 
 import com.yoviro.rest.models.repository.UserRepository;
 import com.yoviro.rest.models.entity.Role;
-import com.yoviro.rest.models.entity.Usuario;
+import com.yoviro.rest.models.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,22 +29,22 @@ public class JpaUserDetailsService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Usuario usuario = usuarioDao.findByUsername(username);
-        if (usuario == null) {
+        User user = usuarioDao.findByUsername(username);
+        if (user == null) {
             throw new UsernameNotFoundException("Username " + username +"no existe en el sistema!");
         }
 
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-        for (Role role : usuario.getRoles()) {
-            authorities.add(new SimpleGrantedAuthority(role.getAuthority()));
+        for (Role role : user.getRoles()) {
+            authorities.add(new SimpleGrantedAuthority(role.getRoleCode()));
         }
 
         if(authorities.isEmpty()){
             throw new UsernameNotFoundException("Error login: no existe el usuario '" + username + "', no tiene roles asignado!");
         }
 
-        return new User(usuario.getUsername(),
-                usuario.getPassword(),
-                usuario.getEnabled(), true, true, true, authorities);
+        return new org.springframework.security.core.userdetails.User(user.getUsername(),
+                user.getPassword(),
+                user.getEnabled(), true, true, true, authorities);
     }
 }

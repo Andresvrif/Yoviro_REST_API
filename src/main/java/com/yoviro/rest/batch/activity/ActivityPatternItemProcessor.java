@@ -1,18 +1,16 @@
 package com.yoviro.rest.batch.activity;
 
-import com.yoviro.rest.config.enums.ActivityStatus;
+import com.yoviro.rest.config.enums.ActivityStatusEnum;
 import com.yoviro.rest.config.enums.StatusTerm;
 import com.yoviro.rest.handler.JobHandler;
 import com.yoviro.rest.models.entity.Activity;
 import com.yoviro.rest.models.entity.ActivityPattern;
 import com.yoviro.rest.models.entity.Agreement;
-import com.yoviro.rest.models.entity.Job;
 import org.springframework.batch.item.ItemProcessor;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 public class ActivityPatternItemProcessor implements ItemProcessor<ActivityPattern, List<Activity>> {
     @Override
@@ -30,7 +28,7 @@ public class ActivityPatternItemProcessor implements ItemProcessor<ActivityPatte
             Activity activity = new Activity();
             activity.setActivityPattern(activityPattern);
             activity.setJob(JobHandler.lastJobFromAgreement(agreement));
-            activity.setStatus(ActivityStatus.DEFINED);
+            activity.setStatus(ActivityStatusEnum.DEFINED);
 
             toBeCreated.add(activity);
         }

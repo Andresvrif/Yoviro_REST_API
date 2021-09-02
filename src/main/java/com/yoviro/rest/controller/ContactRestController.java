@@ -3,7 +3,7 @@ package com.yoviro.rest.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yoviro.rest.config.AppConfig;
-import com.yoviro.rest.config.enums.OfficialIdType;
+import com.yoviro.rest.config.enums.OfficialIdTypeEnum;
 import com.yoviro.rest.dto.ContactDTO;
 import com.yoviro.rest.dto.OfficialIdDTO;
 import com.yoviro.rest.dto.search.SearchContactDTO;
@@ -48,10 +48,10 @@ public class ContactRestController {
     }
 
     @GetMapping("/findContactByOfficialID")
-    public Map<String, Object> findContactByOfficialID(@RequestParam(required = true) OfficialIdType officialIdType,
+    public Map<String, Object> findContactByOfficialID(@RequestParam(required = true) OfficialIdTypeEnum officialIdTypeEnum,
                                                        @RequestParam(required = true) String officialIdNumber) throws JsonProcessingException, JSONException {
         OfficialIdDTO officialIdDTO = new OfficialIdDTO();
-        officialIdDTO.setOfficialIdType(officialIdType);
+        officialIdDTO.setOfficialIdType(officialIdTypeEnum);
         officialIdDTO.setOfficialIdNumber(officialIdNumber);
         Contact contact = contactService.findContactByOfficialId(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
 
@@ -64,7 +64,7 @@ public class ContactRestController {
                                       @RequestParam(required = false) String secondName,
                                       @RequestParam(required = false) String firstLastName,
                                       @RequestParam(required = false) String secondLastName,
-                                      @RequestParam(required = false) OfficialIdType officialIDType,
+                                      @RequestParam(required = false) OfficialIdTypeEnum officialIDTypeEnum,
                                       @RequestParam(required = false) String officialIDNumber,
                                       @RequestParam(required = true) Boolean exactCoincidence,
                                       @RequestParam(required = true) String page) throws JsonProcessingException, JSONException {
@@ -73,7 +73,7 @@ public class ContactRestController {
         searchContactDTO.setSecondName(secondName);
         searchContactDTO.setFirstLastName(firstLastName);
         searchContactDTO.setSecondLastName(secondLastName);
-        searchContactDTO.setOfficialIDType(officialIDType);
+        searchContactDTO.setOfficialIDType(officialIDTypeEnum);
         searchContactDTO.setOfficialIDNumber(officialIDNumber);
         searchContactDTO.setExactCoincidence(exactCoincidence);
 

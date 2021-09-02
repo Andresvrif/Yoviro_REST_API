@@ -1,6 +1,6 @@
 package com.yoviro.rest.config.enums;
 
-public enum OfficialIdType{
+public enum OfficialIdTypeEnum {
     DNI,
     PASSPORT
 }
