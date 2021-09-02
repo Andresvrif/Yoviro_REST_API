@@ -1,5 +1,7 @@
 package com.yoviro.rest.models.entity;
 
+import com.yoviro.rest.config.enums.TeamTypeEnum;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,9 +15,9 @@ public class Team implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(unique = true)
-    private String code;
-    private String name;
+    private TeamTypeEnum teamType;
 
     @ManyToMany(mappedBy = "teams")
     private List<User> users = new ArrayList<>();
@@ -28,20 +30,20 @@ public class Team implements Serializable {
         this.id = id;
     }
 
-    public String getCode() {
-        return code;
+    public TeamTypeEnum getTeamType() {
+        return teamType;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setTeamType(TeamTypeEnum teamType) {
+        this.teamType = teamType;
     }
 
-    public String getName() {
-        return name;
+    public List<User> getUsers() {
+        return users;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 
     private static final long serialVersionUID = 1L;

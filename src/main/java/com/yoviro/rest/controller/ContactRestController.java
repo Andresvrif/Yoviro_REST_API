@@ -48,7 +48,7 @@ public class ContactRestController {
     }
 
     @GetMapping("/findContactByOfficialID")
-    public Map<String, Object> findContactByOfficialID(@RequestParam(required = true) OfficialIdTypeEnum officialIdTypeEnum,
+    public Map<String, Object> findContactByOfficialID(@RequestParam(required = true, name = "officialIdType") OfficialIdTypeEnum officialIdTypeEnum,
                                                        @RequestParam(required = true) String officialIdNumber) throws JsonProcessingException, JSONException {
         OfficialIdDTO officialIdDTO = new OfficialIdDTO();
         officialIdDTO.setOfficialIdType(officialIdTypeEnum);

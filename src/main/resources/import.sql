@@ -25,6 +25,16 @@ INSERT INTO user_role (user_id, role_id) VALUES(2, 3);
 INSERT INTO user_role (user_id, role_id) VALUES(3, 3);
 INSERT INTO user_role (user_id, role_id) VALUES(4, 3);
 
+/* TEAMS */
+INSERT INTO team (team_type) VALUES('ADMINISTRATORS');
+INSERT INTO team (team_type) VALUES('NURSES');
+
+/* TEAMS PARA USUARIOS */
+INSERT INTO user_team (user_id, team_id) VALUES(1, 1);
+INSERT INTO user_team (user_id, team_id) VALUES(2, 1);
+INSERT INTO user_team (user_id, team_id) VALUES(3, 2);
+INSERT INTO user_team (user_id, team_id) VALUES(4, 2);
+
 /* CONTACTOS */
 INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Andres', null, 'Guzman', 'Canevaro', 'profesor@bolsadeideas.com', '2017-08-01', '', NOW());
 INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('John', null, 'Doe', 'Law' ,'john.doe@gmail.com', '2017-08-02', '', NOW());
