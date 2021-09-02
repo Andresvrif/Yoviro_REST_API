@@ -1,9 +1,11 @@
 package com.yoviro.rest.security;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
+import java.util.Date;
 
 public class CustomUserDetails extends User implements UserDetails {
     private com.yoviro.rest.models.entity.User user;
@@ -26,11 +28,24 @@ public class CustomUserDetails extends User implements UserDetails {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
     }
 
-    public com.yoviro.rest.models.entity.User getUser() {
-        return user;
+    public String getFirstName(){
+        return user.getFirstName();
     }
 
-    public void setUser(com.yoviro.rest.models.entity.User user) {
-        this.user = user;
+    public String getSecondName(){
+        return user.getSecondName();
+    }
+
+    public String getLastName(){
+        return user.getLastName();
+    }
+
+    public String getSecondLastName(){
+        return user.getSecondLastName();
+    }
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    public Date getBirthDate(){
+        return user.getBirthDate();
     }
 }

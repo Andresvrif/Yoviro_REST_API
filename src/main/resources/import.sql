@@ -9,6 +9,8 @@ create trigger before_insert_job before insert on job for each row begin IF (NEW
 /* USUARIOS */
 INSERT INTO users (username, password, first_name, second_name, last_name, second_last_name, birth_date, enabled) VALUES('dvila', '$2a$10$debpqzhpXFd4O/Lx3kAhX.KeOqhesTfrJMStixsYSqcQFvIXicHbC', 'deborah', 'francesca', 'vila', 'roman', '1985-02-21', 1);
 INSERT INTO users (username, password, first_name, last_name, second_last_name, birth_date, enabled) VALUES('admin', '$2a$10$X.1R6428OlgxcWCEpX2SSuFKMIBPpQ/EFG/e3GTZm57BWvzZEzdAO', 'admin', '', '', '1990-08-23', 1);
+INSERT INTO users (username, password, first_name, last_name, second_last_name, birth_date, enabled) VALUES('ecastro', '$2a$10$X.1R6428OlgxcWCEpX2SSuFKMIBPpQ/EFG/e3GTZm57BWvzZEzdAO', 'elvira', 'castro', 'ramirez', '1990-08-23', 1);
+INSERT INTO users (username, password, first_name, last_name, second_last_name, birth_date, enabled) VALUES('acisneros', '$2a$10$X.1R6428OlgxcWCEpX2SSuFKMIBPpQ/EFG/e3GTZm57BWvzZEzdAO', 'angie', 'cisneros', 'vega', '1990-08-23', 1);
 
 /* ROLES */
 INSERT INTO role (id, role_code) VALUES(1,'ROLE_ADMIN');
@@ -19,6 +21,9 @@ INSERT INTO role (id, role_code) VALUES(3,'ROLE_NURSE');
 INSERT INTO user_role (user_id, role_id) VALUES(1, 1);
 INSERT INTO user_role (user_id, role_id) VALUES(2, 1);
 INSERT INTO user_role (user_id, role_id) VALUES(2, 2);
+INSERT INTO user_role (user_id, role_id) VALUES(2, 3);
+INSERT INTO user_role (user_id, role_id) VALUES(3, 3);
+INSERT INTO user_role (user_id, role_id) VALUES(4, 3);
 
 /* CONTACTOS */
 INSERT INTO contact (first_name, second_name, first_last_name, second_last_name, email, birth_date, photo, create_at) VALUES('Andres', null, 'Guzman', 'Canevaro', 'profesor@bolsadeideas.com', '2017-08-01', '', NOW());

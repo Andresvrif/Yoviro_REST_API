@@ -3,6 +3,7 @@ package com.yoviro.rest.security.filter;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yoviro.rest.security.CustomUserDetails;
 import com.yoviro.rest.security.service.IJWTService;
 import com.yoviro.rest.security.service.JWTServiceImpl;
 import com.yoviro.rest.models.entity.User;
@@ -77,7 +78,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         //Esta instrucción siempre debe ir
         response.addHeader(JWTServiceImpl.HEADER_STRING, JWTServiceImpl.TOKEN_PREFIX + token);
-        var user = ((org.springframework.security.core.userdetails.User) authResult.getPrincipal());
+        var user = ((CustomUserDetails) authResult.getPrincipal());
         Map<String, Object> body = new HashMap<String, Object>();
         body.put("token", token);
         body.put("user", user);

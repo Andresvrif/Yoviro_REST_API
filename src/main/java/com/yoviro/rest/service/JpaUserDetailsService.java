@@ -3,6 +3,7 @@ package com.yoviro.rest.service;
 import com.yoviro.rest.models.repository.UserRepository;
 import com.yoviro.rest.models.entity.Role;
 import com.yoviro.rest.models.entity.User;
+import com.yoviro.rest.security.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -31,7 +32,7 @@ public class JpaUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = usuarioDao.findByUsername(username);
         if (user == null) {
-            throw new UsernameNotFoundException("Username " + username +"no existe en el sistema!");
+            throw new UsernameNotFoundException("Username " + username + "no existe en el sistema!");
         }
 
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
@@ -39,12 +40,11 @@ public class JpaUserDetailsService implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority(role.getRoleCode()));
         }
 
-        if(authorities.isEmpty()){
+        if (authorities.isEmpty()) {
             throw new UsernameNotFoundException("Error login: no existe el usuario '" + username + "', no tiene roles asignado!");
         }
 
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),
-                user.getPassword(),
-                user.getEnabled(), true, true, true, authorities);
+        //return new CustomUserDetails(user.getUsername(), user.getPassword(), user.getEnabled(), true, true, true, authorities);
+        return new CustomUserDetails(user, user.getUsername(), user.getPassword(), authorities);
     }
 }
