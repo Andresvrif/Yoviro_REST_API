@@ -3,6 +3,7 @@ package com.yoviro.rest.models.entity;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.thymeleaf.util.DateUtils;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -14,9 +15,11 @@ import java.util.List;
 @Entity
 @Table(name = "contact")
 @NamedQuery(name = "Contact.findByOfficialID",
-        query = "select c from Contact as c inner join OfficialId as o ON o.contact.id=c.id where o.officialIdType=?1 and o.officialIdNumber=?2")
+        query = "select c from Contact as c " +
+                "inner join OfficialId as o " +
+                "ON o.contact.id=c.id where o.officialIdType=?1 and " +
+                "o.officialIdNumber=?2 and c.internal = false")
 public class Contact implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -55,6 +58,9 @@ public class Contact implements Serializable {
             },
             orphanRemoval = true)
     private List<OfficialId> officialIds;
+
+    @Column(columnDefinition = "boolean default false")
+    private Boolean internal;
 
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP(6)")
@@ -186,6 +192,14 @@ public class Contact implements Serializable {
             if (officialId.getPrimaryOfficialId()) return officialId;
         }
         return null;
+    }
+
+    public Boolean getInternal() {
+        return internal;
+    }
+
+    public void setInternal(Boolean internal) {
+        this.internal = internal;
     }
 
     private static final long serialVersionUID = 1L;

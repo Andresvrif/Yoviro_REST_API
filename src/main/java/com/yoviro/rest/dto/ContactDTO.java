@@ -30,6 +30,9 @@ public class ContactDTO {
 
     private Date createAt;
 
+    @JsonIgnore
+    private Boolean internal;
+
     public Long getId() {
         return id;
     }
@@ -111,5 +114,13 @@ public class ContactDTO {
 
     public void setCreateAt(Date createAt) {
         this.createAt = createAt;
+    }
+
+    public Boolean getInternal() {
+        return internal;
+    }
+
+    public void setInternal(Boolean internal) {
+        this.internal = internal;
     }
 }
