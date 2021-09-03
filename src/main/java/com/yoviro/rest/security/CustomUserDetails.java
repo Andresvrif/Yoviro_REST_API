@@ -29,23 +29,28 @@ public class CustomUserDetails extends User implements UserDetails {
     }
 
     public String getFirstName(){
-        return user.getFirstName();
+        //return user.getFirstName();
+        return null;
     }
 
     public String getSecondName(){
-        return user.getSecondName();
+        //return user.getSecondName();
+        return null;
     }
 
     public String getLastName(){
-        return user.getLastName();
+        //return user.getLastName();
+        return null;
     }
 
     public String getSecondLastName(){
-        return user.getSecondLastName();
+        //return user.getSecondLastName();
+        return null;
     }
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     public Date getBirthDate(){
-        return user.getBirthDate();
+        //return user.getBirthDate();
+        return null;
     }
 }

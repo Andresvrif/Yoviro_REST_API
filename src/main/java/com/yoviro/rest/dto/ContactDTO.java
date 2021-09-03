@@ -13,7 +13,7 @@ public class ContactDTO {
 
     private String secondName;
 
-    private String firstLastName;
+    private String lastName;
 
     private String secondLastName;
 
@@ -57,12 +57,12 @@ public class ContactDTO {
         this.secondName = secondName;
     }
 
-    public String getFirstLastName() {
-        return firstLastName;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setFirstLastName(String firstLastName) {
-        this.firstLastName = firstLastName;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getSecondLastName() {

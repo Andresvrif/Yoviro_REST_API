@@ -32,7 +32,7 @@ public class Contact implements Serializable {
 
     @NotEmpty
     @NotNull
-    private String firstLastName;
+    private String lastName;
 
     @NotEmpty
     @NotNull
@@ -78,8 +78,8 @@ public class Contact implements Serializable {
             this.secondName = this.secondName.toLowerCase();
         }
 
-        if (this.firstLastName != null) {
-            this.firstLastName = this.firstLastName.toLowerCase();
+        if (this.lastName != null) {
+            this.lastName = this.lastName.toLowerCase();
         }
 
         if (this.secondLastName != null) {
@@ -118,12 +118,12 @@ public class Contact implements Serializable {
         this.secondName = secondName;
     }
 
-    public String getFirstLastName() {
-        return firstLastName;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setFirstLastName(String surname) {
-        this.firstLastName = surname;
+    public void setLastName(String surname) {
+        this.lastName = surname;
     }
 
     public String getSecondLastName() {
@@ -182,7 +182,7 @@ public class Contact implements Serializable {
         String whiteSpace = " ";
         return fullName.concat(this.firstName).concat(whiteSpace)
                 .concat(this.secondName).concat(whiteSpace)
-                .concat(this.firstLastName).concat(whiteSpace)
+                .concat(this.lastName).concat(whiteSpace)
                 .concat(this.secondLastName);
     }
 

@@ -24,7 +24,7 @@ import java.util.Set;
         @NamedQuery(name = "ActivityPattern.agreementsResidentRelated",
                 query = "select distinct c.firstName as firstName," +
                         "c.secondName as secondName," +
-                        "c.firstLastName as firstLastName," +
+                        "c.lastName as firstLastName," +
                         "c.secondLastName as secondLastName," +
                         "ag.agreementNumber as agreementNumber from ActivityPattern ap " +
                         "inner join ap.agreements aap on ap.patternCode = ?1 " +
