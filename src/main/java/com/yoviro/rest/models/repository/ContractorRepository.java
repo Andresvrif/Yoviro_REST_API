@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ContractorRepository extends PagingAndSortingRepository<Contractor, Long> {
-    Contractor findByOfficialID(OfficialIdTypeEnum officialIDTypeEnum, String officialIDNumber);
+    Contractor findByOfficialID(OfficialIdTypeEnum officialIDTypeEnum,
+                                String officialIDNumber);
 }

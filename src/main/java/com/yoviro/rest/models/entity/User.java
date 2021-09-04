@@ -1,5 +1,6 @@
 package com.yoviro.rest.models.entity;
 
+import com.yoviro.rest.config.enums.WorkShiftEnum;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
@@ -21,7 +22,7 @@ public class User implements Serializable {
     private Boolean enabled;
 
     @OneToMany(mappedBy = "assignedUser",
-               fetch = FetchType.LAZY)
+            fetch = FetchType.LAZY)
     private List<Activity> activities = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -101,6 +102,39 @@ public class User implements Serializable {
 
     public void setActivities(List<Activity> activities) {
         this.activities = activities;
+    }
+
+    /**
+     * Author : Andrés V.
+     * Desc : Determines if the activity pattern (hour frequency) can be assign in the workshif of the user
+     *
+     * @param activityPattern
+     * @return
+     */
+    public Boolean canBeAssigned(ActivityPattern activityPattern) {
+        Worker worker = this.worker;
+        if(worker == null) return Boolean.FALSE;
+
+        return isInWorkShift(activityPattern.getHourFrequency(), worker.getWorkShiftEnum());
+    }
+
+    /**
+     * Author : Andrés V.
+     * Desc : Determines if the reference date is inside the workshift
+     *
+     * @param referenceDate
+     * @param workshift
+     * @return
+     */
+    private Boolean isInWorkShift(Date referenceDate,
+                                  WorkShiftEnum workshift) {
+        Date startWorkShiftDate = (Date) referenceDate.clone();
+        Date endWorkShiftDate = (Date) referenceDate.clone();
+        startWorkShiftDate.setHours(workshift.getStartHour());
+        startWorkShiftDate.setMinutes(workshift.getStartMinute());
+        endWorkShiftDate.setHours(workshift.getEndHour());
+        endWorkShiftDate.setMinutes(workshift.getEndMinute());
+        return referenceDate.compareTo(startWorkShiftDate) >= 0 && referenceDate.compareTo(endWorkShiftDate) <= 0;
     }
 
     private static final long serialVersionUID = 1L;

@@ -8,6 +8,7 @@ import com.yoviro.rest.dto.search.SearchResidentDTO;
 import com.yoviro.rest.models.entity.Contact;
 import com.yoviro.rest.models.entity.Contractor;
 import com.yoviro.rest.models.entity.Resident;
+import com.yoviro.rest.models.repository.ContactRepository;
 import com.yoviro.rest.models.repository.ResidentRepository;
 import com.yoviro.rest.models.repository.specification.handler.*;
 import com.yoviro.rest.service.interfaces.IResidentService;
@@ -30,6 +31,9 @@ public class ResidentServiceImpl implements IResidentService {
     @Autowired
     ResidentRepository residentRepository;
 
+    @Autowired
+    private ContactRepository contactRepository;
+
     @Override
     public Resident save(ResidentDTO residentDTO) {
         Resident resident = modelMapper.map(residentDTO, Resident.class);
@@ -41,7 +45,16 @@ public class ResidentServiceImpl implements IResidentService {
         ContactDTO contactDTO = residentDTO.getContact();
         OfficialIdDTO officialIdDTO = contactDTO.getOfficialIds().get(0);
         Resident resident = residentRepository.findByOfficialID(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
-        return resident != null ? resident : save(residentDTO);
+        if (resident == null) {
+            resident = new Resident();
+            resident.setEnable(Boolean.TRUE);
+            Contact contact = contactRepository.findByOfficialID(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
+            resident.setContact(contact);
+
+            return resident;
+        } else {
+            return resident;
+        }
     }
 
     @Override

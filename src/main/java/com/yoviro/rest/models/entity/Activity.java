@@ -31,7 +31,7 @@ public class Activity {
     @JoinColumn(name = "job_id")
     private Job job;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private User assignedUser;
 
     @NotNull

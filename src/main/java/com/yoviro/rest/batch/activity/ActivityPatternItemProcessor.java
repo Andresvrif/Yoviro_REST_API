@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ActivityPatternItemProcessor implements ItemProcessor<ActivityPattern, List<Activity>> {
     private static TeamTypeEnum teamTypeEnum = TeamTypeEnum.NURSES;
@@ -98,10 +99,16 @@ public class ActivityPatternItemProcessor implements ItemProcessor<ActivityPatte
 
     private User defineUserToBeAssigned(List<User> users,
                                         ActivityPattern activityPattern) {
-        List<User> candidates = new ArrayList<>();
-        for (User userToBeEvaluated : users) {
+        users = users.stream().filter(e -> e.canBeAssigned(activityPattern)).collect(Collectors.toList());
+        User userToBeAssigned = null;
+        for (User user : users) {
+            if (userToBeAssigned == null) userToBeAssigned = user;
 
+            if (userToBeAssigned.getActivities().size() < user.getActivities().size()) {
+                userToBeAssigned = user;
+            }
         }
-        return null;
+
+        return userToBeAssigned;
     }
 }

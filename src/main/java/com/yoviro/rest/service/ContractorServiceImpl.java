@@ -4,6 +4,7 @@ import com.yoviro.rest.dto.ContactDTO;
 import com.yoviro.rest.dto.ContractorDTO;
 import com.yoviro.rest.dto.OfficialIdDTO;
 import com.yoviro.rest.models.entity.Contact;
+import com.yoviro.rest.models.repository.ContactRepository;
 import com.yoviro.rest.models.repository.ContractorRepository;
 import com.yoviro.rest.models.repository.projections.ContratanteConContactoProjection;
 import com.yoviro.rest.models.entity.Contractor;
@@ -25,6 +26,9 @@ public class ContractorServiceImpl implements IContractorService {
     @Autowired
     private ContractorRepository contractorRepository;
 
+    @Autowired
+    private ContactRepository contactRepository;
+
     @Override
     public Contractor save(ContractorDTO contractorDTO) {
         Contractor contractor = modelMapper.map(contractorDTO, Contractor.class);
@@ -41,6 +45,14 @@ public class ContractorServiceImpl implements IContractorService {
         ContactDTO contactDTO = contractorDTO.getContact();
         OfficialIdDTO officialIdDTO = contactDTO.getOfficialIds().get(0);
         Contractor contractor = contractorRepository.findByOfficialID(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
-        return contractor != null ? contractor : save(contractorDTO);
+        if (contractor == null) {
+            contractor = new Contractor();
+            Contact contact = contactRepository.findByOfficialID(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
+            contractor.setContact(contact);
+
+            return contractorRepository.save(contractor);
+        } else {
+            return contractor;
+        }
     }
 }
