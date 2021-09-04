@@ -14,7 +14,7 @@ public class Worker {
     @Enumerated(EnumType.STRING)
     private WorkShiftEnum workShiftEnum;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contact_id", unique = true)
     private Contact contact;
 

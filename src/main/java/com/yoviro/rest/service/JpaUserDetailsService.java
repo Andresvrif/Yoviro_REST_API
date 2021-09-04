@@ -1,8 +1,10 @@
 package com.yoviro.rest.service;
 
+import com.yoviro.rest.models.entity.Contact;
 import com.yoviro.rest.models.repository.UserRepository;
 import com.yoviro.rest.models.entity.Role;
 import com.yoviro.rest.models.entity.User;
+import com.yoviro.rest.models.repository.WorkerRepository;
 import com.yoviro.rest.security.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,6 +29,9 @@ public class JpaUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository usuarioDao;
 
+    @Autowired
+    private WorkerRepository workerRepository;
+
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -44,7 +49,14 @@ public class JpaUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("Error login: no existe el usuario '" + username + "', no tiene roles asignado!");
         }
 
-        //return new CustomUserDetails(user.getUsername(), user.getPassword(), user.getEnabled(), true, true, true, authorities);
-        return new CustomUserDetails(user, user.getUsername(), user.getPassword(), authorities);
+        //At this point the user exist and his roles
+        Contact contact = user.getWorker().getContact();
+        return new CustomUserDetails(user,
+                                     authorities,
+                                     contact.getFirstName(),
+                                     contact.getSecondName(),
+                                     contact.getLastName(),
+                                     contact.getSecondLastName(),
+                                     contact.getBirthDate());
     }
 }

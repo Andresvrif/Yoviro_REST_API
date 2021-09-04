@@ -3,16 +3,20 @@ package com.yoviro.rest.security.filter;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yoviro.rest.models.repository.WorkerRepository;
 import com.yoviro.rest.security.CustomUserDetails;
 import com.yoviro.rest.security.service.IJWTService;
 import com.yoviro.rest.security.service.JWTServiceImpl;
 import com.yoviro.rest.models.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.stereotype.Component;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -73,12 +77,16 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+    protected void successfulAuthentication(HttpServletRequest request,
+                                            HttpServletResponse response,
+                                            FilterChain chain,
+                                            Authentication authResult) throws IOException, ServletException {
         String token = jwtService.create(authResult);
 
         //Esta instrucción siempre debe ir
         response.addHeader(JWTServiceImpl.HEADER_STRING, JWTServiceImpl.TOKEN_PREFIX + token);
         var user = ((CustomUserDetails) authResult.getPrincipal());
+
         Map<String, Object> body = new HashMap<String, Object>();
         body.put("token", token);
         body.put("user", user);

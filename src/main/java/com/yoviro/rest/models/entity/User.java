@@ -20,6 +20,10 @@ public class User implements Serializable {
 
     private Boolean enabled;
 
+    @OneToMany(mappedBy = "assignedUser",
+               fetch = FetchType.LAZY)
+    private List<Activity> activities = new ArrayList<>();
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_role",
             joinColumns = {@JoinColumn(name = "user_id")},
@@ -31,6 +35,9 @@ public class User implements Serializable {
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "team_id")})
     private List<Team> teams = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user")
+    private Worker worker;
 
     public Long getId() {
         return id;
@@ -78,6 +85,22 @@ public class User implements Serializable {
 
     public void setTeams(List<Team> teams) {
         this.teams = teams;
+    }
+
+    public Worker getWorker() {
+        return worker;
+    }
+
+    public void setWorker(Worker worker) {
+        this.worker = worker;
+    }
+
+    public List<Activity> getActivities() {
+        return activities;
+    }
+
+    public void setActivities(List<Activity> activities) {
+        this.activities = activities;
     }
 
     private static final long serialVersionUID = 1L;

@@ -1,56 +1,60 @@
 package com.yoviro.rest.security;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.yoviro.rest.models.entity.Contact;
+import com.yoviro.rest.models.entity.Worker;
+import net.bytebuddy.asm.Advice;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.Collection;
 import java.util.Date;
 
+/***
+ * Author : Andrés V.
+ * Desc : Wrap custom info related to the user login.
+ */
 public class CustomUserDetails extends User implements UserDetails {
-    private com.yoviro.rest.models.entity.User user;
+    private String firstName;
+    private String secondName;
+    private String lastName;
+    private String secondLastName;
+    private Date birthDate;
 
     public CustomUserDetails(com.yoviro.rest.models.entity.User user,
-                             String username,
-                             String password,
-                             Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, authorities);
-        this.user = user;
+                             Collection<? extends GrantedAuthority> authorities,
+                             String firstName,
+                             String secondName,
+                             String lastName,
+                             String secondLastName,
+                             Date birthDate) {
+        super(user.getUsername(), user.getPassword(), authorities);
+        this.firstName = firstName;
+        this.secondName = secondName;
+        this.lastName = lastName;
+        this.secondLastName = secondLastName;
+        this.birthDate = birthDate;
     }
 
-    public CustomUserDetails(String username,
-                             String password,
-                             Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, authorities);
+    public String getFirstName() {
+        return firstName;
     }
 
-    public CustomUserDetails(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
+    public String getSecondName() {
+        return secondName;
     }
 
-    public String getFirstName(){
-        //return user.getFirstName();
-        return null;
+    public String getLastName() {
+        return lastName;
     }
 
-    public String getSecondName(){
-        //return user.getSecondName();
-        return null;
-    }
-
-    public String getLastName(){
-        //return user.getLastName();
-        return null;
-    }
-
-    public String getSecondLastName(){
-        //return user.getSecondLastName();
-        return null;
+    public String getSecondLastName() {
+        return secondLastName;
     }
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-    public Date getBirthDate(){
-        //return user.getBirthDate();
-        return null;
+    public Date getBirthDate() {
+        return birthDate;
     }
 }
