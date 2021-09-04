@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -24,19 +25,23 @@ public class ActivityServiceImpl implements IActivityService {
 
     @Override
     public List<Activity> findActivitiesAssignedForUserForToday(String userName) {
-        Date today = new Date();
-        today.setHours(0);
-        today.setTime(0);
-        Date tomorrow = (Date) today.clone();
-        tomorrow.setDate(tomorrow.getDay() + 1);
+        Calendar today = Calendar.getInstance();
+        today.setTime(new Date());
+        today.set(Calendar.HOUR, 0);
+        today.set(Calendar.MINUTE, 0);
 
-        return findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(today, tomorrow, userName);
+        Calendar tomorrow = (Calendar) today.clone();
+        tomorrow.add(Calendar.DAY_OF_MONTH, 1);
+
+        return findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(today.getTime(), tomorrow.getTime(), userName);
     }
 
     @Override
     public List<Activity> findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(Date startDate,
                                                                                          Date endDate,
                                                                                          String userName) {
+        var x = startDate;
+        var y = endDate;
         return activityRepository.findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(startDate, endDate, userName);
     }
 }

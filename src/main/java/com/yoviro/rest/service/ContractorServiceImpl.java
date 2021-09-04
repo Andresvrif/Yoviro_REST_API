@@ -8,6 +8,7 @@ import com.yoviro.rest.models.repository.ContactRepository;
 import com.yoviro.rest.models.repository.ContractorRepository;
 import com.yoviro.rest.models.repository.projections.ContratanteConContactoProjection;
 import com.yoviro.rest.models.entity.Contractor;
+import com.yoviro.rest.service.interfaces.IContactService;
 import com.yoviro.rest.service.interfaces.IContractorService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class ContractorServiceImpl implements IContractorService {
     private ContractorRepository contractorRepository;
 
     @Autowired
-    private ContactRepository contactRepository;
+    private IContactService contactService;
 
     @Override
     public Contractor save(ContractorDTO contractorDTO) {
@@ -46,8 +47,8 @@ public class ContractorServiceImpl implements IContractorService {
         OfficialIdDTO officialIdDTO = contactDTO.getOfficialIds().get(0);
         Contractor contractor = contractorRepository.findByOfficialID(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
         if (contractor == null) {
+            Contact contact = contactService.getOrCreateContact(contactDTO);
             contractor = new Contractor();
-            Contact contact = contactRepository.findByOfficialID(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
             contractor.setContact(contact);
 
             return contractorRepository.save(contractor);

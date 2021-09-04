@@ -11,6 +11,7 @@ import com.yoviro.rest.models.entity.Resident;
 import com.yoviro.rest.models.repository.ContactRepository;
 import com.yoviro.rest.models.repository.ResidentRepository;
 import com.yoviro.rest.models.repository.specification.handler.*;
+import com.yoviro.rest.service.interfaces.IContactService;
 import com.yoviro.rest.service.interfaces.IResidentService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class ResidentServiceImpl implements IResidentService {
     ResidentRepository residentRepository;
 
     @Autowired
-    private ContactRepository contactRepository;
+    private IContactService contactService;
 
     @Override
     public Resident save(ResidentDTO residentDTO) {
@@ -46,9 +47,9 @@ public class ResidentServiceImpl implements IResidentService {
         OfficialIdDTO officialIdDTO = contactDTO.getOfficialIds().get(0);
         Resident resident = residentRepository.findByOfficialID(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
         if (resident == null) {
+            Contact contact = contactService.getOrCreateContact(contactDTO);
             resident = new Resident();
             resident.setEnable(Boolean.TRUE);
-            Contact contact = contactRepository.findByOfficialID(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
             resident.setContact(contact);
 
             return resident;
