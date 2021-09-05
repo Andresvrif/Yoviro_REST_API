@@ -97,6 +97,7 @@ public class ActivityPatternServiceImpl implements IActivityPatternService {
             activityPattern.setEndDate(activityPatternDTO.getEndDate());
             activityPattern.setSubject(activityPatternDTO.getSubject());
             activityPattern.setDescription(activityPatternDTO.getDescription());
+            activityPattern.setColorCode(activityPatternDTO.getColorCode());
         }
 
         //Make relationship between agreements and activity pattern

@@ -1,9 +1,12 @@
 package com.yoviro.rest.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.yoviro.rest.models.entity.Agreement;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Set;
 
@@ -13,11 +16,7 @@ public class ActivityPatternDTO {
     private Date createAt;
     private String patternCode; //Unique
     private Integer dayFrequency; //Cada 2 dias, cada 3 dias, etc...
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date startDate;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date endDate; //If it's null, end date
     private String subject; //
     private String description;
@@ -28,6 +27,8 @@ public class ActivityPatternDTO {
     private Date hourFrequency;
 
     private Set<AgreementDTO> agreementDTOs;
+
+    private String colorCode;
 
     public Long getId() {
         return id;
@@ -115,5 +116,13 @@ public class ActivityPatternDTO {
 
     public void setAgreementDTOs(Set<AgreementDTO> agreementDTOs) {
         this.agreementDTOs = agreementDTOs;
+    }
+
+    public String getColorCode() {
+        return colorCode;
+    }
+
+    public void setColorCode(String colorCode) {
+        this.colorCode = colorCode;
     }
 }

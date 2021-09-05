@@ -78,6 +78,9 @@ public class ActivityPattern {
     @NotNull
     private Boolean enable;
 
+    @Column(nullable = true, columnDefinition = "varchar(255) default '#099EAE'")
+    private String colorCode;
+
     @PrePersist
     public void PrePersist() {
         this.createAt = DateUtils.createNow().getTime();
@@ -188,6 +191,14 @@ public class ActivityPattern {
 
     public Boolean hasAgreements() {
         return agreements != null && agreements.size() > 0;
+    }
+
+    public String getColorCode() {
+        return colorCode;
+    }
+
+    public void setColorCode(String colorCode) {
+        this.colorCode = colorCode;
     }
 
     private static final long serialVersionUID = 1L;

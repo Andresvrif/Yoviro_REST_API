@@ -46,15 +46,14 @@ public class ActivityRestController {
         Calendar calendar = DateUtil.dateToCalendar(new Date());
         for (ActivityPattern activityPattern : activityPatterns) {
             activityCalendar = DateUtil.dateToCalendar(activityPattern.getHourFrequency());
-            activityCalendar.set(calendar.get(Calendar.YEAR),
-                                 calendar.get(Calendar.MONTH),
-                                 calendar.get(Calendar.DATE));
+            activityCalendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE));
 
             //Put data
             rowData = new HashMap<String, Object>();
             rowData.put("title", activityPattern.getSubject());
             rowData.put("start", pattern.format(activityCalendar.getTime()));
             rowData.put("patternCode", activityPattern.getPatternCode());
+            rowData.put("color", activityPattern.getColorCode());
 
             dataContainer.add(rowData);
         }

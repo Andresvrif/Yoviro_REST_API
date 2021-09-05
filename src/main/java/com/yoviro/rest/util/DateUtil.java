@@ -2,15 +2,12 @@ package com.yoviro.rest.util;
 
 import com.yoviro.rest.config.AppConfig;
 import org.joda.time.DateTimeComparator;
-
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtil {
+
     public static Date instanceDate(String date) throws Exception {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat(AppConfig.DATE_FORMAT);
