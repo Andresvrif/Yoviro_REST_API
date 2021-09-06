@@ -10,8 +10,12 @@ import java.util.List;
 public interface IActivityService {
     Iterable<Activity> saveAll(List<Activity> activities);
     List<Activity> findActivitiesAssignedForUserForToday(String userName);
-    List<Activity> findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(Date startDate,
+    List<Activity> findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(Date referenceDate,
                                                                                   Date endDate,
                                                                                   String userName);
+
+    List<Activity> findActivitiesRelatedToPatternCodeAndUserInASpecificDate(Date referenceDate,
+                                                                             String userName,
+                                                                             String patternCode);
 
 }

@@ -1,15 +1,10 @@
 package com.yoviro.rest.controller;
 
-import com.yoviro.rest.config.AppConfig;
-import com.yoviro.rest.models.entity.Activity;
-import com.yoviro.rest.models.entity.ActivityPattern;
-import com.yoviro.rest.models.entity.Resident;
+import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.service.interfaces.IActivityService;
 import com.yoviro.rest.util.DateUtil;
+import com.yoviro.rest.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,12 +26,18 @@ public class ActivityRestController {
 
         //Define Response
         Map<String, Object> response = new HashMap<String, Object>();
-        response.put("events", wrapActivities(activities));
+        response.put("events", wrapActivityEvents(activities));
 
         return response;
     }
 
-    public List<Map<String, Object>> wrapActivities(List<Activity> activities) {
+    /***
+     * Author: Andrés V.
+     * Desc : Wrap events associated to the user
+     * @param activities
+     * @return
+     */
+    public List<Map<String, Object>> wrapActivityEvents(List<Activity> activities) {
         Map<String, Object> rowData;
         List<Map<String, Object>> dataContainer = new ArrayList<Map<String, Object>>();
         HashSet<ActivityPattern> activityPatterns = (HashSet<ActivityPattern>) activities.stream().map(e -> e.getActivityPattern()).collect(Collectors.toSet());
@@ -54,6 +55,62 @@ public class ActivityRestController {
             rowData.put("start", pattern.format(activityCalendar.getTime()));
             rowData.put("patternCode", activityPattern.getPatternCode());
             rowData.put("color", activityPattern.getColorCode());
+
+            dataContainer.add(rowData);
+        }
+
+        return dataContainer;
+    }
+
+    @GetMapping("/activityDetailResidents")
+    public Map<String, Object> activityDetailResidents(@RequestParam String userName,
+                                                       @RequestParam String patternCode,
+                                                       @RequestParam Date assignedDate) {
+        var activities = activityService.findActivitiesRelatedToPatternCodeAndUserInASpecificDate(assignedDate, userName, patternCode);
+        //Define Response
+        return wrapActivityDetailResidents(activities);
+    }
+
+    public Map<String, Object> wrapActivityDetailResidents(List<Activity> activities) {
+        if (activities == null) return null;
+        if (activities.isEmpty()) return null;
+
+        ActivityPattern activityPatternReference = activities.stream().findFirst().get().getActivityPattern();
+        Map<String, Object> activityProperties = new HashMap<>();
+        activityProperties.put("patternCode", activityPatternReference.getPatternCode());
+        activityProperties.put("residents", wrapResidents(activities));
+
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("Activity", activityProperties);
+
+        return data;
+    }
+
+    private List<Map<String, Object>> wrapResidents(List<Activity> activities) {
+        Job job;
+        Resident resident;
+        Contact contact;
+        OfficialId primaryOfficialID;
+        Map<String, Object> rowData;
+        Map<String, String> officialID;
+        List<Map<String, Object>> dataContainer = new ArrayList<Map<String, Object>>();
+
+        for (Activity activity : activities) {
+            job = activity.getJob();
+            resident = job.getResident();
+            contact = resident.getContact();
+            primaryOfficialID = contact.getPrimaryOfficialID();
+
+            //Put data
+            officialID = new HashMap<>();
+            officialID.put("officialIDType", primaryOfficialID.getOfficialIdType().toString());
+            officialID.put("officialIDNumber", primaryOfficialID.getOfficialIdNumber());
+
+            rowData = new HashMap<String, Object>();
+            rowData.put("fullName", StringUtil.capitalizeWord(contact.getFullName()));
+            rowData.put("officialId", officialID);
+            rowData.put("status", activity.getStatus());
 
             dataContainer.add(rowData);
         }

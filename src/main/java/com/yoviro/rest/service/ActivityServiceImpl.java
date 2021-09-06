@@ -3,6 +3,7 @@ package com.yoviro.rest.service;
 import com.yoviro.rest.models.entity.Activity;
 import com.yoviro.rest.models.repository.ActivityRepository;
 import com.yoviro.rest.service.interfaces.IActivityService;
+import com.yoviro.rest.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,8 +26,7 @@ public class ActivityServiceImpl implements IActivityService {
 
     @Override
     public List<Activity> findActivitiesAssignedForUserForToday(String userName) {
-        Calendar today = Calendar.getInstance();
-        today.setTime(new Date());
+        Calendar today = DateUtil.dateToCalendar(new Date());
         today.set(Calendar.HOUR, 0);
         today.set(Calendar.MINUTE, 0);
 
@@ -40,8 +40,23 @@ public class ActivityServiceImpl implements IActivityService {
     public List<Activity> findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(Date startDate,
                                                                                          Date endDate,
                                                                                          String userName) {
-        var x = startDate;
-        var y = endDate;
         return activityRepository.findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(startDate, endDate, userName);
+    }
+
+    @Override
+    public List<Activity> findActivitiesRelatedToPatternCodeAndUserInASpecificDate(Date referenceDate,
+                                                                                   String userName,
+                                                                                   String patternCode) {
+        Calendar refDateCalendar = DateUtil.dateToCalendar(referenceDate);
+        refDateCalendar.set(Calendar.HOUR, 0);
+        refDateCalendar.set(Calendar.MINUTE, 0);
+
+        Calendar refTomorrowDateCalendar = (Calendar) refDateCalendar.clone();
+        refTomorrowDateCalendar.add(Calendar.DAY_OF_MONTH, 1);
+
+        return activityRepository.findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsernameAndActivityPatternPatternCode(refDateCalendar.getTime(),
+                                                                                                                              refTomorrowDateCalendar.getTime(),
+                                                                                                                              userName,
+                                                                                                                              patternCode);
     }
 }

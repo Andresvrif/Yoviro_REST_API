@@ -15,4 +15,9 @@ public interface ActivityRepository extends PagingAndSortingRepository<Activity,
     List<Activity> findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(Date startDate,
                                                                                   Date endDate,
                                                                                   String userName);
+
+    List<Activity> findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsernameAndActivityPatternPatternCode(Date startDate,
+                                                                                                                 Date endDate,
+                                                                                                                 String userName,
+                                                                                                                 String patternCode);
 }
