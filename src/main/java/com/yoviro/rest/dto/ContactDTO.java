@@ -17,7 +17,6 @@ public class ContactDTO {
 
     private String secondLastName;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date birthDate;
 
     private String email;

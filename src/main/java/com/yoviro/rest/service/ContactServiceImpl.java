@@ -73,7 +73,10 @@ public class ContactServiceImpl implements IContactService {
     public Contact getOrCreateContact(ContactDTO contactDTO) {
         OfficialIdDTO officialIdDTO = contactDTO.getOfficialIds().get(0);
         Contact contact = findContactByOfficialId(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
-        return contact != null ? contact : contactRepository.save(contact);
+        if (contact != null) return contact;
+
+        contact = modelMapper.map(contactDTO, Contact.class);
+        return contactRepository.save(contact);
     }
 
     static List<SearchFilter> instanceContactCriteria(SearchContactDTO searchContactDTO) {

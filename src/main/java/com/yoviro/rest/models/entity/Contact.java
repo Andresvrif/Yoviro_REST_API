@@ -18,7 +18,7 @@ import java.util.List;
         query = "select c from Contact as c " +
                 "inner join OfficialId as o " +
                 "ON o.contact.id=c.id where o.officialIdType=?1 and " +
-                "o.officialIdNumber=?2 and c.internal = false")
+                "o.officialIdNumber=?2")
 public class Contact implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

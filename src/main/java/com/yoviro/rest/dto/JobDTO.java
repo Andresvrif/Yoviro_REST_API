@@ -18,13 +18,10 @@ public abstract class JobDTO {
     @JsonProperty("residentDTO")
     private ResidentDTO resident;
 
-    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date startDate;
 
-    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date endDate;
 
-    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date effectiveDate;
 
     public Long getId() {

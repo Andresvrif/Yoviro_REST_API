@@ -53,7 +53,6 @@ public class CustomUserDetails extends User implements UserDetails {
         return secondLastName;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     public Date getBirthDate() {
         return birthDate;
     }

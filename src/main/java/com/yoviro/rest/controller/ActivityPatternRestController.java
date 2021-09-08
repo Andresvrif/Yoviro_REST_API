@@ -136,7 +136,7 @@ public class ActivityPatternRestController {
         ActivityPatternDTO activityPatternDTO = modelMapper.map(activityPattern, ActivityPatternDTO.class);
 
         activityPatternDTO.setAgreementDTOs(null);
-
+        //TODO retirar agreement DTOs
         return activityPatternDTO;
     }
 }

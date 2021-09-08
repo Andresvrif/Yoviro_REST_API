@@ -13,6 +13,7 @@ import java.util.Set;
 public class ActivityPatternDTO {
     @JsonIgnore
     private Long id;
+    @JsonIgnore
     private Date createAt;
     private String patternCode; //Unique
     private Integer dayFrequency; //Cada 2 dias, cada 3 dias, etc...
