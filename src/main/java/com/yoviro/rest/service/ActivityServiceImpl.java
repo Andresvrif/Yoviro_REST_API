@@ -9,9 +9,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ActivityServiceImpl implements IActivityService {
@@ -55,8 +57,23 @@ public class ActivityServiceImpl implements IActivityService {
         refTomorrowDateCalendar.add(Calendar.DAY_OF_MONTH, 1);
 
         return activityRepository.findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsernameAndActivityPatternPatternCode(refDateCalendar.getTime(),
-                                                                                                                              refTomorrowDateCalendar.getTime(),
-                                                                                                                              userName,
-                                                                                                                              patternCode);
+                refTomorrowDateCalendar.getTime(),
+                userName,
+                patternCode);
+    }
+
+    @Override
+    public void updateStatusActivities(List<Activity> activities) {
+        Activity activityRef;
+        List<Long> idActivities = activities.stream().map(activity -> activity.getId()).collect(Collectors.toList());
+        List<Activity> activitiesFromDB = activityRepository.findAllByIdIn(idActivities);
+
+        //Update Data
+        for (Activity activityToBeUpdated : activitiesFromDB) {
+            activityRef = activities.stream().filter(activity -> activity.getId() == activityToBeUpdated.getId()).findFirst().get();
+            activityToBeUpdated.setStatus(activityRef.getStatus());
+        }
+
+        activityRepository.saveAll(activitiesFromDB);
     }
 }

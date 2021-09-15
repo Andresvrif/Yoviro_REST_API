@@ -1,14 +1,16 @@
 package com.yoviro.rest.controller;
 
+import com.yoviro.rest.config.enums.ActivityStatusEnum;
+import com.yoviro.rest.dto.ActivityDTO;
 import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.service.interfaces.IActivityService;
 import com.yoviro.rest.util.DateUtil;
 import com.yoviro.rest.util.StringUtil;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -67,54 +69,69 @@ public class ActivityRestController {
                                                        @RequestParam String patternCode,
                                                        @RequestParam Date assignedDate) {
         var activities = activityService.findActivitiesRelatedToPatternCodeAndUserInASpecificDate(assignedDate, userName, patternCode);
+
         //Define Response
-        return wrapActivityDetailResidents(activities);
+        return wrapActivities(activities);
     }
 
-    public Map<String, Object> wrapActivityDetailResidents(List<Activity> activities) {
+    /***
+     * Author: Andrés V.
+     * Desc : Wrap activities
+     * @param activities
+     * @return
+     */
+    public Map<String, Object> wrapActivities(List<Activity> activities) {
         if (activities == null) return null;
         if (activities.isEmpty()) return null;
 
-        ActivityPattern activityPatternReference = activities.stream().findFirst().get().getActivityPattern();
-        Map<String, Object> activityProperties = new HashMap<>();
-        activityProperties.put("patternCode", activityPatternReference.getPatternCode());
-        activityProperties.put("residents", wrapResidents(activities));
-
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("Activity", activityProperties);
-
-        return data;
-    }
-
-    private List<Map<String, Object>> wrapResidents(List<Activity> activities) {
         Job job;
         Resident resident;
         Contact contact;
         OfficialId primaryOfficialID;
+        List<Map<String, Object>> wrapActivities = new ArrayList<>();
         Map<String, Object> rowData;
-        Map<String, String> officialID;
-        List<Map<String, Object>> dataContainer = new ArrayList<Map<String, Object>>();
 
         for (Activity activity : activities) {
             job = activity.getJob();
             resident = job.getResident();
             contact = resident.getContact();
             primaryOfficialID = contact.getPrimaryOfficialID();
-
-            //Put data
-            officialID = new HashMap<>();
-            officialID.put("officialIDType", primaryOfficialID.getOfficialIdType().toString());
-            officialID.put("officialIDNumber", primaryOfficialID.getOfficialIdNumber());
-
             rowData = new HashMap<String, Object>();
+            rowData.put("id", activity.getId());
             rowData.put("fullName", StringUtil.capitalizeWord(contact.getFullName()));
-            rowData.put("officialId", officialID);
+            rowData.put("officialIdNumber", primaryOfficialID.getOfficialIdNumber());
+            rowData.put("officialIdType", primaryOfficialID.getOfficialIdType());
             rowData.put("status", activity.getStatus());
 
-            dataContainer.add(rowData);
+            wrapActivities.add(rowData);
         }
 
-        return dataContainer;
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("Activities", wrapActivities);
+
+        return data;
+    }
+
+    @PutMapping("/updateStatusActivities")
+    public void updateStatusActivities(@RequestBody String json) throws JSONException {
+        JSONObject jsonObject = new JSONObject(json);
+        JSONObject jsonActivity;
+        JSONArray jsonActivities = jsonObject.getJSONArray("activities");
+
+        Activity activity;
+        List<Activity> activities = new ArrayList<>();
+        for (int i = 0; i < jsonActivities.length(); i++) {
+            jsonActivity = jsonActivities.getJSONObject(i);
+
+            //Instance Activity
+            activity = new Activity();
+            activity.setId(Long.valueOf(jsonActivity.get("id").toString()));
+            activity.setStatus(ActivityStatusEnum.valueOf(jsonActivity.get("status").toString()));
+
+            activities.add(activity);
+        }
+
+        activityService.updateStatusActivities(activities);
     }
 }

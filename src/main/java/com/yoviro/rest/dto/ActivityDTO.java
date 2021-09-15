@@ -17,7 +17,53 @@ public class ActivityDTO {
 
     private User assignedUser;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
     private ActivityStatusEnum status;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Date getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Date createAt) {
+        this.createAt = createAt;
+    }
+
+    public ActivityPatternDTO getActivityPattern() {
+        return activityPattern;
+    }
+
+    public void setActivityPattern(ActivityPatternDTO activityPattern) {
+        this.activityPattern = activityPattern;
+    }
+
+    public JobDTO getJob() {
+        return job;
+    }
+
+    public void setJob(JobDTO job) {
+        this.job = job;
+    }
+
+    public User getAssignedUser() {
+        return assignedUser;
+    }
+
+    public void setAssignedUser(User assignedUser) {
+        this.assignedUser = assignedUser;
+    }
+
+    public ActivityStatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(ActivityStatusEnum status) {
+        this.status = status;
+    }
 }

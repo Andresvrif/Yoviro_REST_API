@@ -20,4 +20,6 @@ public interface ActivityRepository extends PagingAndSortingRepository<Activity,
                                                                                                                  Date endDate,
                                                                                                                  String userName,
                                                                                                                  String patternCode);
+
+    List<Activity> findAllByIdIn(List<Long> ids);
 }

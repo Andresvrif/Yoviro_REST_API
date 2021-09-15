@@ -18,4 +18,5 @@ public interface IActivityService {
                                                                              String userName,
                                                                              String patternCode);
 
+    void updateStatusActivities(List<Activity> activities);
 }
