@@ -23,9 +23,6 @@ public class ActivityPatternItemProcessor implements ItemProcessor<ActivityPatte
 
     @Override
     public List<Activity> process(ActivityPattern activityPattern) throws Exception {
-        System.out.println("------------------------------ process - START ------------------------------");
-
-
         return processActivityPattern(activityPattern);
     }
 
@@ -34,11 +31,15 @@ public class ActivityPatternItemProcessor implements ItemProcessor<ActivityPatte
         List<User> users = retrieveUserTeams(team);
         List<Activity> activitiesToBeCreated = new ArrayList<Activity>();
         List<Agreement> agreements = activityPattern.getAgreements();
+        Date currentDate = new Date();
 
         for (Agreement agreement : agreements) {
-            if (!applyToBeCreated(activityPattern, agreement)) continue;
+            if (!agreement.applyActivityPatternToBeAssigned(currentDate, activityPattern)) continue;
+
             //Define User to be assigned
-            User userToAssign = defineUserToBeAssigned(users, activityPattern);
+            User userToAssign = defineUserToBeAssigned(currentDate,
+                                                       users,
+                                                       activityPattern);
 
             //At this point, the activity can be created
             Activity activity = new Activity();
@@ -51,31 +52,6 @@ public class ActivityPatternItemProcessor implements ItemProcessor<ActivityPatte
         }
 
         return activitiesToBeCreated.isEmpty() ? null : activitiesToBeCreated;
-    }
-
-    /***
-     * Author : Andrés V.
-     * Desc : Evaluates if the activity can be created or not
-     * @param activityPattern
-     * @param agreement
-     * @return
-     */
-    private Boolean applyToBeCreated(ActivityPattern activityPattern,
-                                     Agreement agreement) {
-        Date currentDate = new Date();
-        try {
-            //Can't create activities in not vigent agreements
-            if (agreement.getStatus(currentDate) != StatusTerm.VIGENT)
-                return Boolean.FALSE;
-
-            //Can't re create the same activity in the same date
-            if (agreement.getJobs().stream().anyMatch(job -> JobHandler.hasJobActivityRelated(job, activityPattern, currentDate)))
-                return Boolean.FALSE;
-
-            return Boolean.TRUE;
-        } catch (Exception ex) {
-            return Boolean.FALSE;
-        }
     }
 
     /***
@@ -97,9 +73,18 @@ public class ActivityPatternItemProcessor implements ItemProcessor<ActivityPatte
         return candidates;
     }
 
-    private User defineUserToBeAssigned(List<User> users,
+    /***
+     * Author : Andrés V.
+     * Desc : Defines the user to be assigned accord user and activity pattern
+     * @param users
+     * @param activityPattern
+     * @return
+     */
+    private User defineUserToBeAssigned(Date referenceDate,
+                                        List<User> users,
                                         ActivityPattern activityPattern) {
-        users = users.stream().filter(e -> e.canBeAssigned(activityPattern)).collect(Collectors.toList());
+        users = users.stream().filter(e -> e.canBeAssigned(referenceDate, activityPattern)).collect(Collectors.toList());
+        //TODO balancing
         User userToBeAssigned = null;
         for (User user : users) {
             if (userToBeAssigned == null) userToBeAssigned = user;

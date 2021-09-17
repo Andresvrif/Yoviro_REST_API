@@ -1,8 +1,11 @@
 package com.yoviro.rest.models.entity;
 
-import com.yoviro.rest.config.enums.WorkShiftEnum;
+import com.yoviro.rest.util.DateUtil;
+
 import javax.persistence.*;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 @Entity
@@ -111,30 +114,32 @@ public class User implements Serializable {
      * @param activityPattern
      * @return
      */
-    public Boolean canBeAssigned(ActivityPattern activityPattern) {
+    public Boolean canBeAssigned(Date referenceDate,
+                                 ActivityPattern activityPattern) {
+        //Hasn't been registered as a worker
         Worker worker = this.worker;
-        if(worker == null) return Boolean.FALSE;
+        if (worker == null) return Boolean.FALSE;
 
-        return isInWorkShift(activityPattern.getHourFrequency(), worker.getWorkShiftEnum());
+        //Hasn't a workshift related
+        WorkShift workShift = worker.getWorkShift();
+        if (workShift == null) return Boolean.FALSE;
+
+        return workShift.isIn(referenceDate, activityPattern);
     }
 
-    /**
+    /***
      * Author : Andrés V.
-     * Desc : Determines if the reference date is inside the workshift
-     *
+     * Desc : Determines if the reference date is inside of the workshift or not
      * @param referenceDate
-     * @param workshift
+     * @param workShift
      * @return
      */
-    private Boolean isInWorkShift(Date referenceDate,
-                                  WorkShiftEnum workshift) {
-        Date startWorkShiftDate = (Date) referenceDate.clone();
-        Date endWorkShiftDate = (Date) referenceDate.clone();
-        startWorkShiftDate.setHours(workshift.getStartHour());
-        startWorkShiftDate.setMinutes(workshift.getStartMinute());
-        endWorkShiftDate.setHours(workshift.getEndHour());
-        endWorkShiftDate.setMinutes(workshift.getEndMinute());
-        return referenceDate.compareTo(startWorkShiftDate) >= 0 && referenceDate.compareTo(endWorkShiftDate) <= 0;
+    public Boolean isInWorkShift(Date referenceDate,
+                                 WorkShift workShift) {
+        Calendar referenceCalendar = DateUtil.dateToCalendar(referenceDate);
+        LocalDate referenceLocalDate = LocalDate.of(referenceCalendar.get(Calendar.YEAR), referenceCalendar.get(Calendar.MONTH), referenceCalendar.get(Calendar.DAY_OF_MONTH));
+        List<WorkshiftItem> workshiftItems = (List<WorkshiftItem>) workShift.getWorkshiftItems().stream().filter(e -> e.getDayOfWeek() == referenceLocalDate.getDayOfWeek());
+        return Boolean.FALSE;
     }
 
     private static final long serialVersionUID = 1L;

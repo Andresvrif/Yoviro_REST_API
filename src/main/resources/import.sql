@@ -2073,17 +2073,39 @@ INSERT INTO official_id (id, official_id_number, official_id_type, primary_offic
 INSERT INTO official_id (id, official_id_number, official_id_type, primary_official_id, contact_id) VALUES (1007,  '59806237',  'DNI', true, 1007);
 INSERT INTO official_id (id, official_id_number, official_id_type, primary_official_id, contact_id) VALUES (1008,  '70007861',  'DNI', true, 1008);
 INSERT INTO official_id (id, official_id_number, official_id_type, primary_official_id, contact_id) VALUES (1009,  '18910121',  'DNI', true, 1009);
+/* WORK SHIFTS */
+INSERT INTO work_shift (name) VALUES ('Lunes y Miercoles Full');
+INSERT INTO work_shift (name) VALUES ('Martes y Jueves Full');
+INSERT INTO work_shift (name) VALUES ('Viernes y Domingo Full');
+INSERT INTO work_shift (name) VALUES ('Sabado Full');
+
+/* WORK SHIFT ITEMS de 6 a 6, horario 24hrs */
+INSERT INTO workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('MONDAY', '06:00:00', '23:59:59', 1); /* START - LUNES FULL DAY */
+INSERT INTO workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('TUESDAY', '00:00:00', '05:59:59', 1); /* END - LUNES FULL DAY */
+INSERT INTO workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('WEDNESDAY', '06:00:00', '23:59:59', 1); /* START - MIERCOLES FULL DAY */
+INSERT INTO workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('THURSDAY', '00:00:00', '05:59:59', 1); /* END - MIERCOLES FULL DAY */
+
+INSERT INTO workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('TUESDAY', '06:00:00', '23:59:59', 2);/* START - MARTES FULL DAY */
+INSERT INTO workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('WEDNESDAY', '00:00:00', '05:59:59', 2);/* END - MARTES FULL DAY */
+INSERT INTO workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('THURSDAY', '06:00:00', '23:59:59', 2);/* START - JUEVES FULL DAY */
+INSERT INTO workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('FRIDAY', '00:00:00', '05:59:59', 2);/* END - JUEVES FULL DAY */
+
+INSERT INTO workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('FRIDAY', '06:00:00', '23:59:59', 3); /* START - VIERNES FULL DAY */
+INSERT INTO workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('SATURDAY', '00:00:00', '05:59:59', 3); /* START - VIERNES FULL DAY */
+INSERT INTO workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('SUNDAY', '06:00:00', '23:59:59', 3); /* START - DOMINGO FULL DAY */
+INSERT INTO workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('MONDAY', '00:00:00', '05:59:59', 3); /* START - DOMINGO FULL DAY */
+
+INSERT INTO workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('SATURDAY', '06:00:00', '23:59:59', 4); /* START - SABADO FULL DAY */
+INSERT INTO workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('SUNDAY', '00:00:00', '05:59:59', 4); /* START - SABADO FULL DAY */
 
 /* WORKERS */
-INSERT INTO worker (id, work_shift_enum, contact_id, user_id)  VALUES (1,'MORNING',1001,2);
-INSERT INTO worker (id, work_shift_enum, contact_id, user_id)  VALUES (2,'MORNING',1002,3);
-INSERT INTO worker (id, work_shift_enum, contact_id, user_id)  VALUES (3,'MORNING',1003,4);
-INSERT INTO worker (id, work_shift_enum, contact_id, user_id)  VALUES (4,'LATE',1004,5);
-INSERT INTO worker (id, work_shift_enum, contact_id, user_id)  VALUES (5,'LATE',1005,6);
-INSERT INTO worker (id, work_shift_enum, contact_id, user_id)  VALUES (6,'LATE',1006,7);
-INSERT INTO worker (id, work_shift_enum, contact_id, user_id)  VALUES (7,'EVENING',1007,8);
-INSERT INTO worker (id, work_shift_enum, contact_id, user_id)  VALUES (8,'EVENING',1008,9);
-INSERT INTO worker (id, work_shift_enum, contact_id, user_id)  VALUES (9,'EVENING',1008,10);
+INSERT INTO worker (id, work_shift_id, contact_id, user_id)  VALUES (1,1,1001,2); /* rrojas */
+INSERT INTO worker (id, work_shift_id, contact_id, user_id)  VALUES (2,1,1002,3); /* ghinojosa */
+INSERT INTO worker (id, work_shift_id, contact_id, user_id)  VALUES (3,2,1003,4); /* dmontoya */
+INSERT INTO worker (id, work_shift_id, contact_id, user_id)  VALUES (4,2,1004,5); /* mmoncada */
+INSERT INTO worker (id, work_shift_id, contact_id, user_id)  VALUES (5,3,1005,6); /* award */
+INSERT INTO worker (id, work_shift_id, contact_id, user_id)  VALUES (6,3,1006,7); /* olopez */
+INSERT INTO worker (id, work_shift_id, contact_id, user_id)  VALUES (7,4,1007,8); /* dvila */
 
 /* CONTRATANTES */
 INSERT INTO contractor (contact_id) VALUES(26);

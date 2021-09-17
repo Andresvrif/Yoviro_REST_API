@@ -115,5 +115,28 @@ public class Agreement {
         return JobHandler.getStatusTerm(lastJob, referenceDate);
     }
 
+    /**
+     * Author : Andrés V.
+     * Desc : Checks if the activity pattern can be assigned to this agreement
+     *
+     * @return
+     */
+    public Boolean applyActivityPatternToBeAssigned(Date referenceDate,
+                                                    ActivityPattern activityPattern) {
+        try {
+            //Can't create activities in not vigent agreements
+            if (this.getStatus(referenceDate) != StatusTerm.VIGENT)
+                return Boolean.FALSE;
+
+            //Can't re create the same activity in the same date
+            if (this.getJobs().stream().anyMatch(job -> JobHandler.hasJobActivityRelated(job, activityPattern, referenceDate)))
+                return Boolean.FALSE;
+
+            return Boolean.TRUE;
+        } catch (Exception ex) {
+            return Boolean.FALSE;
+        }
+    }
+
     private static final long serialVersionUID = 1L;
 }

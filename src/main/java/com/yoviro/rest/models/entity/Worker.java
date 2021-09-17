@@ -1,7 +1,5 @@
 package com.yoviro.rest.models.entity;
 
-import com.yoviro.rest.config.enums.WorkShiftEnum;
-
 import javax.persistence.*;
 
 @Entity
@@ -11,10 +9,6 @@ public class Worker {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private WorkShiftEnum workShiftEnum;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contact_id", unique = true)
     private Contact contact;
@@ -23,20 +17,16 @@ public class Worker {
     @JoinColumn(name = "user_id", unique = true)
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "work_shift_id")
+    private WorkShift workShift;
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public WorkShiftEnum getWorkShiftEnum() {
-        return workShiftEnum;
-    }
-
-    public void setWorkShiftEnum(WorkShiftEnum workShiftEnum) {
-        this.workShiftEnum = workShiftEnum;
     }
 
     public Contact getContact() {
@@ -53,6 +43,14 @@ public class Worker {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public WorkShift getWorkShift() {
+        return workShift;
+    }
+
+    public void setWorkShift(WorkShift workShift) {
+        this.workShift = workShift;
     }
 
     private static final long serialVersionUID = 1L;

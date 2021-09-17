@@ -17,8 +17,6 @@ public class Activity {
     private Long id;
 
     @NotNull
-    @ColumnDefault("CURRENT_TIMESTAMP(6)")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createAt;
 
     @NotNull
@@ -88,7 +86,8 @@ public class Activity {
 
     @PrePersist
     public void PrePersist() {
-        this.createAt = DateUtils.createNow().getTime();
+        var x = new Date();
+        this.createAt = x;
     }
 
     private static final long serialVersionUID = 1L;
