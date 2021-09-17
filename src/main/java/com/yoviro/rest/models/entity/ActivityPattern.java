@@ -1,5 +1,6 @@
 package com.yoviro.rest.models.entity;
 
+import com.yoviro.rest.config.enums.FormRequestedEnum;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.thymeleaf.util.DateUtils;
@@ -80,6 +81,10 @@ public class ActivityPattern {
 
     @Column(nullable = true, columnDefinition = "varchar(255) default '#099EAE'")
     private String colorCode;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
+    private FormRequestedEnum relatedForm;
 
     @PrePersist
     public void PrePersist() {
@@ -199,6 +204,14 @@ public class ActivityPattern {
 
     public void setColorCode(String colorCode) {
         this.colorCode = colorCode;
+    }
+
+    public FormRequestedEnum getRelatedForm() {
+        return relatedForm;
+    }
+
+    public void setRelatedForm(FormRequestedEnum relatedForm) {
+        this.relatedForm = relatedForm;
     }
 
     private static final long serialVersionUID = 1L;

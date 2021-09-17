@@ -102,6 +102,7 @@ public class ActivityRestController {
             rowData.put("officialIdNumber", primaryOfficialID.getOfficialIdNumber());
             rowData.put("officialIdType", primaryOfficialID.getOfficialIdType());
             rowData.put("status", activity.getStatus());
+            rowData.put("relatedForm", activity.getActivityPattern().getRelatedForm());
 
             wrapActivities.add(rowData);
         }

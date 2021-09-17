@@ -84,7 +84,7 @@ public class ActivityPatternItemProcessor implements ItemProcessor<ActivityPatte
                                         List<User> users,
                                         ActivityPattern activityPattern) {
         users = users.stream().filter(e -> e.canBeAssigned(referenceDate, activityPattern)).collect(Collectors.toList());
-        //TODO balancing
+        //TODO BALANCING!
         User userToBeAssigned = null;
         for (User user : users) {
             if (userToBeAssigned == null) userToBeAssigned = user;
