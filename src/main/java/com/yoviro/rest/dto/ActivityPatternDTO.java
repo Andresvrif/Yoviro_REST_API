@@ -1,16 +1,11 @@
 package com.yoviro.rest.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.text.SimpleDateFormat;
+import com.yoviro.rest.config.enums.FormRequestedEnum;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Set;
 
 public class ActivityPatternDTO {
@@ -22,10 +17,11 @@ public class ActivityPatternDTO {
     private Integer dayFrequency; //Cada 2 dias, cada 3 dias, etc...
     private LocalDate startDate;
     private LocalDate endDate; //If it's null, end date
-    private String subject; //
+    private String subject;
     private String description;
     private Boolean enable;
     private Set<AgreementDTO> agreements;
+    private FormRequestedEnum relatedForm;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime hourFrequency;
@@ -136,5 +132,13 @@ public class ActivityPatternDTO {
 
     public void setColorCode(String colorCode) {
         this.colorCode = colorCode;
+    }
+
+    public FormRequestedEnum getRelatedForm() {
+        return relatedForm;
+    }
+
+    public void setRelatedForm(FormRequestedEnum relatedForm) {
+        this.relatedForm = relatedForm;
     }
 }
