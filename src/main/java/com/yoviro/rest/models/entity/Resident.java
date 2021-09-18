@@ -6,6 +6,7 @@ import org.thymeleaf.util.DateUtils;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "resident", uniqueConstraints = {
@@ -29,6 +30,11 @@ public class Resident {
     @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "contact_id")
     private Contact contact; //Paciente Adulto Mayor
+
+    @OneToMany(mappedBy = "resident",
+               fetch = FetchType.LAZY,
+               orphanRemoval = true)
+    private List<VitalSignsCheck> vitalSignsChecks;
 
     @NotNull
     @Column(name = "create_at")
@@ -58,6 +64,14 @@ public class Resident {
 
     public void setContact(Contact contact) {
         this.contact = contact;
+    }
+
+    public List<VitalSignsCheck> getVitalSignsChecks() {
+        return vitalSignsChecks;
+    }
+
+    public void setVitalSignsChecks(List<VitalSignsCheck> vitalSignsChecks) {
+        this.vitalSignsChecks = vitalSignsChecks;
     }
 
     public Date getCreateAt() {

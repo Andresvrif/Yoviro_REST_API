@@ -1,6 +1,9 @@
 package com.yoviro.rest.dto;
 
 import com.fasterxml.jackson.annotation.*;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +20,8 @@ public class ContactDTO {
 
     private String secondLastName;
 
-    private Date birthDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate birthDate;
 
     private String email;
 
@@ -72,14 +76,6 @@ public class ContactDTO {
         this.secondLastName = secondLastName;
     }
 
-    public Date getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -94,6 +90,14 @@ public class ContactDTO {
 
     public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
     }
 
     public List<OfficialIdDTO> getOfficialIds() {

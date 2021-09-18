@@ -1,10 +1,13 @@
 package com.yoviro.rest.models.entity;
 
 import com.yoviro.rest.util.DateUtil;
+import org.apache.tomcat.jni.Local;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -64,19 +67,19 @@ public class WorkShift {
      *
      * @return
      */
-    public Boolean isIn(Date referenceDate,
+    public Boolean isIn(LocalDateTime referenceDate,
                         ActivityPattern activityPattern) {
-        //Mix Reference date and activity pattern hour
-        Calendar referenceCalendar = DateUtil.dateToCalendar(referenceDate);
-        Calendar activityPatternCalendar = DateUtil.dateToCalendar(activityPattern.getHourFrequency());
 
-        referenceCalendar.set(Calendar.HOUR_OF_DAY, activityPatternCalendar.get(Calendar.HOUR_OF_DAY));
-        referenceCalendar.set(Calendar.MINUTE, activityPatternCalendar.get(Calendar.MINUTE));
-        referenceCalendar.set(Calendar.SECOND, activityPatternCalendar.get(Calendar.SECOND));
+        //Mix Reference date and activity pattern hour
+        LocalTime activityPatternHour = activityPattern.getHourFrequency();
+        LocalDateTime reference = LocalDateTime.of(referenceDate.toLocalDate(), referenceDate.toLocalTime());
+        reference.withHour(activityPatternHour.getHour())
+                .withMinute(activityPatternHour.getMinute())
+                .withSecond(activityPatternHour.getSecond());
 
         List<WorkshiftItem> workshiftItems = this.workshiftItems;
         if (workshiftItems == null || workshiftItems.isEmpty()) return Boolean.FALSE;
 
-        return workshiftItems.stream().anyMatch(workshiftItem -> workshiftItem.match(referenceCalendar.getTime()));
+        return workshiftItems.stream().anyMatch(workshiftItem -> workshiftItem.match(reference));
     }
 }

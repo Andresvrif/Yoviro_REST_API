@@ -10,9 +10,11 @@ import com.yoviro.rest.service.interfaces.ITeamService;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 public class ActivityPatternItemProcessor implements ItemProcessor<ActivityPattern, List<Activity>> {
@@ -31,7 +33,7 @@ public class ActivityPatternItemProcessor implements ItemProcessor<ActivityPatte
         List<User> users = retrieveUserTeams(team);
         List<Activity> activitiesToBeCreated = new ArrayList<Activity>();
         List<Agreement> agreements = activityPattern.getAgreements();
-        Date currentDate = new Date();
+        LocalDateTime currentDate = LocalDateTime.now();
 
         for (Agreement agreement : agreements) {
             if (!agreement.applyActivityPatternToBeAssigned(currentDate, activityPattern)) continue;
@@ -80,7 +82,7 @@ public class ActivityPatternItemProcessor implements ItemProcessor<ActivityPatte
      * @param activityPattern
      * @return
      */
-    private User defineUserToBeAssigned(Date referenceDate,
+    private User defineUserToBeAssigned(LocalDateTime referenceDate,
                                         List<User> users,
                                         ActivityPattern activityPattern) {
         users = users.stream().filter(e -> e.canBeAssigned(referenceDate, activityPattern)).collect(Collectors.toList());

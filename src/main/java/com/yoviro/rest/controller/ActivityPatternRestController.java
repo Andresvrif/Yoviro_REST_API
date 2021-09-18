@@ -25,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -114,7 +115,7 @@ public class ActivityPatternRestController {
     private List<Map<String, Object>> wrapAgreementResidentRelated(List<AgreementResidentProjection> data) {
         Map<String, Object> rowData;
         List<Map<String, Object>> dataContainer = new ArrayList<Map<String, Object>>();
-        for (AgreementResidentProjection item : data){
+        for (AgreementResidentProjection item : data) {
             Agreement agreement = agreementService.findAgreementByAgreementNumber(item.getAgreementNumber());
             Job job = JobHandler.lastJobFromAgreement(agreement);
 
@@ -122,7 +123,7 @@ public class ActivityPatternRestController {
             rowData = new HashMap<String, Object>();
             rowData.put("fullName", StringUtil.capitalizeWord(item.getFullName()));
             rowData.put("agreementNumber", item.getAgreementNumber());
-            rowData.put("status", JobHandler.getStatusTerm(job, new Date()));
+            rowData.put("status", JobHandler.getStatusTerm(job, LocalDateTime.now()));
 
             dataContainer.add(rowData);
         }
@@ -136,7 +137,6 @@ public class ActivityPatternRestController {
         ActivityPatternDTO activityPatternDTO = modelMapper.map(activityPattern, ActivityPatternDTO.class);
 
         activityPatternDTO.setAgreementDTOs(null);
-        //TODO retirar agreement DTOs
         return activityPatternDTO;
     }
 }

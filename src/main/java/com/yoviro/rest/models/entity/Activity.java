@@ -7,6 +7,7 @@ import org.thymeleaf.util.DateUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -17,7 +18,7 @@ public class Activity {
     private Long id;
 
     @NotNull
-    private Date createAt;
+    private LocalDateTime createAt;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,11 +45,11 @@ public class Activity {
         this.id = id;
     }
 
-    public Date getCreateAt() {
+    public LocalDateTime getCreateAt() {
         return createAt;
     }
 
-    public void setCreateAt(Date createAt) {
+    public void setCreateAt(LocalDateTime createAt) {
         this.createAt = createAt;
     }
 
@@ -86,8 +87,7 @@ public class Activity {
 
     @PrePersist
     public void PrePersist() {
-        var x = new Date();
-        this.createAt = x;
+        this.createAt = LocalDateTime.now();
     }
 
     private static final long serialVersionUID = 1L;

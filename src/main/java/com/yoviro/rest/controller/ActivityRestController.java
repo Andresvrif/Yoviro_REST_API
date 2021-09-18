@@ -6,6 +6,7 @@ import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.service.interfaces.IActivityService;
 import com.yoviro.rest.util.DateUtil;
 import com.yoviro.rest.util.StringUtil;
+import org.apache.tomcat.jni.Local;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,18 +48,20 @@ public class ActivityRestController {
         Map<String, Object> rowData;
         List<Map<String, Object>> dataContainer = new ArrayList<Map<String, Object>>();
         HashSet<ActivityPattern> activityPatterns = (HashSet<ActivityPattern>) activities.stream().map(e -> e.getActivityPattern()).collect(Collectors.toSet());
-        SimpleDateFormat pattern = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-        Calendar activityCalendar = null;
-        Calendar calendar = DateUtil.dateToCalendar(new Date());
+        LocalDateTime localDateTime;
         for (ActivityPattern activityPattern : activityPatterns) {
-            activityCalendar = DateUtil.dateToCalendar(activityPattern.getHourFrequency());
-            activityCalendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE));
+            LocalTime activityPatternHour = activityPattern.getHourFrequency();
+            localDateTime = LocalDateTime.now()
+                                         .withHour(activityPatternHour.getHour())
+                                         .withMinute(activityPatternHour.getMinute())
+                                         .withSecond(activityPatternHour.getSecond());
 
             //Put data
             rowData = new HashMap<String, Object>();
             rowData.put("title", activityPattern.getSubject());
-            rowData.put("start", pattern.format(activityCalendar.getTime()));
+            rowData.put("start", localDateTime.format(formatter));
             rowData.put("patternCode", activityPattern.getPatternCode());
             rowData.put("color", activityPattern.getColorCode());
 
@@ -67,8 +74,9 @@ public class ActivityRestController {
     @GetMapping("/activityDetailResidents")
     public Map<String, Object> activityDetailResidents(@RequestParam String userName,
                                                        @RequestParam String patternCode,
-                                                       @RequestParam Date assignedDate) {
-        var activities = activityService.findActivitiesRelatedToPatternCodeAndUserInASpecificDate(assignedDate, userName, patternCode);
+                                                       @RequestParam LocalDate assignedDate) {
+        LocalDateTime localDateTime = LocalDateTime.of(assignedDate, LocalTime.MIDNIGHT);
+        var activities = activityService.findActivitiesRelatedToPatternCodeAndUserInASpecificDate(localDateTime, userName, patternCode);
 
         //Define Response
         return wrapActivities(activities);

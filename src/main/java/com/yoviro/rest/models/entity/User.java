@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -114,7 +115,7 @@ public class User implements Serializable {
      * @param activityPattern
      * @return
      */
-    public Boolean canBeAssigned(Date referenceDate,
+    public Boolean canBeAssigned(LocalDateTime referenceDate,
                                  ActivityPattern activityPattern) {
         //Hasn't been registered as a worker
         Worker worker = this.worker;

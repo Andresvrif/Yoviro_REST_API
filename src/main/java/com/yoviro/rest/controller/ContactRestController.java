@@ -41,8 +41,7 @@ public class ContactRestController {
     @PostMapping
     public ContactDTO newContact(@RequestBody String json) throws IOException, JSONException {
         JSONObject jsonObject = new JSONObject(json);
-        ContactDTO contactDto = objectMapper
-                .readValue(jsonObject.get("contactDTO").toString(), ContactDTO.class);
+        ContactDTO contactDto = objectMapper.readValue(jsonObject.get("contactDTO").toString(), ContactDTO.class);
 
         return contactService.save(contactDto);
     }
@@ -62,7 +61,7 @@ public class ContactRestController {
     @GetMapping("/search")
     public Map<String, Object> search(@RequestParam(required = false) String firstName,
                                       @RequestParam(required = false) String secondName,
-                                      @RequestParam(required = false) String firstLastName,
+                                      @RequestParam(required = false) String lastName,
                                       @RequestParam(required = false) String secondLastName,
                                       @RequestParam(required = false) OfficialIdTypeEnum officialIDTypeEnum,
                                       @RequestParam(required = false) String officialIDNumber,
@@ -71,7 +70,7 @@ public class ContactRestController {
         SearchContactDTO searchContactDTO = new SearchContactDTO();
         searchContactDTO.setFirstName(firstName);
         searchContactDTO.setSecondName(secondName);
-        searchContactDTO.setFirstLastName(firstLastName);
+        searchContactDTO.setLastName(lastName);
         searchContactDTO.setSecondLastName(secondLastName);
         searchContactDTO.setOfficialIDType(officialIDTypeEnum);
         searchContactDTO.setOfficialIDNumber(officialIDNumber);

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -34,10 +35,17 @@ public class ActivityPatternItemReader implements ItemReader<ActivityPattern> {
         return processActivityPattern(activityPatternIterator);
     }
 
+    /**
+     * Author : Andrés V.
+     * Desc : Defines if the activity pattern applies to be created
+     * @param iterator
+     * @return
+     */
     public ActivityPattern processActivityPattern(Iterator<ActivityPattern> iterator) {
+        LocalDateTime currentDate = LocalDateTime.now();
         while (iterator.hasNext()) {
             ActivityPattern candidate = activityPatternIterator.next();
-            return applyActivityPattern(candidate) ? candidate : processActivityPattern(iterator);
+            return applyActivityPattern(currentDate, candidate) ? candidate : processActivityPattern(iterator);
         }
         return null;
     }
@@ -46,24 +54,26 @@ public class ActivityPatternItemReader implements ItemReader<ActivityPattern> {
      * Author : Andrés V.
      * Desc : Evaluates if the activity Pattern applies or not
      *
-     * @param candidate
+     * @param
      * @return
      */
-    private Boolean applyActivityPattern(ActivityPattern activityPattern) {
+    private Boolean applyActivityPattern(LocalDateTime referenceDate,
+                                         ActivityPattern activityPattern) {
         if (!activityPattern.hasAgreements()) return Boolean.FALSE; //Check if has agreements
-        if (!applySchedule(activityPattern)) return Boolean.FALSE; //Check if the current date applies
+        if (!applySchedule(referenceDate, activityPattern)) return Boolean.FALSE; //Check if the current date applies
 
         return Boolean.TRUE;
     }
 
     /***
      * Author : Andrés V.
-     * Desc :  Determines if the activity pattern should be created in the current date
+     * Desc :  Determines if the activity pattern FREQUENCY should be created in the current date
      * @param activityPattern
      * @return
      */
-    private Boolean applySchedule(ActivityPattern activityPattern) {
-        return DateUtil.insideOfRange(new Date(),
+    private Boolean applySchedule(LocalDateTime referenceDate,
+                                  ActivityPattern activityPattern) {
+        return DateUtil.insideOfRange(referenceDate,
                 activityPattern.getStartDate(),
                 activityPattern.getEndDate(),
                 activityPattern.getDayFrequency());

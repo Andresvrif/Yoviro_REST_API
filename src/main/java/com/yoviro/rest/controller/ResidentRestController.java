@@ -38,7 +38,7 @@ public class ResidentRestController {
     @GetMapping("/search")
     public Map<String, Object> search(@RequestParam(required = false) String firstName,
                                       @RequestParam(required = false) String secondName,
-                                      @RequestParam(required = false) String firstLastName,
+                                      @RequestParam(required = false) String lastName,
                                       @RequestParam(required = false) String secondLastName,
                                       @RequestParam(required = false) OfficialIdTypeEnum officialIDTypeEnum,
                                       @RequestParam(required = false) String officialIDNumber,
@@ -47,7 +47,7 @@ public class ResidentRestController {
         SearchContactDTO searchContactDTO = new SearchContactDTO();
         searchContactDTO.setFirstName(firstName);
         searchContactDTO.setSecondName(secondName);
-        searchContactDTO.setFirstLastName(firstLastName);
+        searchContactDTO.setLastName(lastName);
         searchContactDTO.setSecondLastName(secondLastName);
         searchContactDTO.setOfficialIDType(officialIDTypeEnum);
         searchContactDTO.setOfficialIDNumber(officialIDNumber);

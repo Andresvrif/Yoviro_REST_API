@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,36 +30,28 @@ public class ActivityServiceImpl implements IActivityService {
 
     @Override
     public List<Activity> findActivitiesAssignedForUserForToday(String userName) {
-        Calendar today = DateUtil.dateToCalendar(new Date());
-        today.set(Calendar.HOUR, 0);
-        today.set(Calendar.MINUTE, 0);
-
-        Calendar tomorrow = (Calendar) today.clone();
-        tomorrow.add(Calendar.DAY_OF_MONTH, 1);
-
-        return findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(today.getTime(), tomorrow.getTime(), userName);
+        LocalDateTime currentTime = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
+        return findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(currentTime, currentTime.plusDays(1), userName);
     }
 
     @Override
-    public List<Activity> findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(Date startDate,
-                                                                                         Date endDate,
+    public List<Activity> findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(LocalDateTime startDate,
+                                                                                         LocalDateTime endDate,
                                                                                          String userName) {
         return activityRepository.findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(startDate, endDate, userName);
     }
 
     @Override
-    public List<Activity> findActivitiesRelatedToPatternCodeAndUserInASpecificDate(Date referenceDate,
+    public List<Activity> findActivitiesRelatedToPatternCodeAndUserInASpecificDate(LocalDateTime referenceDate,
                                                                                    String userName,
                                                                                    String patternCode) {
-        Calendar refDateCalendar = DateUtil.dateToCalendar(referenceDate);
-        refDateCalendar.set(Calendar.HOUR, 0);
-        refDateCalendar.set(Calendar.MINUTE, 0);
+        LocalDateTime refDate = LocalDateTime.of(referenceDate.toLocalDate(), referenceDate.toLocalTime())
+                                                .withMinute(0)
+                                                .withSecond(0)
+                                                .withNano(0);
 
-        Calendar refTomorrowDateCalendar = (Calendar) refDateCalendar.clone();
-        refTomorrowDateCalendar.add(Calendar.DAY_OF_MONTH, 1);
-
-        return activityRepository.findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsernameAndActivityPatternPatternCode(refDateCalendar.getTime(),
-                refTomorrowDateCalendar.getTime(),
+        return activityRepository.findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsernameAndActivityPatternPatternCode(refDate,
+                refDate.plusDays(1),
                 userName,
                 patternCode);
     }

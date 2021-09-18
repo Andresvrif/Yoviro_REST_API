@@ -4,6 +4,7 @@ import com.yoviro.rest.config.enums.StatusTerm;
 import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.util.DateUtil;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class JobHandler {
@@ -23,9 +24,9 @@ public class JobHandler {
      * @return
      */
     public static Boolean canBeCanceled(Agreement agreement,
-                                        Date effectiveDate) {
+                                        LocalDateTime effectiveDate) {
         Job lastJob = lastJobFromAgreement(agreement);
-        return !(lastJob instanceof Cancellation) && (DateUtil.compareIgnoreTime(effectiveDate, lastJob.getEndDate()) <= 0 && DateUtil.compareIgnoreTime(effectiveDate, lastJob.getStartDate()) >= 0);
+        return !(lastJob instanceof Cancellation) && (effectiveDate.compareTo(lastJob.getEndDate()) <= 0 && effectiveDate.compareTo(lastJob.getStartDate()) >= 0);
     }
 
     /***
@@ -36,36 +37,34 @@ public class JobHandler {
      * @return
      */
     public static StatusTerm getStatusTerm(Job job,
-                                           Date referenceDate) {
-        Date startDate = job.getStartDate();
-        Date endDate = job.getEndDate();
-        Date effectiveDate = job.getEffectiveDate();
+                                           LocalDateTime referenceDate) {
+        LocalDateTime startDate = job.getStartDate();
+        LocalDateTime endDate = job.getEndDate();
+        LocalDateTime effectiveDate = job.getEffectiveDate();
         if (job instanceof Submission) {
             Submission submission = (Submission) job;
-            if (DateUtil.compareIgnoreTime(referenceDate, endDate) > 0) {
+            if (referenceDate.compareTo(endDate) > 0) {
                 //AFTER TERM
                 return StatusTerm.NO_VIGENT;
-            } else if (DateUtil.compareIgnoreTime(referenceDate, startDate) < 0) {
+            } else if (referenceDate.compareTo(startDate) < 0) {
                 //BEFORE TERM
                 return StatusTerm.PLANNED;
-            } else if (DateUtil.compareIgnoreTime(startDate, referenceDate) <= 0 &&
-                    DateUtil.compareIgnoreTime(referenceDate, endDate) <= 0) {
+            } else if (startDate.compareTo(referenceDate) <= 0 && referenceDate.compareTo(endDate) <= 0) {
                 return StatusTerm.VIGENT;
             }
             return null;
         } else if (job instanceof Cancellation) {
             Cancellation cancellation = (Cancellation) job;
-            if (DateUtil.compareIgnoreTime(referenceDate, endDate) > 0) {
+            if (referenceDate.compareTo(endDate) > 0) {
                 //AFTER TERM
                 return StatusTerm.NO_VIGENT;
-            } else if (DateUtil.compareIgnoreTime(referenceDate, startDate) < 0) {
+            } else if (referenceDate.compareTo(startDate) < 0) {
                 //BEFORE TERM
                 return StatusTerm.CANCELLED;
-            } else if (DateUtil.compareIgnoreTime(startDate, referenceDate) <= 0 &&
-                    DateUtil.compareIgnoreTime(referenceDate, endDate) <= 0) {
+            } else if (startDate.compareTo(referenceDate) <= 0 && referenceDate.compareTo(endDate) <= 0) {
                 //INSIDE TERM
                 //INSIDE ENABLE PERIOD AFTER CANCELLATION
-                if (DateUtil.compareIgnoreTime(referenceDate, effectiveDate) <= 0) {
+                if (referenceDate.compareTo(effectiveDate) <= 0) {
                     return StatusTerm.VIGENT;
                 } else {
                     return StatusTerm.CANCELLED;
@@ -87,7 +86,7 @@ public class JobHandler {
      */
     public static Boolean hasJobActivityRelated(Job job,
                                                 ActivityPattern activityPattern,
-                                                Date refDate) {
+                                                LocalDateTime refDate) {
         return job.getActivities().stream().anyMatch(e -> e.getActivityPattern().getPatternCode() == activityPattern.getPatternCode() && DateUtil.compareIgnoreTime(e.getCreateAt(), refDate) == 0);
     }
 }

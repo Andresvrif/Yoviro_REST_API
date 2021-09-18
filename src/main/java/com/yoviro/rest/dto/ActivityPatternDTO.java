@@ -6,6 +6,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Set;
@@ -14,18 +17,18 @@ public class ActivityPatternDTO {
     @JsonIgnore
     private Long id;
     @JsonIgnore
-    private Date createAt;
+    private LocalDateTime createAt;
     private String patternCode; //Unique
     private Integer dayFrequency; //Cada 2 dias, cada 3 dias, etc...
-    private Date startDate;
-    private Date endDate; //If it's null, end date
+    private LocalDate startDate;
+    private LocalDate endDate; //If it's null, end date
     private String subject; //
     private String description;
     private Boolean enable;
     private Set<AgreementDTO> agreements;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
-    private Date hourFrequency;
+    private LocalTime hourFrequency;
 
     private Set<AgreementDTO> agreementDTOs;
 
@@ -37,14 +40,6 @@ public class ActivityPatternDTO {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Date getCreateAt() {
-        return createAt;
-    }
-
-    public void setCreateAt(Date createAt) {
-        this.createAt = createAt;
     }
 
     public String getPatternCode() {
@@ -63,28 +58,44 @@ public class ActivityPatternDTO {
         this.dayFrequency = dayFrequency;
     }
 
-    public Date getHourFrequency() {
+    public LocalTime getHourFrequency() {
         return hourFrequency;
     }
 
-    public void setHourFrequency(Date hourFrequency) {
+    public void setHourFrequency(LocalTime hourFrequency) {
         this.hourFrequency = hourFrequency;
     }
 
-    public Date getStartDate() {
+    public LocalDateTime getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(LocalDateTime createAt) {
+        this.createAt = createAt;
+    }
+
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public Set<AgreementDTO> getAgreements() {
+        return agreements;
+    }
+
+    public void setAgreements(Set<AgreementDTO> agreements) {
+        this.agreements = agreements;
     }
 
     public String getSubject() {

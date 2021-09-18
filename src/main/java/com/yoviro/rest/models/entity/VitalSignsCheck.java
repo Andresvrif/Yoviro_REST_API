@@ -21,15 +21,19 @@ public class VitalSignsCheck {
     @Column(nullable = false)
     private BigDecimal oxygenation;
 
-    @Column(nullable = false)
+    @Column
     private BigDecimal glucose;
 
-    @Column(nullable = false)
+    @Column
     private String observation;
 
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP(6)")
     private Date createAt;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "resident_id")
+    private Resident resident;
 
     @PrePersist
     public void PrePersist() {
@@ -82,6 +86,14 @@ public class VitalSignsCheck {
 
     public void setObservation(String observation) {
         this.observation = observation;
+    }
+
+    public Resident getResident() {
+        return resident;
+    }
+
+    public void setResident(Resident resident) {
+        this.resident = resident;
     }
 
     public Date getCreateAt() {

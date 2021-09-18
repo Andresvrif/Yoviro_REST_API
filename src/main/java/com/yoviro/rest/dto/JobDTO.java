@@ -1,9 +1,12 @@
 package com.yoviro.rest.dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
+import com.yoviro.rest.models.entity.Job;
+import com.yoviro.rest.util.DateUtil;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
 public abstract class JobDTO {
@@ -18,11 +21,31 @@ public abstract class JobDTO {
     @JsonProperty("residentDTO")
     private ResidentDTO resident;
 
-    private Date startDate;
+    private LocalDateTime startDate;
 
-    private Date endDate;
+    private LocalDateTime endDate;
 
-    private Date effectiveDate;
+    private LocalDateTime effectiveDate;
+
+    public JobDTO() {
+    }
+
+    @JsonCreator
+    public JobDTO(Long id,
+                  String jobNumber,
+                  String startDate,
+                  String endDate,
+                  String effectiveDate,
+                  ResidentDTO residentDTO,
+                  AgreementDTO agreementDTO) {
+        this.id = id;
+        this.jobNumber = jobNumber;
+        this.startDate = startDate != null ? DateUtil.instanceEffectiveDateTime(DateUtil.instanceLocalDate(startDate, DateTimeFormatter.ISO_LOCAL_DATE)) : null;
+        this.endDate = endDate != null ? DateUtil.instanceEffectiveDateTime(DateUtil.instanceLocalDate(endDate, DateTimeFormatter.ISO_LOCAL_DATE)) : null;
+        this.effectiveDate = effectiveDate != null ? DateUtil.instanceEffectiveDateTime(DateUtil.instanceLocalDate(effectiveDate, DateTimeFormatter.ISO_LOCAL_DATE)) : null;
+        this.resident = residentDTO;
+        this.agreement = agreementDTO;
+    }
 
     public Long getId() {
         return id;
@@ -48,27 +71,27 @@ public abstract class JobDTO {
         this.jobNumber = jobNumber;
     }
 
-    public Date getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 
-    public Date getEffectiveDate() {
+    public LocalDateTime getEffectiveDate() {
         return effectiveDate;
     }
 
-    public void setEffectiveDate(Date effectiveDate) {
+    public void setEffectiveDate(LocalDateTime effectiveDate) {
         this.effectiveDate = effectiveDate;
     }
 

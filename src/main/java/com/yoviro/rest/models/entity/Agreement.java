@@ -10,6 +10,7 @@ import org.thymeleaf.util.DateUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -106,7 +107,7 @@ public class Agreement {
         return jobs != null && jobs.size() > 0;
     }
 
-    public StatusTerm getStatus(Date referenceDate) throws Exception {
+    public StatusTerm getStatus(LocalDateTime referenceDate) throws Exception {
         if (!hasJobs()) {
             throw new Exception("Can't define a status agreement without jobs defined");
         }
@@ -121,16 +122,16 @@ public class Agreement {
      *
      * @return
      */
-    public Boolean applyActivityPatternToBeAssigned(Date referenceDate,
+    public Boolean applyActivityPatternToBeAssigned(LocalDateTime referenceDate,
                                                     ActivityPattern activityPattern) {
         try {
             //Can't create activities in not vigent agreements
-            if (this.getStatus(referenceDate) != StatusTerm.VIGENT)
-                return Boolean.FALSE;
+            StatusTerm statusTerm = this.getStatus(referenceDate);
+            if (statusTerm != StatusTerm.VIGENT) return Boolean.FALSE;
 
             //Can't re create the same activity in the same date
-            if (this.getJobs().stream().anyMatch(job -> JobHandler.hasJobActivityRelated(job, activityPattern, referenceDate)))
-                return Boolean.FALSE;
+            var flag = this.getJobs().stream().anyMatch(job -> JobHandler.hasJobActivityRelated(job, activityPattern, referenceDate));
+            if (flag) return Boolean.FALSE;
 
             return Boolean.TRUE;
         } catch (Exception ex) {

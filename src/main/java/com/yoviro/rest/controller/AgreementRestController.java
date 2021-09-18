@@ -27,6 +27,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,7 +61,9 @@ public class AgreementRestController {
         JSONObject jsonObject = new JSONObject(json);
         String agreementNumberParam = jsonObject.get("agreementNumber").toString();
         String effectiveDateParam = jsonObject.get("effectiveDate").toString();
-        Date effectiveDate = DateUtil.instanceDate(effectiveDateParam);
+
+        //Clean Parameters
+        LocalDateTime effectiveDate = DateUtil.instanceEffectiveDateTime(DateUtil.instanceLocalDate(effectiveDateParam, DateTimeFormatter.ISO_LOCAL_DATE));
 
         //Define Cancellation date
         CancellationDTO cancellationDTO = new CancellationDTO();
@@ -92,7 +96,7 @@ public class AgreementRestController {
         SearchContactDTO searchContactDTO = new SearchContactDTO();
         searchContactDTO.setFirstName(firstName);
         searchContactDTO.setSecondName(secondName);
-        searchContactDTO.setFirstLastName(firstLastName);
+        searchContactDTO.setLastName(firstLastName);
         searchContactDTO.setSecondLastName(secondLastName);
         searchContactDTO.setOfficialIDType(officialIDTypeEnum);
         searchContactDTO.setOfficialIDNumber(officialIDNumber);
@@ -139,7 +143,7 @@ public class AgreementRestController {
             rowData.put("officialIdType", primaryOfficialID.getOfficialIdType());
             rowData.put("officialIdNumber", primaryOfficialID.getOfficialIdNumber());
             rowData.put("agreementNumber", agreement.getAgreementNumber());
-            rowData.put("status", JobHandler.getStatusTerm(job, new Date()));
+            rowData.put("status", JobHandler.getStatusTerm(job, LocalDateTime.now()));
 
             dataContainer.add(rowData);
         }

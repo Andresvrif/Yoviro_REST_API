@@ -3,12 +3,12 @@ package com.yoviro.rest.models.entity;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.thymeleaf.util.DateUtils;
-
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -24,14 +24,12 @@ public class Contact implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty
-    @NotNull
+    @Column(nullable = false)
     private String firstName;
 
     private String secondName;
 
-    @NotEmpty
-    @NotNull
+    @Column(nullable = false)
     private String lastName;
 
     @NotEmpty
@@ -40,8 +38,7 @@ public class Contact implements Serializable {
     private String secondLastName;
 
     @Column(nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date birthDate;
+    private LocalDate birthDate;
 
     @Email
     private String email;
@@ -134,11 +131,11 @@ public class Contact implements Serializable {
         this.secondLastName = secondSurname;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 

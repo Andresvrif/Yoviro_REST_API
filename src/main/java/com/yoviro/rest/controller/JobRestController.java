@@ -55,7 +55,7 @@ public class JobRestController {
 
         searchContactDTO.setFirstName(firstName);
         searchContactDTO.setSecondName(secondName);
-        searchContactDTO.setFirstLastName(firstLastName);
+        searchContactDTO.setLastName(firstLastName);
         searchContactDTO.setSecondLastName(secondLastName);
         searchContactDTO.setOfficialIDType(officialIDTypeEnum);
         searchContactDTO.setOfficialIDNumber(officialIDNumber);

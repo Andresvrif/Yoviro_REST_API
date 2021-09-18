@@ -6,6 +6,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.thymeleaf.util.DateUtils;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -51,15 +54,13 @@ public class ActivityPattern {
     private Integer dayFrequency; //Cada 2 dias, cada 3 dias, etc...
 
     @NotNull
-    @Temporal(TemporalType.TIME)
-    private Date hourFrequency;
+    private LocalTime hourFrequency;
 
     @NotNull
-    @Temporal(TemporalType.DATE)
-    private Date startDate;
+    private LocalDate startDate;
 
-    @Temporal(TemporalType.DATE)
-    private Date endDate; //If it's null, end date
+    @Column
+    private LocalDate endDate; //If it's null, end date
 
     @NotNull
     private String subject;
@@ -72,8 +73,7 @@ public class ActivityPattern {
             inverseJoinColumns = {@JoinColumn(name = "agreement_id")})
     private List<Agreement> agreements = new ArrayList<>(); //Contratos vigentes, como regla de negocio los contratos tendran vigencia de medio dia a medio dia
 
-    @OneToMany(mappedBy = "activityPattern",
-            fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "activityPattern", fetch = FetchType.LAZY)
     private Set<Activity> activities;
 
     @NotNull
@@ -122,14 +122,6 @@ public class ActivityPattern {
         this.patternCode = patternCode;
     }
 
-    public Date getHourFrequency() {
-        return hourFrequency;
-    }
-
-    public void setHourFrequency(Date hourFrequency) {
-        this.hourFrequency = hourFrequency;
-    }
-
     public Integer getDayFrequency() {
         return dayFrequency;
     }
@@ -138,19 +130,27 @@ public class ActivityPattern {
         this.dayFrequency = dayFrequency;
     }
 
-    public Date getStartDate() {
+    public LocalTime getHourFrequency() {
+        return hourFrequency;
+    }
+
+    public void setHourFrequency(LocalTime hourFrequency) {
+        this.hourFrequency = hourFrequency;
+    }
+
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 

@@ -100,11 +100,11 @@ public class ContactServiceImpl implements IContactService {
             filters.add(contactFilter);
         }
 
-        if (searchContactDTO.getFirstLastName() != null) {
+        if (searchContactDTO.getLastName() != null) {
             contactFilter = new SearchFilter();
-            contactFilter.setProperty("firstLastName");
+            contactFilter.setProperty("lastName");
             contactFilter.setOperator(searchContactDTO.getExactCoincidence() ? OperatorEnum.EQUALS : OperatorEnum.LIKE);
-            contactFilter.setValue(searchContactDTO.getFirstLastName());
+            contactFilter.setValue(searchContactDTO.getLastName());
 
             filters.add(contactFilter);
         }

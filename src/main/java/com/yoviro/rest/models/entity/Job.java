@@ -1,6 +1,7 @@
 package com.yoviro.rest.models.entity;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -9,6 +10,7 @@ import org.thymeleaf.util.DateUtils;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -27,7 +29,7 @@ public abstract class Job implements Serializable{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "agreement_id")
     protected Agreement agreement;
-    
+
     @Generated(GenerationTime.INSERT)
     protected String jobNumber;
 
@@ -35,24 +37,22 @@ public abstract class Job implements Serializable{
      * Author : Andrés V.
      * Desc : Fecha de inicio del contrato
      */
-    @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date startDate;
+    @Column(nullable = false)
+    protected LocalDateTime startDate;
 
     /***
      * Author : Andrés V.
      * Desc : Fecha de fin del contrato
      */
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date endDate;
+    @Column(nullable = true)
+    protected LocalDateTime endDate;
 
     /***
      * Author : Andrés V.
      * Desc : Fecha efectiva de la aplicación de la solicitud
      */
-    @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
-    protected Date effectiveDate;
+    @Column(nullable = false)
+    protected LocalDateTime effectiveDate;
 
     /***
      * Author : Andrés V.
@@ -63,11 +63,10 @@ public abstract class Job implements Serializable{
     @JoinColumn(name = "resident_id")
     protected Resident resident;
 
-    @NotNull
-    @Column(name = "create_at")
+    @Column(nullable = false)
+    @CreationTimestamp
     @ColumnDefault("CURRENT_TIMESTAMP(6)")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    protected Date createAt;
+    protected LocalDateTime createAt;
 
     @OneToMany(mappedBy = "job", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Activity> activities;
@@ -96,27 +95,27 @@ public abstract class Job implements Serializable{
         this.jobNumber = jobNumber;
     }
 
-    public Date getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 
-    public Date getEffectiveDate() {
+    public LocalDateTime getEffectiveDate() {
         return effectiveDate;
     }
 
-    public void setEffectiveDate(Date effectiveDate) {
+    public void setEffectiveDate(LocalDateTime effectiveDate) {
         this.effectiveDate = effectiveDate;
     }
 
@@ -128,11 +127,11 @@ public abstract class Job implements Serializable{
         this.resident = resident;
     }
 
-    public Date getCreateAt() {
+    public LocalDateTime getCreateAt() {
         return createAt;
     }
 
-    public void setCreateAt(Date createAt) {
+    public void setCreateAt(LocalDateTime createAt) {
         this.createAt = createAt;
     }
 

@@ -5,7 +5,7 @@ import com.yoviro.rest.config.enums.OfficialIdTypeEnum;
 public class SearchContactDTO {
     private String firstName;
     private String secondName;
-    private String firstLastName;
+    private String lastName;
     private String secondLastName;
     private OfficialIdTypeEnum officialIDTypeEnum;
     private String officialIDNumber;
@@ -28,12 +28,12 @@ public class SearchContactDTO {
         this.secondName = secondName;
     }
 
-    public String getFirstLastName() {
-        return firstLastName;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setFirstLastName(String firstLastName) {
-        this.firstLastName = firstLastName;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getSecondLastName() {
