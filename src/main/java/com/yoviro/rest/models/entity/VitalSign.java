@@ -2,18 +2,15 @@ package com.yoviro.rest.models.entity;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
-
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @NamedQueries({
         @NamedQuery(name = "VitalSign.summaryListAll",
-                query = "select c.firstName as firstName," +
+                query = "select vs.id as id," +
+                        "c.firstName as firstName," +
                         "c.secondName as secondName," +
                         "c.lastName as lastName," +
                         "c.secondLastName as secondLastName," +
@@ -24,7 +21,8 @@ import java.util.Date;
                         "join Resident r on r = vs.resident " +
                         "join Contact c on r.contact = c"),
         @NamedQuery(name = "VitalSign.summaryListLikeFirstName",
-                query = "select c.firstName as firstName," +
+                query = "select vs.id as id," +
+                        "c.firstName as firstName," +
                         "c.secondName as secondName," +
                         "c.lastName as lastName," +
                         "c.secondLastName as secondLastName," +

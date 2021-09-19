@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public interface SummaryVitalSignProjection {
+    Long getId();
+
     String getArterialPresion();
 
     BigDecimal getTemperature();

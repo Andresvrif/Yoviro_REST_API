@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 
 public class VitalSignDTO {
 
-    @JsonIgnore
     private Long id;
 
     private String arterialPresion;

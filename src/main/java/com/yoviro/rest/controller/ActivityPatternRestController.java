@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yoviro.rest.config.AppConfig;
 import com.yoviro.rest.dto.ActivityPatternDTO;
-import com.yoviro.rest.dto.AgreementDTO;
 import com.yoviro.rest.handler.JobHandler;
 import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.models.repository.projections.AgreementResidentProjection;
@@ -61,14 +60,14 @@ public class ActivityPatternRestController {
     }
 
     @GetMapping("/summaryList")
-    public Map<String, Object> summaryList(@RequestParam(required = false) String search,
+    public Map<String, Object> summaryList(@RequestParam(required = false) String searchByFirstName,
                                            @RequestParam(required = true) String page) {
         //Define pagination
         Integer pageNumber = PageUtil.definePageNumber(page);
         Pageable sortedByDescription = PageRequest.of(pageNumber, AppConfig.PAGE_SIZE, Sort.by("subject").ascending());
 
         //Call Service and retrieve data
-        Page<SummaryActivityPatternProjection> pageSummary = search != null ? activityPatternService.summaryList(sortedByDescription, search) :
+        Page<SummaryActivityPatternProjection> pageSummary = searchByFirstName != null ? activityPatternService.summaryList(sortedByDescription, searchByFirstName) :
                 activityPatternService.summaryList(sortedByDescription);
 
         //Transform projection to DTO

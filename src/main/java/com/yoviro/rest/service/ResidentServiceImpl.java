@@ -83,6 +83,11 @@ public class ResidentServiceImpl implements IResidentService {
         return residentRepository.findAll(specification, pageable);
     }
 
+    @Override
+    public Resident findByOfficialID(OfficialIdDTO officialIdDTO) {
+        return residentRepository.findByOfficialID(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
+    }
+
     static List<SearchFilter> instanceResidentCriteria(SearchResidentDTO searchResidentDTO) {
         List<SearchFilter> filters = new ArrayList<>();
         return filters;
