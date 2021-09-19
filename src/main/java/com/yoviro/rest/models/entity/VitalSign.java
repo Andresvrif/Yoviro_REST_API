@@ -1,19 +1,48 @@
 package com.yoviro.rest.models.entity;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
-public class VitalSignsCheck {
+@NamedQueries({
+        @NamedQuery(name = "VitalSign.summaryListAll",
+                query = "select c.firstName as firstName," +
+                        "c.secondName as secondName," +
+                        "c.lastName as lastName," +
+                        "c.secondLastName as secondLastName," +
+                        "vs.arterialPresion as arterialPresion," +
+                        "vs.oxygenation as oxygenation," +
+                        "vs.temperature as temperature," +
+                        "vs.createAt as createAt from VitalSign vs " +
+                        "join Resident r on r = vs.resident " +
+                        "join Contact c on r.contact = c"),
+        @NamedQuery(name = "VitalSign.summaryListLikeFirstName",
+                query = "select c.firstName as firstName," +
+                        "c.secondName as secondName," +
+                        "c.lastName as lastName," +
+                        "c.secondLastName as secondLastName," +
+                        "vs.arterialPresion as arterialPresion," +
+                        "vs.oxygenation as oxygenation," +
+                        "vs.temperature as temperature," +
+                        "vs.createAt as createAt from VitalSign vs " +
+                        "join Resident r on r = vs.resident " +
+                        "join Contact c on r.contact = c " +
+                        "where c.firstName like ?1")
+})
+public class VitalSign {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private BigDecimal arterialPresion;
+    private String arterialPresion;
 
     @Column(nullable = false)
     private BigDecimal temperature;
@@ -27,9 +56,10 @@ public class VitalSignsCheck {
     @Column
     private String observation;
 
-    @NotNull
+    @Column(nullable = false)
+    @CreationTimestamp
     @ColumnDefault("CURRENT_TIMESTAMP(6)")
-    private Date createAt;
+    private LocalDateTime createAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "resident_id")
@@ -48,11 +78,11 @@ public class VitalSignsCheck {
         this.id = id;
     }
 
-    public BigDecimal getArterialPresion() {
+    public String getArterialPresion() {
         return arterialPresion;
     }
 
-    public void setArterialPresion(BigDecimal arterialPresion) {
+    public void setArterialPresion(String arterialPresion) {
         this.arterialPresion = arterialPresion;
     }
 
@@ -96,11 +126,11 @@ public class VitalSignsCheck {
         this.resident = resident;
     }
 
-    public Date getCreateAt() {
+    public LocalDateTime getCreateAt() {
         return createAt;
     }
 
-    public void setCreateAt(Date createAt) {
+    public void setCreateAt(LocalDateTime createAt) {
         this.createAt = createAt;
     }
 

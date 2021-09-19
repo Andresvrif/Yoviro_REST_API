@@ -34,7 +34,7 @@ public class Resident {
     @OneToMany(mappedBy = "resident",
                fetch = FetchType.LAZY,
                orphanRemoval = true)
-    private List<VitalSignsCheck> vitalSignsChecks;
+    private List<VitalSign> vitalSigns;
 
     @NotNull
     @Column(name = "create_at")
@@ -66,12 +66,12 @@ public class Resident {
         this.contact = contact;
     }
 
-    public List<VitalSignsCheck> getVitalSignsChecks() {
-        return vitalSignsChecks;
+    public List<VitalSign> getVitalSignsChecks() {
+        return vitalSigns;
     }
 
-    public void setVitalSignsChecks(List<VitalSignsCheck> vitalSignsChecks) {
-        this.vitalSignsChecks = vitalSignsChecks;
+    public void setVitalSignsChecks(List<VitalSign> vitalSigns) {
+        this.vitalSigns = vitalSigns;
     }
 
     public Date getCreateAt() {

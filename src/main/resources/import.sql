@@ -2142,4 +2142,5 @@ INSERT INTO activity_pattern_agreement (agreement_id, activity_pattern_id) VALUE
 INSERT INTO activity_pattern_agreement (agreement_id, activity_pattern_id) VALUES ('1', '6');
 
 /* VITAL SIGNS CHECK */
-INSERT INTO vital_signs_check (id, arterial_presion, create_at, glucose, observation, oxygenation, temperature, resident_id) VALUES (1, 120.00, DEFAULT, null, null, 98.50, 36.00, 1);
+INSERT INTO vital_sign (id, arterial_presion, create_at, glucose, observation, oxygenation, temperature, resident_id) VALUES (1, '120/80', DEFAULT, null, null, 98.50, 36.00, 1);
+INSERT INTO vital_sign (id, arterial_presion, create_at, glucose, observation, oxygenation, temperature,resident_id) VALUES (2, '110/80', DEFAULT, null, null, 97.00, 37.50, 1);
