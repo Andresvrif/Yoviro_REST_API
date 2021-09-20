@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -46,9 +47,9 @@ public class ActivityServiceImpl implements IActivityService {
                                                                                    String userName,
                                                                                    String patternCode) {
         LocalDateTime refDate = LocalDateTime.of(referenceDate.toLocalDate(), referenceDate.toLocalTime())
-                                                .withMinute(0)
-                                                .withSecond(0)
-                                                .withNano(0);
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
 
         return activityRepository.findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsernameAndActivityPatternPatternCode(refDate,
                 refDate.plusDays(1),
@@ -56,6 +57,7 @@ public class ActivityServiceImpl implements IActivityService {
                 patternCode);
     }
 
+    @Transactional
     @Override
     public void updateStatusActivities(List<Activity> activities) {
         Activity activityRef;
@@ -68,6 +70,8 @@ public class ActivityServiceImpl implements IActivityService {
             activityToBeUpdated.setStatus(activityRef.getStatus());
         }
 
-        activityRepository.saveAll(activitiesFromDB);
+        if (!activitiesFromDB.isEmpty()) {
+            activityRepository.saveAll(activitiesFromDB);
+        }
     }
 }
