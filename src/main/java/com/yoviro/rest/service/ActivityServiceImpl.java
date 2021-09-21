@@ -9,13 +9,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,5 +71,11 @@ public class ActivityServiceImpl implements IActivityService {
         if (!activitiesFromDB.isEmpty()) {
             activityRepository.saveAll(activitiesFromDB);
         }
+    }
+
+    @Override
+    public Activity findById(Long id) {
+        Optional<Activity> optionalActivity = activityRepository.findById(id);
+        return optionalActivity.get();
     }
 }

@@ -3,9 +3,13 @@ package com.yoviro.rest.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yoviro.rest.config.AppConfig;
 import com.yoviro.rest.config.enums.OfficialIdTypeEnum;
+import com.yoviro.rest.dto.ActivityDTO;
 import com.yoviro.rest.dto.ResidentDTO;
 import com.yoviro.rest.dto.search.SearchContactDTO;
 import com.yoviro.rest.dto.search.SearchResidentDTO;
+import com.yoviro.rest.models.entity.Activity;
+import com.yoviro.rest.models.entity.Contact;
+import com.yoviro.rest.models.entity.OfficialId;
 import com.yoviro.rest.models.entity.Resident;
 import com.yoviro.rest.service.interfaces.IResidentService;
 import com.yoviro.rest.util.JSONUtil;
@@ -17,10 +21,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,6 +70,41 @@ public class ResidentRestController {
         Map<String, Object> response = new HashMap<String, Object>();
         response.put(AppConfig.METADATA_TAG, JSONUtil.pageToJson(pageResidents));
         response.put("residents", pageResidents.getContent().stream().map(c -> modelMapper.map(c, ResidentDTO.class)).collect(Collectors.toList()));
+        return response;
+    }
+
+    @GetMapping("/bringResidentByIdActivity")
+    public Map<String, Object> bringResidentAssociated(@RequestParam String idActivity) {
+        //Mapear Activity DTO
+        ActivityDTO activityDTO = new ActivityDTO();
+        activityDTO.setId(Long.valueOf(idActivity));
+
+        Resident resident = residentService.findByActivity(activityDTO);
+        if (resident == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Resident not found");
+        }
+
+        //Define Response
+        var response = wrapResident(resident);
+        //reurn modelMapper.map(resident, ResidentDTO.class);
+        return response;
+    }
+
+    private HashMap<String, Object> wrapResident(Resident resident) {
+        Contact contact = resident.getContact();
+        OfficialId officialId = contact.getPrimaryOfficialID();
+
+        HashMap<String, Object> response = new HashMap<>();
+
+        //Map Official ID Info
+        response.put("Resident", Map.ofEntries(
+                Map.entry("fullName", contact.getFullName()),
+                Map.entry("OfficialIdDto", Map.ofEntries(
+                        Map.entry("officialIdType", officialId.getOfficialIdType()),
+                        Map.entry("officialIdNumber", officialId.getOfficialIdNumber())
+                ))
+        ));
+
         return response;
     }
 }

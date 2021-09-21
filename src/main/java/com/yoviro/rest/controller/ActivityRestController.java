@@ -10,6 +10,7 @@ import org.apache.tomcat.jni.Local;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,9 @@ import java.util.stream.Collectors;
 public class ActivityRestController {
     @Autowired
     IActivityService activityService;
+
+    @Autowired
+    ModelMapper modelMapper;
 
     @GetMapping("/activitiesForToday")
     public Map<String, Object> findActivitiesOfUser(@RequestParam(required = true) String userName) {
@@ -54,9 +58,9 @@ public class ActivityRestController {
         for (ActivityPattern activityPattern : activityPatterns) {
             LocalTime activityPatternHour = activityPattern.getHourFrequency();
             localDateTime = LocalDateTime.now()
-                                         .withHour(activityPatternHour.getHour())
-                                         .withMinute(activityPatternHour.getMinute())
-                                         .withSecond(activityPatternHour.getSecond());
+                    .withHour(activityPatternHour.getHour())
+                    .withMinute(activityPatternHour.getMinute())
+                    .withSecond(activityPatternHour.getSecond());
 
             //Put data
             rowData = new HashMap<String, Object>();

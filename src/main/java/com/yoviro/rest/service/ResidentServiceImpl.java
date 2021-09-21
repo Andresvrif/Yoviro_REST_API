@@ -1,13 +1,16 @@
 package com.yoviro.rest.service;
 
+import com.yoviro.rest.dto.ActivityDTO;
 import com.yoviro.rest.dto.ContactDTO;
 import com.yoviro.rest.dto.OfficialIdDTO;
 import com.yoviro.rest.dto.ResidentDTO;
 import com.yoviro.rest.dto.search.SearchContactDTO;
 import com.yoviro.rest.dto.search.SearchResidentDTO;
+import com.yoviro.rest.models.entity.Activity;
 import com.yoviro.rest.models.entity.Contact;
 import com.yoviro.rest.models.entity.Contractor;
 import com.yoviro.rest.models.entity.Resident;
+import com.yoviro.rest.models.repository.ActivityRepository;
 import com.yoviro.rest.models.repository.ContactRepository;
 import com.yoviro.rest.models.repository.ResidentRepository;
 import com.yoviro.rest.models.repository.specification.handler.*;
@@ -22,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +35,9 @@ public class ResidentServiceImpl implements IResidentService {
 
     @Autowired
     ResidentRepository residentRepository;
+
+    @Autowired
+    ActivityRepository activityRepository;
 
     @Autowired
     private IContactService contactService;
@@ -86,6 +93,17 @@ public class ResidentServiceImpl implements IResidentService {
     @Override
     public Resident findByOfficialID(OfficialIdDTO officialIdDTO) {
         return residentRepository.findByOfficialID(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
+    }
+
+    @Override
+    public Resident findByActivity(ActivityDTO activityDTO) {
+        Optional<Activity> activityOptional = activityRepository.findById(activityDTO.getId());
+        if(activityOptional.isEmpty()){
+            return null;
+        }
+        Activity activity = activityOptional.get();
+        
+        return activity.getJob().getResident();
     }
 
     static List<SearchFilter> instanceResidentCriteria(SearchResidentDTO searchResidentDTO) {

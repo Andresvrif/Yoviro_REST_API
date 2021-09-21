@@ -61,6 +61,7 @@ public class VitalSignServiceImpl implements IVitalSignService {
         VitalSign vitalSign;
         Optional<VitalSign> optionalVitalSign = null;
         if (vitalSignDTO.getId() != null) {
+            //We're talking about an update process
             optionalVitalSign = vitalSignRepository.findById(vitalSignDTO.getId());
             vitalSign = optionalVitalSign.get();
             if (vitalSign == null) {

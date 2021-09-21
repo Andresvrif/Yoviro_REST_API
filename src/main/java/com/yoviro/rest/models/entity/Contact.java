@@ -1,5 +1,6 @@
 package com.yoviro.rest.models.entity;
 
+import com.yoviro.rest.util.StringUtil;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.thymeleaf.util.DateUtils;
@@ -175,12 +176,20 @@ public class Contact implements Serializable {
     }
 
     public String getFullName() {
-        String fullName = "";
-        String whiteSpace = " ";
-        return fullName.concat(this.firstName).concat(whiteSpace)
-                .concat(this.secondName).concat(whiteSpace)
-                .concat(this.lastName).concat(whiteSpace)
-                .concat(this.secondLastName);
+        String fullName = getFirstName().concat(" ");
+        if (getSecondName() != null) {
+            fullName = fullName.concat(getSecondName()).concat(" ");
+        }
+
+        if (getLastName() != null) {
+            fullName = fullName.concat(getLastName().concat(" "));
+        }
+
+        if (getSecondLastName() != null) {
+            fullName = fullName.concat(getSecondLastName().concat(" "));
+        }
+
+        return StringUtil.capitalizeWord(fullName);
     }
 
     public OfficialId getPrimaryOfficialID() {
