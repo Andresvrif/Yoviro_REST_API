@@ -61,7 +61,6 @@ public class VitalSignRestController {
     @PostMapping("/createOrUpdate")
     public void createOrUpdate(@RequestBody String json) throws Exception {
         JSONObject jsonObject = new JSONObject(json);
-        String idActivity = jsonObject.get("idActivity").toString();
         JSONObject vitalSignJSON = (JSONObject) jsonObject.get("VitalSignDTO");
         JSONObject officialIdJSON = (JSONObject) vitalSignJSON.get("OfficialIdDto");
 
@@ -69,9 +68,9 @@ public class VitalSignRestController {
         OfficialIdDTO officialIdDTO = objectMapper.readValue(officialIdJSON.toString(), OfficialIdDTO.class);
         VitalSignDTO vitalSignDTO = objectMapper.readValue(vitalSignJSON.toString(), VitalSignDTO.class);
         ActivityDTO activityDTO = null;
-        if (idActivity != null) {
+        if (jsonObject.has("idActivity")) {
             activityDTO = new ActivityDTO();
-            activityDTO.setId(Long.parseLong(idActivity.toString()));
+            activityDTO.setId(jsonObject.getLong("idActivity"));
         }
 
         //Save it
