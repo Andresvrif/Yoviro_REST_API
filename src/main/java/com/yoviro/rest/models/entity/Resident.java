@@ -3,8 +3,10 @@ package com.yoviro.rest.models.entity;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.thymeleaf.util.DateUtils;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,8 +17,8 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(name = "Resident.findByOfficialID",
                 query = "select r from Resident r \n" +
-                        "inner join Contact c on r.contact.id = c.id \n" +
-                        "inner join OfficialId o on o.contact.id = c.id \n" +
+                        "inner join Person p on r.person = p \n" +
+                        "inner join OfficialId o on o.contact = p \n" +
                         "where o.officialIdType = ?1 and o.officialIdNumber = ?2")
 })
 public class Resident {
@@ -29,12 +31,18 @@ public class Resident {
     @NotNull
     @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "contact_id")
-    private Contact contact; //Paciente Adulto Mayor
+    private Person person; //Paciente Adulto Mayor
 
     @OneToMany(mappedBy = "resident",
-               fetch = FetchType.LAZY,
-               orphanRemoval = true)
-    private List<VitalSign> vitalSigns;
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
+    private List<VitalSign> vitalSigns = new ArrayList<>();
+
+    @OneToMany(mappedBy = "resident", fetch = FetchType.LAZY)
+    private List<InventoryRequest> inventoryRequests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "resident", fetch = FetchType.LAZY)
+    private List<ResidentDispatch> residentDispatches = new ArrayList<>();
 
     @NotNull
     @Column(name = "create_at")
@@ -58,12 +66,20 @@ public class Resident {
         this.id = id;
     }
 
-    public Contact getContact() {
-        return contact;
+    public Person getPerson() {
+        return person;
     }
 
-    public void setContact(Contact contact) {
-        this.contact = contact;
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
+    public List<VitalSign> getVitalSigns() {
+        return vitalSigns;
+    }
+
+    public void setVitalSigns(List<VitalSign> vitalSigns) {
+        this.vitalSigns = vitalSigns;
     }
 
     public List<VitalSign> getVitalSignsChecks() {
@@ -72,6 +88,14 @@ public class Resident {
 
     public void setVitalSignsChecks(List<VitalSign> vitalSigns) {
         this.vitalSigns = vitalSigns;
+    }
+
+    public List<InventoryRequest> getInventoryRequests() {
+        return inventoryRequests;
+    }
+
+    public void setInventoryRequests(List<InventoryRequest> inventoryRequests) {
+        this.inventoryRequests = inventoryRequests;
     }
 
     public Date getCreateAt() {

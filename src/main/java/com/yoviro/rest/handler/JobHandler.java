@@ -1,6 +1,6 @@
 package com.yoviro.rest.handler;
 
-import com.yoviro.rest.config.enums.StatusTerm;
+import com.yoviro.rest.config.enums.StatusTermEnum;
 import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.util.DateUtil;
 
@@ -36,8 +36,8 @@ public class JobHandler {
      * @param referenceDate
      * @return
      */
-    public static StatusTerm getStatusTerm(Job job,
-                                           LocalDateTime referenceDate) {
+    public static StatusTermEnum getStatusTerm(Job job,
+                                               LocalDateTime referenceDate) {
         LocalDateTime startDate = job.getStartDate();
         LocalDateTime endDate = job.getEndDate();
         LocalDateTime effectiveDate = job.getEffectiveDate();
@@ -45,29 +45,29 @@ public class JobHandler {
             Submission submission = (Submission) job;
             if (referenceDate.compareTo(endDate) > 0) {
                 //AFTER TERM
-                return StatusTerm.NO_VIGENT;
+                return StatusTermEnum.NO_VIGENT;
             } else if (referenceDate.compareTo(startDate) < 0) {
                 //BEFORE TERM
-                return StatusTerm.PLANNED;
+                return StatusTermEnum.PLANNED;
             } else if (startDate.compareTo(referenceDate) <= 0 && referenceDate.compareTo(endDate) <= 0) {
-                return StatusTerm.VIGENT;
+                return StatusTermEnum.VIGENT;
             }
             return null;
         } else if (job instanceof Cancellation) {
             Cancellation cancellation = (Cancellation) job;
             if (referenceDate.compareTo(endDate) > 0) {
                 //AFTER TERM
-                return StatusTerm.NO_VIGENT;
+                return StatusTermEnum.NO_VIGENT;
             } else if (referenceDate.compareTo(startDate) < 0) {
                 //BEFORE TERM
-                return StatusTerm.CANCELLED;
+                return StatusTermEnum.CANCELLED;
             } else if (startDate.compareTo(referenceDate) <= 0 && referenceDate.compareTo(endDate) <= 0) {
                 //INSIDE TERM
                 //INSIDE ENABLE PERIOD AFTER CANCELLATION
                 if (referenceDate.compareTo(effectiveDate) <= 0) {
-                    return StatusTerm.VIGENT;
+                    return StatusTermEnum.VIGENT;
                 } else {
-                    return StatusTerm.CANCELLED;
+                    return StatusTermEnum.CANCELLED;
                 }
             }
 

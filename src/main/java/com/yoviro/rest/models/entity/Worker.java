@@ -1,6 +1,8 @@
 package com.yoviro.rest.models.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "worker")
@@ -11,7 +13,7 @@ public class Worker {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contact_id", unique = true)
-    private Contact contact;
+    private Person person;
 
     @OneToOne
     @JoinColumn(name = "user_id", unique = true)
@@ -21,6 +23,11 @@ public class Worker {
     @JoinColumn(name = "work_shift_id")
     private WorkShift workShift;
 
+    @OneToMany(mappedBy = "worker",
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
+    private List<InventoryRequest> inventoryRequests = new ArrayList<>();
+
     public Long getId() {
         return id;
     }
@@ -29,12 +36,12 @@ public class Worker {
         this.id = id;
     }
 
-    public Contact getContact() {
-        return contact;
+    public Person getPerson() {
+        return person;
     }
 
-    public void setContact(Contact contact) {
-        this.contact = contact;
+    public void setPerson(Person person) {
+        this.person = person;
     }
 
     public User getUser() {
@@ -47,6 +54,14 @@ public class Worker {
 
     public WorkShift getWorkShift() {
         return workShift;
+    }
+
+    public List<InventoryRequest> getInventoryRequests() {
+        return inventoryRequests;
+    }
+
+    public void setInventoryRequests(List<InventoryRequest> inventoryRequests) {
+        this.inventoryRequests = inventoryRequests;
     }
 
     public void setWorkShift(WorkShift workShift) {

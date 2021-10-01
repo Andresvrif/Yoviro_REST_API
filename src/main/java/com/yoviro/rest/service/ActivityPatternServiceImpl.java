@@ -77,8 +77,8 @@ public class ActivityPatternServiceImpl implements IActivityPatternService {
 
     @Transactional
     @Override
-    public ActivityPattern createNewActivityPatternWithAgreements(ActivityPatternDTO activityPatternDTO,
-                                                                  List<String> agreementNumbers) {
+    public ActivityPattern createOrUpdateActivityPatternWithAgreements(ActivityPatternDTO activityPatternDTO,
+                                                                       List<String> agreementNumbers) {
         //Bring all agreements
         List<Agreement> agreements = agreementRepository.findAgreementByAgreementNumberIn(agreementNumbers);
 

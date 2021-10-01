@@ -1,6 +1,6 @@
 package com.yoviro.rest.models.entity;
 
-import com.yoviro.rest.config.enums.StatusTerm;
+import com.yoviro.rest.config.enums.StatusTermEnum;
 import com.yoviro.rest.handler.JobHandler;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Generated;
@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "agreement", uniqueConstraints = {
@@ -107,7 +106,7 @@ public class Agreement {
         return jobs != null && jobs.size() > 0;
     }
 
-    public StatusTerm getStatus(LocalDateTime referenceDate) throws Exception {
+    public StatusTermEnum getStatus(LocalDateTime referenceDate) throws Exception {
         if (!hasJobs()) {
             throw new Exception("Can't define a status agreement without jobs defined");
         }
@@ -126,8 +125,8 @@ public class Agreement {
                                                     ActivityPattern activityPattern) {
         try {
             //Can't create activities in not vigent agreements
-            StatusTerm statusTerm = this.getStatus(referenceDate);
-            if (statusTerm != StatusTerm.VIGENT) return Boolean.FALSE;
+            StatusTermEnum statusTermEnum = this.getStatus(referenceDate);
+            if (statusTermEnum != StatusTermEnum.VIGENT) return Boolean.FALSE;
 
             //Can't re create the same activity in the same date
             var flag = this.getJobs().stream().anyMatch(job -> JobHandler.hasJobActivityRelated(job, activityPattern, referenceDate));

@@ -14,7 +14,7 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(name = "Contractor.findByOfficialID",
                 query = "select cr from Contractor cr \n" +
-                        "inner join Contact c on cr.contact.id = c.id \n" +
+                        "inner join Contact c on cr.person.id = c.id \n" +
                         "inner join OfficialId o on o.contact.id = c.id \n" +
                         "where o.officialIdType = ?1 and o.officialIdNumber = ?2")
 })
@@ -27,7 +27,7 @@ public class Contractor implements Serializable {
 
     @OneToOne(cascade = CascadeType.PERSIST,fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "contact_id", nullable = false)
-    private Contact contact;
+    private Person person;
 
     @OneToMany(mappedBy = "contractor",
             fetch = FetchType.LAZY,
@@ -61,12 +61,12 @@ public class Contractor implements Serializable {
         this.contractorNumber = contractorNumber;
     }
 
-    public Contact getContact() {
-        return contact;
+    public Person getPerson() {
+        return person;
     }
 
-    public void setContact(Contact contact) {
-        this.contact = contact;
+    public void setPerson(Person person) {
+        this.person = person;
     }
 
     public List<Agreement> getAgreements() {

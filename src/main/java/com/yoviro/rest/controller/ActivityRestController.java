@@ -1,12 +1,8 @@
 package com.yoviro.rest.controller;
 
 import com.yoviro.rest.config.enums.ActivityStatusEnum;
-import com.yoviro.rest.dto.ActivityDTO;
 import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.service.interfaces.IActivityService;
-import com.yoviro.rest.util.DateUtil;
-import com.yoviro.rest.util.StringUtil;
-import org.apache.tomcat.jni.Local;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,7 +10,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -106,11 +101,13 @@ public class ActivityRestController {
         for (Activity activity : activities) {
             job = activity.getJob();
             resident = job.getResident();
-            contact = resident.getContact();
+            //TODO Refactor
+            contact = null;//resident.getContact();
             primaryOfficialID = contact.getPrimaryOfficialID();
             rowData = new HashMap<String, Object>();
             rowData.put("id", activity.getId());
-            rowData.put("fullName", StringUtil.capitalizeWord(contact.getFullName()));
+            //TODO refactor
+            //rowData.put("fullName", StringUtil.capitalizeWord(contact.getFullName()));
             rowData.put("officialIdNumber", primaryOfficialID.getOfficialIdNumber());
             rowData.put("officialIdType", primaryOfficialID.getOfficialIdType());
             rowData.put("status", activity.getStatus());

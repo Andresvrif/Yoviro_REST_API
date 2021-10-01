@@ -144,7 +144,6 @@ public class AgreementServiceImpl implements IAgreementService {
 
     @Override
     public Agreement findAgreementByAgreementNumber(String agreementNumber) {
-        var x = agreementRepository.findAgreementByAgreementNumber(agreementNumber);
-        return x;
+        return agreementRepository.findAgreementByAgreementNumber(agreementNumber);
     }
 }

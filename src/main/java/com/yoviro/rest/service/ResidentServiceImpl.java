@@ -8,10 +8,8 @@ import com.yoviro.rest.dto.search.SearchContactDTO;
 import com.yoviro.rest.dto.search.SearchResidentDTO;
 import com.yoviro.rest.models.entity.Activity;
 import com.yoviro.rest.models.entity.Contact;
-import com.yoviro.rest.models.entity.Contractor;
 import com.yoviro.rest.models.entity.Resident;
 import com.yoviro.rest.models.repository.ActivityRepository;
-import com.yoviro.rest.models.repository.ContactRepository;
 import com.yoviro.rest.models.repository.ResidentRepository;
 import com.yoviro.rest.models.repository.specification.handler.*;
 import com.yoviro.rest.service.interfaces.IContactService;
@@ -26,7 +24,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ResidentServiceImpl implements IResidentService {
@@ -57,7 +54,8 @@ public class ResidentServiceImpl implements IResidentService {
             Contact contact = contactService.getOrCreateContact(contactDTO);
             resident = new Resident();
             resident.setEnable(Boolean.TRUE);
-            resident.setContact(contact);
+            //TODO Refactor
+            //resident.setContact(contact);
 
             return resident;
         } else {

@@ -7,7 +7,6 @@ import com.yoviro.rest.dto.ActivityDTO;
 import com.yoviro.rest.dto.ResidentDTO;
 import com.yoviro.rest.dto.search.SearchContactDTO;
 import com.yoviro.rest.dto.search.SearchResidentDTO;
-import com.yoviro.rest.models.entity.Activity;
 import com.yoviro.rest.models.entity.Contact;
 import com.yoviro.rest.models.entity.OfficialId;
 import com.yoviro.rest.models.entity.Resident;
@@ -91,14 +90,16 @@ public class ResidentRestController {
     }
 
     private HashMap<String, Object> wrapResident(Resident resident) {
-        Contact contact = resident.getContact();
+        Contact contact = null;
+        //resident.getContact(); TODO Refactor
         OfficialId officialId = contact.getPrimaryOfficialID();
 
         HashMap<String, Object> response = new HashMap<>();
 
         //Map Official ID Info
         response.put("Resident", Map.ofEntries(
-                Map.entry("fullName", contact.getFullName()),
+                //TODO REFACTOR
+                //Map.entry("fullName", contact.getFullName()),
                 Map.entry("OfficialIdDto", Map.ofEntries(
                         Map.entry("officialIdType", officialId.getOfficialIdType()),
                         Map.entry("officialIdNumber", officialId.getOfficialIdNumber())

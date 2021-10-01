@@ -4,6 +4,7 @@ import com.yoviro.rest.config.enums.FormRequestedEnum;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.thymeleaf.util.DateUtils;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -26,16 +27,16 @@ import java.util.Set;
         @NamedQuery(name = "ActivityPattern.enableActivityPatterns",
                 query = "select ap from ActivityPattern as ap where ap.enable = ?1"),
         @NamedQuery(name = "ActivityPattern.agreementsResidentRelated",
-                query = "select distinct c.firstName as firstName," +
-                        "c.secondName as secondName," +
-                        "c.lastName as firstLastName," +
-                        "c.secondLastName as secondLastName," +
+                query = "select distinct p.name as firstName, " +
+                        "p.secondName as secondName, " +
+                        "p.lastName as firstLastName, " +
+                        "p.secondLastName as secondLastName, " +
                         "ag.agreementNumber as agreementNumber from ActivityPattern ap " +
                         "inner join ap.agreements aap on ap.patternCode = ?1 " +
                         "inner join Agreement ag on aap.id=ag.id " +
                         "inner join Job j on j.agreement=ag " +
                         "inner join Resident r on r=j.resident " +
-                        "inner join Contact c on r.contact=c")
+                        "inner join Person p on r.person=p")
 })
 public class ActivityPattern {
 

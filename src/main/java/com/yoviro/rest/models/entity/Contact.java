@@ -1,6 +1,5 @@
 package com.yoviro.rest.models.entity;
 
-import com.yoviro.rest.util.StringUtil;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.thymeleaf.util.DateUtils;
@@ -9,42 +8,29 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "contact")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NamedQuery(name = "Contact.findByOfficialID",
         query = "select c from Contact as c " +
                 "inner join OfficialId as o " +
-                "ON o.contact.id=c.id where o.officialIdType=?1 and " +
+                "ON o.contact =c where o.officialIdType=?1 and " +
                 "o.officialIdNumber=?2")
-public class Contact implements Serializable {
+@DiscriminatorColumn(name = "contactType", discriminatorType = DiscriminatorType.STRING)
+public abstract class Contact implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String firstName;
-
-    private String secondName;
-
-    @Column(nullable = false)
-    private String lastName;
-
-    @NotEmpty
-    @NotNull
-    @Column
-    private String secondLastName;
-
-    @Column(nullable = false)
-    private LocalDate birthDate;
+    private String name; //For Person is firstName, For Company is Name of the company
 
     @Email
     private String email;
-
-    private String photo;
 
     @NotNull
     @NotEmpty
@@ -55,7 +41,7 @@ public class Contact implements Serializable {
                     CascadeType.REMOVE
             },
             orphanRemoval = true)
-    private List<OfficialId> officialIds;
+    private List<OfficialId> officialIds = new ArrayList<>();
 
     @Column(columnDefinition = "boolean default false")
     private Boolean internal;
@@ -68,22 +54,6 @@ public class Contact implements Serializable {
     @PrePersist
     public void PrePersist() {
         this.createAt = DateUtils.createNow().getTime();
-        if (this.firstName != null) {
-            this.firstName = this.firstName.toLowerCase();
-        }
-
-        if (this.secondName != null) {
-            this.secondName = this.secondName.toLowerCase();
-        }
-
-        if (this.lastName != null) {
-            this.lastName = this.lastName.toLowerCase();
-        }
-
-        if (this.secondLastName != null) {
-            this.secondLastName = this.secondLastName.toLowerCase();
-        }
-
         if (this.officialIds != null) {
             if (this.officialIds.size() == 1) {
                 OfficialId officialId = this.officialIds.get(0);
@@ -100,44 +70,12 @@ public class Contact implements Serializable {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getSecondName() {
-        return secondName;
-    }
-
-    public void setSecondName(String secondName) {
-        this.secondName = secondName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String surname) {
-        this.lastName = surname;
-    }
-
-    public String getSecondLastName() {
-        return secondLastName;
-    }
-
-    public void setSecondLastName(String secondSurname) {
-        this.secondLastName = secondSurname;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -146,14 +84,6 @@ public class Contact implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(String photo) {
-        this.photo = photo;
     }
 
     public List<OfficialId> getOfficialIds() {
@@ -173,23 +103,6 @@ public class Contact implements Serializable {
 
     public void setCreateAt(Date createAt) {
         this.createAt = createAt;
-    }
-
-    public String getFullName() {
-        String fullName = getFirstName().concat(" ");
-        if (getSecondName() != null) {
-            fullName = fullName.concat(getSecondName()).concat(" ");
-        }
-
-        if (getLastName() != null) {
-            fullName = fullName.concat(getLastName().concat(" "));
-        }
-
-        if (getSecondLastName() != null) {
-            fullName = fullName.concat(getSecondLastName().concat(" "));
-        }
-
-        return StringUtil.capitalizeWord(fullName);
     }
 
     public OfficialId getPrimaryOfficialID() {

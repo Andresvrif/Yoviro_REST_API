@@ -36,8 +36,8 @@ public interface IActivityPatternService {
 
     public Iterable<ActivityPattern> findAllByEnable(Boolean enable);
 
-    public ActivityPattern createNewActivityPatternWithAgreements(ActivityPatternDTO activityPatternDTO,
-                                                                  List<String> agreementNumbers);
+    public ActivityPattern createOrUpdateActivityPatternWithAgreements(ActivityPatternDTO activityPatternDTO,
+                                                                       List<String> agreementNumbers);
 
     public ActivityPattern retrieveActivityPatternByPatternCode(String patternCode);
 }

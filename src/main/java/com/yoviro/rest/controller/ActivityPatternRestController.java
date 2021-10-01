@@ -54,7 +54,7 @@ public class ActivityPatternRestController {
         ActivityPatternDTO activityPatternDTO = objectMapper.readValue(activityPatternDTOJsonObject.toString(), ActivityPatternDTO.class);
 
         List<String> agreementNodes = JSONUtil.<String>transformToList(agreementsJson);
-        ActivityPattern activityPattern = activityPatternService.createNewActivityPatternWithAgreements(activityPatternDTO, agreementNodes);
+        ActivityPattern activityPattern = activityPatternService.createOrUpdateActivityPatternWithAgreements(activityPatternDTO, agreementNodes);
 
         return activityPattern.getPatternCode();
     }
@@ -64,11 +64,11 @@ public class ActivityPatternRestController {
                                            @RequestParam(required = true) String page) {
         //Define pagination
         Integer pageNumber = PageUtil.definePageNumber(page);
-        Pageable sortedByDescription = PageRequest.of(pageNumber, AppConfig.PAGE_SIZE, Sort.by("subject").ascending());
+        Pageable pageable = PageRequest.of(pageNumber, AppConfig.PAGE_SIZE, Sort.by("subject").ascending());
 
         //Call Service and retrieve data
-        Page<SummaryActivityPatternProjection> pageSummary = searchByFirstName != null ? activityPatternService.summaryList(sortedByDescription, searchByFirstName) :
-                activityPatternService.summaryList(sortedByDescription);
+        Page<SummaryActivityPatternProjection> pageSummary = searchByFirstName != null ? activityPatternService.summaryList(pageable, searchByFirstName) :
+                activityPatternService.summaryList(pageable);
 
         //Transform projection to DTO
         List<ActivityPatternDTO> resultDTO = pageSummary.stream()
@@ -131,7 +131,7 @@ public class ActivityPatternRestController {
     }
 
     @GetMapping("/{patternCode}")
-    public ActivityPatternDTO agreementResidentRelated(@PathVariable String patternCode) throws Exception {
+    public ActivityPatternDTO activityPatternDetail(@PathVariable String patternCode) throws Exception {
         ActivityPattern activityPattern = activityPatternService.retrieveActivityPatternByPatternCode(patternCode);
         ActivityPatternDTO activityPatternDTO = modelMapper.map(activityPattern, ActivityPatternDTO.class);
 

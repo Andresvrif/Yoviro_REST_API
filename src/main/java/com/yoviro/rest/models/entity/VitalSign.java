@@ -10,29 +10,29 @@ import java.time.LocalDateTime;
 @NamedQueries({
         @NamedQuery(name = "VitalSign.summaryListAll",
                 query = "select vs.id as id," +
-                        "c.firstName as firstName," +
-                        "c.secondName as secondName," +
-                        "c.lastName as lastName," +
-                        "c.secondLastName as secondLastName," +
+                        "p.name as firstName," +
+                        "p.secondName as secondName," +
+                        "p.lastName as lastName," +
+                        "p.secondLastName as secondLastName," +
                         "vs.arterialPresion as arterialPresion," +
                         "vs.oxygenation as oxygenation," +
                         "vs.temperature as temperature," +
                         "vs.createAt as createAt from VitalSign vs " +
                         "join Resident r on r = vs.resident " +
-                        "join Contact c on r.contact = c"),
+                        "join Person p on r.person = p"),
         @NamedQuery(name = "VitalSign.summaryListLikeFirstName",
                 query = "select vs.id as id," +
-                        "c.firstName as firstName," +
-                        "c.secondName as secondName," +
-                        "c.lastName as lastName," +
-                        "c.secondLastName as secondLastName," +
+                        "p.name as firstName," +
+                        "p.secondName as secondName," +
+                        "p.lastName as lastName," +
+                        "p.secondLastName as secondLastName," +
                         "vs.arterialPresion as arterialPresion," +
                         "vs.oxygenation as oxygenation," +
                         "vs.temperature as temperature," +
                         "vs.createAt as createAt from VitalSign vs " +
                         "join Resident r on r = vs.resident " +
-                        "join Contact c on r.contact = c " +
-                        "where c.firstName like ?1")
+                        "join Person p on r.person = p " +
+                        "where p.name like ?1")
 })
 public class VitalSign {
     @Id

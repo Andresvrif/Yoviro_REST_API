@@ -1,20 +1,16 @@
 package com.yoviro.rest.batch.activity;
 
 import com.yoviro.rest.config.enums.ActivityStatusEnum;
-import com.yoviro.rest.config.enums.StatusTerm;
 import com.yoviro.rest.config.enums.TeamTypeEnum;
 import com.yoviro.rest.handler.JobHandler;
 import com.yoviro.rest.models.entity.*;
-import com.yoviro.rest.service.interfaces.IActivityPatternService;
 import com.yoviro.rest.service.interfaces.ITeamService;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 public class ActivityPatternItemProcessor implements ItemProcessor<ActivityPattern, List<Activity>> {

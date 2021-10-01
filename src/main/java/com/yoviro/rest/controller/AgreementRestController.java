@@ -15,7 +15,6 @@ import com.yoviro.rest.service.interfaces.IAgreementService;
 import com.yoviro.rest.util.DateUtil;
 import com.yoviro.rest.util.JSONUtil;
 import com.yoviro.rest.util.PageUtil;
-import com.yoviro.rest.util.StringUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
@@ -108,10 +107,10 @@ public class AgreementRestController {
 
         //Define Pageable
         Integer pageNumber = PageUtil.definePageNumber(page);
-        Pageable sortedByFirstName = PageRequest.of(pageNumber, AppConfig.PAGE_SIZE, Sort.by("agreementNumber").ascending());
+        Pageable pageable = PageRequest.of(pageNumber, AppConfig.PAGE_SIZE, Sort.by("agreementNumber").ascending());
 
         //Call Controller
-        Page<Agreement> pageAgreement = agreementService.searchAgreementsByContact(sortedByFirstName, searchAgreementDTO);
+        Page<Agreement> pageAgreement = agreementService.searchAgreementsByContact(pageable, searchAgreementDTO);
         List<Agreement> dataResult = pageAgreement.getContent().stream().collect(Collectors.toList());
 
         //Define Response
@@ -134,12 +133,14 @@ public class AgreementRestController {
 
         for (Agreement agreement : agreements) {
             Job job = JobHandler.lastJobFromAgreement(agreement);
-            Contact contact = job.getResident().getContact();
+            Contact contact = null;
+                    //job.getResident().getContact(); TODO Refactor
             OfficialId primaryOfficialID = contact.getPrimaryOfficialID();
 
             //Put data
             rowData = new HashMap<String, Object>();
-            rowData.put("fullName", StringUtil.capitalizeWord(contact.getFullName()));
+            //TODO REFACTOR
+            //rowData.put("fullName", StringUtil.capitalizeWord(contact.getFullName()));
             rowData.put("officialIdType", primaryOfficialID.getOfficialIdType());
             rowData.put("officialIdNumber", primaryOfficialID.getOfficialIdNumber());
             rowData.put("agreementNumber", agreement.getAgreementNumber());
