@@ -49,11 +49,7 @@ public class JpaUserDetailsService implements UserDetailsService {
         }
 
         //At this point the user exist and his roles
-        Contact contact = null;
-                //TODO
-                //user.getWorker().getContact();
-        Object object = Hibernate.unproxy(contact);
-        Person person = ((Person) object);
+        Person person = user.getWorker().getPerson();
         return new CustomUserDetails(user,
                 authorities,
                 person.getName(),

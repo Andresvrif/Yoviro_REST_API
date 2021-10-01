@@ -63,6 +63,20 @@ INSERT INTO db_yoviro.contact (contact_type, create_at, email, internal, name, b
 INSERT INTO db_yoviro.contact (contact_type, create_at, email, internal, name, birth_date, last_name, photo, second_last_name, second_name) VALUES ('PERSON', DEFAULT, null, DEFAULT, 'lorenzo', '1942-03-17', 'sotomayor', null, 'von mack', 'jose');
 INSERT INTO db_yoviro.contact (contact_type, create_at, email, internal, name, birth_date, last_name, photo,second_last_name, second_name)VALUES ('PERSON', DEFAULT, null, DEFAULT, 'enrique', '1947-07-18', 'villalobos', null, 'farfan', 'eduardo');
 
+/* Official ID */
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('29242147', 'DNI', 1, 9);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('07918010', 'DNI', 1, 10);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('06181637', 'DNI', 1, 11);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('21401947', 'DNI', 1, 12);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('10063132', 'DNI', 1, 13);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('09300621', 'DNI', 1, 14);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('02586289', 'DNI', 1, 15);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('06300288', 'DNI', 1, 16);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('09147773', 'DNI', 1, 17);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('08827599', 'DNI', 1, 18);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('10063165', 'DNI', 1, 19);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('41663523', 'DNI', 1, 20);
+
 /* WORKER */
 INSERT INTO db_yoviro.worker (contact_id, user_id, work_shift_id) VALUES (1, 1, 1);
 INSERT INTO db_yoviro.worker (contact_id, user_id, work_shift_id) VALUES (2, 2, 1);
