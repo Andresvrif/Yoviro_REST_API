@@ -4,10 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yoviro.rest.config.AppConfig;
 import com.yoviro.rest.config.enums.OfficialIdTypeEnum;
+import com.yoviro.rest.dto.CompanyDTO;
 import com.yoviro.rest.dto.ContactDTO;
 import com.yoviro.rest.dto.OfficialIdDTO;
+import com.yoviro.rest.dto.PersonDTO;
 import com.yoviro.rest.dto.search.SearchContactDTO;
 import com.yoviro.rest.models.entity.Contact;
+import com.yoviro.rest.models.entity.Person;
 import com.yoviro.rest.service.interfaces.IContactService;
 import com.yoviro.rest.util.JSONUtil;
 import com.yoviro.rest.util.PageUtil;
@@ -41,9 +44,21 @@ public class ContactRestController {
     @PostMapping
     public ContactDTO newContact(@RequestBody String json) throws IOException, JSONException {
         JSONObject jsonObject = new JSONObject(json);
-        ContactDTO contactDto = objectMapper.readValue(jsonObject.get("contactDTO").toString(), ContactDTO.class);
+        Boolean isPerson = jsonObject.has("personDTO");
+        Boolean isCompany = jsonObject.has("companyDTO");
+        if (isPerson) {
+            PersonDTO personDTO = objectMapper.readValue(jsonObject.get("personDTO").toString(), PersonDTO.class);
+            return contactService.save(personDTO);
+        } else if (isCompany) {
+            return null;
+        }
+        return null;
+        /*
+        ContactDTO contactDTO = objectMapper.readValue(jsonObject.get("contactDTO").toString(), ContactDTO.class);
 
-        return contactService.save(contactDto);
+        return contactService.save(contactDTO);
+        return contactService.save(contactDTO);
+         */
     }
 
     @GetMapping("/findContactByOfficialID")
@@ -53,9 +68,12 @@ public class ContactRestController {
         officialIdDTO.setOfficialIdType(officialIdTypeEnum);
         officialIdDTO.setOfficialIdNumber(officialIdNumber);
         Contact contact = contactService.findContactByOfficialId(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
-
         if (contact == null) return null;
-        return JSONUtil.addRootName(modelMapper.map(contact, ContactDTO.class));
+        if (contact instanceof Person) {
+            return JSONUtil.addRootName("ContactDTO", modelMapper.map(contact, PersonDTO.class));
+        } else {
+            return JSONUtil.addRootName("ContactDTO", modelMapper.map(contact, CompanyDTO.class));
+        }
     }
 
     @GetMapping("/search")

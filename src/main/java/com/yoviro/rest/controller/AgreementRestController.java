@@ -44,7 +44,7 @@ public class AgreementRestController {
     private IAgreementService agreementService;
 
     @PostMapping("/newFullAgreement")
-    public AgreementDTO newFullAgreement(@RequestBody String json) throws IOException, JSONException {
+    public AgreementDTO newFullAgreement(@RequestBody String json) throws Exception {
         JSONObject jsonObject = new JSONObject(json);
         ContractorDTO contractorDTO = objectMapper.readValue(jsonObject.get("contractorDTO").toString(), ContractorDTO.class);
         ResidentDTO residentDTO = objectMapper.readValue(jsonObject.get("residentDTO").toString(), ResidentDTO.class);

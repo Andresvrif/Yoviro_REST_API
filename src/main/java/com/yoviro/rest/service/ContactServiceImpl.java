@@ -1,10 +1,14 @@
 package com.yoviro.rest.service;
 
 import com.yoviro.rest.config.enums.OfficialIdTypeEnum;
+import com.yoviro.rest.dto.CompanyDTO;
 import com.yoviro.rest.dto.ContactDTO;
 import com.yoviro.rest.dto.OfficialIdDTO;
+import com.yoviro.rest.dto.PersonDTO;
 import com.yoviro.rest.dto.search.SearchContactDTO;
+import com.yoviro.rest.models.entity.Company;
 import com.yoviro.rest.models.entity.Contact;
+import com.yoviro.rest.models.entity.Person;
 import com.yoviro.rest.models.repository.ContactRepository;
 import com.yoviro.rest.models.repository.specification.handler.*;
 import com.yoviro.rest.service.interfaces.IContactService;
@@ -15,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,12 +75,18 @@ public class ContactServiceImpl implements IContactService {
     }
 
     @Override
-    public Contact getOrCreateContact(ContactDTO contactDTO) {
+    public Contact getOrCreateContact(ContactDTO contactDTO) throws Exception {
         OfficialIdDTO officialIdDTO = contactDTO.getOfficialIds().get(0);
         Contact contact = findContactByOfficialId(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
         if (contact != null) return contact;
+        if (contactDTO instanceof PersonDTO) {
+            contact = modelMapper.map(contactDTO, Person.class);
+        } else if (contactDTO instanceof CompanyDTO) {
+            contact = modelMapper.map(contactDTO, Company.class);
+        } else {
+            throw new Exception("Not contact type enable");
+        }
 
-        contact = modelMapper.map(contactDTO, Contact.class);
         return contactRepository.save(contact);
     }
 

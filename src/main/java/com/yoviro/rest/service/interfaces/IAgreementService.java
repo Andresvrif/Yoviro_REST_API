@@ -11,7 +11,7 @@ import java.util.List;
 public interface IAgreementService {
     AgreementDTO createNewFullAgreement(ContractorDTO contractorDTO,
                                         ResidentDTO residentDTO,
-                                        SubmissionDTO submissionDTO);
+                                        SubmissionDTO submissionDTO) throws Exception;
 
     AgreementDTO cancelAgreement(AgreementDTO agreementDTO,
                                  CancellationDTO cancellationDTO) throws Exception;

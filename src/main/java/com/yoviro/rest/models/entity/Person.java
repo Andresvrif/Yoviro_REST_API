@@ -32,8 +32,8 @@ public class Person extends Contact {
     }
 
     public void setSecondName(String secondName) {
-        if (this.secondName != null) {
-            this.secondName = this.secondName.toLowerCase();
+        if (secondName != null) {
+            this.secondName = secondName.toLowerCase();
         }
     }
 
@@ -42,8 +42,8 @@ public class Person extends Contact {
     }
 
     public void setLastName(String lastName) {
-        if (this.lastName != null) {
-            this.lastName = this.lastName.toLowerCase();
+        if (lastName != null) {
+            this.lastName = lastName.toLowerCase();
         }
     }
 
@@ -52,8 +52,8 @@ public class Person extends Contact {
     }
 
     public void setSecondLastName(String secondLastName) {
-        if (this.secondLastName != null) {
-            this.secondLastName = this.secondLastName.toLowerCase();
+        if (secondLastName != null) {
+            this.secondLastName = secondLastName.toLowerCase();
         }
     }
 

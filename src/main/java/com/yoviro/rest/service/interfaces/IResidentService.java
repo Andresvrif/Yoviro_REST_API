@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface IResidentService {
     public Resident save(ResidentDTO residentDTO);
-    public Resident getOrCreateResident(ResidentDTO residentDTO);
+    public Resident getOrCreateResident(ResidentDTO residentDTO) throws Exception;
     public Page<Resident> searchResident(SearchResidentDTO searchResidentDTO, Pageable pageable);
     Resident findByOfficialID(OfficialIdDTO officialIdDTO);
     Resident findByActivity(ActivityDTO activity);

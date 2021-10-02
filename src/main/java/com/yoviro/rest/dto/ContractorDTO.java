@@ -3,6 +3,8 @@ package com.yoviro.rest.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yoviro.rest.models.entity.Person;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,7 +15,7 @@ public class ContractorDTO {
     private String contractorNumber;
 
     @JsonProperty("contactDTO")
-    private ContactDTO contact;
+    private PersonDTO personDTO;
 
     @JsonProperty("agreementDTOs")
     @JsonManagedReference
@@ -37,12 +39,12 @@ public class ContractorDTO {
         this.contractorNumber = contractorNumber;
     }
 
-    public ContactDTO getContact() {
-        return contact;
+    public PersonDTO getPersonDTO() {
+        return personDTO;
     }
 
-    public void setContact(ContactDTO contact) {
-        this.contact = contact;
+    public void setPersonDTO(PersonDTO personDTO) {
+        this.personDTO = personDTO;
     }
 
     public List<AgreementDTO> getAgreements() {

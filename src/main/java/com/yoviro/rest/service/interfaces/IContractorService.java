@@ -9,6 +9,6 @@ public interface IContractorService {
 
     public void delete(Long id);
 
-    public Contractor getOrCreateContractor(ContractorDTO contractorDTO);
+    public Contractor getOrCreateContractor(ContractorDTO contractorDTO) throws Exception;
 
 }

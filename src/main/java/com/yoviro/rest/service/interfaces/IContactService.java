@@ -14,5 +14,5 @@ public interface IContactService {
     public ContactDTO save(ContactDTO contactDTO);
     public void delete(Long id);
     public Contact findContactByOfficialId(OfficialIdTypeEnum officialIDTypeEnum, String officialIDNumber);
-    public Contact getOrCreateContact(ContactDTO contactDTO);
+    public Contact getOrCreateContact(ContactDTO contactDTO) throws Exception;
 }

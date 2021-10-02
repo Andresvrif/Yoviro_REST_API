@@ -35,8 +35,8 @@ public class ContractorServiceImpl implements IContractorService {
     }
 
     @Override
-    public Contractor getOrCreateContractor(ContractorDTO contractorDTO) {
-        ContactDTO contactDTO = contractorDTO.getContact();
+    public Contractor getOrCreateContractor(ContractorDTO contractorDTO) throws Exception {
+        ContactDTO contactDTO = contractorDTO.getPersonDTO();
         OfficialIdDTO officialIdDTO = contactDTO.getOfficialIds().get(0);
         Contractor contractor = contractorRepository.findByOfficialID(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
         if (contractor == null) {

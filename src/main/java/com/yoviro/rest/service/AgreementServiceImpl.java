@@ -47,7 +47,7 @@ public class AgreementServiceImpl implements IAgreementService {
     @Override
     public AgreementDTO createNewFullAgreement(ContractorDTO contractorDTO,
                                                ResidentDTO residentDTO,
-                                               SubmissionDTO submissionDTO) {
+                                               SubmissionDTO submissionDTO) throws Exception {
         //Prepare DTOs
         submissionDTO.setEffectiveDate(submissionDTO.getStartDate());
         residentDTO.setEnable(true);

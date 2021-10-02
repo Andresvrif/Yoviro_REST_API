@@ -9,7 +9,7 @@ public class ResidentDTO {
     private Long id;
 
     @JsonProperty("contactDTO")
-    private ContactDTO contact; //Paciente Adulto Mayor
+    private PersonDTO person; //Paciente Adulto Mayor
 
     private Date createAt;
 
@@ -27,12 +27,12 @@ public class ResidentDTO {
         this.id = id;
     }
 
-    public ContactDTO getContact() {
-        return contact;
+    public PersonDTO getPerson() {
+        return person;
     }
 
-    public void setContact(ContactDTO contact) {
-        this.contact = contact;
+    public void setPerson(PersonDTO person) {
+        this.person = person;
     }
 
     public Date getCreateAt() {

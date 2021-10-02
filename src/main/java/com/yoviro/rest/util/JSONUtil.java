@@ -24,6 +24,12 @@ public class JSONUtil {
         return mapper;
     }
 
+    public static Map<String, Object> addRootName(String rootName, Object object) {
+        var mapper = new HashMap<String, Object>();
+        mapper.put(rootName, object);
+        return mapper;
+    }
+
     public static Map<String, Object> addRootName(String rootName, HashMap<String, Object> data) {
         var map = new HashMap<String, Object>();
         map.put(rootName, data);

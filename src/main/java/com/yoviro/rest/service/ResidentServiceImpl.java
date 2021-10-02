@@ -46,8 +46,8 @@ public class ResidentServiceImpl implements IResidentService {
     }
 
     @Override
-    public Resident getOrCreateResident(ResidentDTO residentDTO) {
-        ContactDTO contactDTO = residentDTO.getContact();
+    public Resident getOrCreateResident(ResidentDTO residentDTO) throws Exception {
+        ContactDTO contactDTO = residentDTO.getPerson();
         OfficialIdDTO officialIdDTO = contactDTO.getOfficialIds().get(0);
         Resident resident = residentRepository.findByOfficialID(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
         if (resident == null) {
@@ -96,11 +96,11 @@ public class ResidentServiceImpl implements IResidentService {
     @Override
     public Resident findByActivity(ActivityDTO activityDTO) {
         Optional<Activity> activityOptional = activityRepository.findById(activityDTO.getId());
-        if(activityOptional.isEmpty()){
+        if (activityOptional.isEmpty()) {
             return null;
         }
         Activity activity = activityOptional.get();
-        
+
         return activity.getJob().getResident();
     }
 
