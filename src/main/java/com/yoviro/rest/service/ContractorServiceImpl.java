@@ -4,6 +4,7 @@ import com.yoviro.rest.dto.ContactDTO;
 import com.yoviro.rest.dto.ContractorDTO;
 import com.yoviro.rest.dto.OfficialIdDTO;
 import com.yoviro.rest.models.entity.Contact;
+import com.yoviro.rest.models.entity.Person;
 import com.yoviro.rest.models.repository.ContractorRepository;
 import com.yoviro.rest.models.entity.Contractor;
 import com.yoviro.rest.service.interfaces.IContactService;
@@ -36,14 +37,13 @@ public class ContractorServiceImpl implements IContractorService {
 
     @Override
     public Contractor getOrCreateContractor(ContractorDTO contractorDTO) throws Exception {
-        ContactDTO contactDTO = contractorDTO.getPersonDTO();
+        ContactDTO contactDTO = contractorDTO.getPerson();
         OfficialIdDTO officialIdDTO = contactDTO.getOfficialIds().get(0);
         Contractor contractor = contractorRepository.findByOfficialID(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
         if (contractor == null) {
             Contact contact = contactService.getOrCreateContact(contactDTO);
             contractor = new Contractor();
-            //TODO Refactor
-            //contractor.setContact(contact);
+            contractor.setPerson((Person) contact);
 
             return contractorRepository.save(contractor);
         } else {

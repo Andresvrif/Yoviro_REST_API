@@ -16,7 +16,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -63,10 +65,11 @@ public class VitalSignServiceImpl implements IVitalSignService {
         if (vitalSignDTO.getId() != null) {
             //We're talking about an update process
             optionalVitalSign = vitalSignRepository.findById(vitalSignDTO.getId());
-            vitalSign = optionalVitalSign.get();
-            if (vitalSign == null) {
+            if (optionalVitalSign.isEmpty()) {
                 throw new Exception("Not found vital sign");
             }
+
+            vitalSign = optionalVitalSign.get();
 
             //Update fields, don't update field
             vitalSign.setGlucose(vitalSignDTO.getGlucose());
@@ -76,7 +79,7 @@ public class VitalSignServiceImpl implements IVitalSignService {
             vitalSign.setObservation(vitalSignDTO.getObservation());
         } else {
             Resident resident = residentRepository.findByOfficialID(officialIdDTO.getOfficialIdType(), officialIdDTO.getOfficialIdNumber());
-            if (resident == null) throw new Exception("Resident not found");
+            if (resident == null) throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Resident not found");
 
             //New vital sign
             vitalSign = modelMapper.map(vitalSignDTO, VitalSign.class);

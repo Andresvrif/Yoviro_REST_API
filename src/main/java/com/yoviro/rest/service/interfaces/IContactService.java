@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface IContactService {
     public List<ContactDTO> findAll();
-    public Page<Contact> search(Pageable pageable, SearchContactDTO searchContactDTO);
+    public Page search(Pageable pageable, SearchContactDTO searchContactDTO);
     public ContactDTO save(ContactDTO contactDTO);
     public void delete(Long id);
     public Contact findContactByOfficialId(OfficialIdTypeEnum officialIDTypeEnum, String officialIDNumber);

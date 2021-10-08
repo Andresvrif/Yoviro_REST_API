@@ -5,11 +5,15 @@ import com.yoviro.rest.dto.CompanyDTO;
 import com.yoviro.rest.dto.ContactDTO;
 import com.yoviro.rest.dto.OfficialIdDTO;
 import com.yoviro.rest.dto.PersonDTO;
+import com.yoviro.rest.dto.search.SearchCompanyDTO;
 import com.yoviro.rest.dto.search.SearchContactDTO;
+import com.yoviro.rest.dto.search.SearchPersonDTO;
 import com.yoviro.rest.models.entity.Company;
 import com.yoviro.rest.models.entity.Contact;
 import com.yoviro.rest.models.entity.Person;
+import com.yoviro.rest.models.repository.CompanyRepository;
 import com.yoviro.rest.models.repository.ContactRepository;
+import com.yoviro.rest.models.repository.PersonRepository;
 import com.yoviro.rest.models.repository.specification.handler.*;
 import com.yoviro.rest.service.interfaces.IContactService;
 import org.modelmapper.ModelMapper;
@@ -32,13 +36,20 @@ public class ContactServiceImpl implements IContactService {
     @Autowired
     private ContactRepository contactRepository;
 
+    @Autowired
+    private PersonRepository personRepository;
+
+    @Autowired
+    private CompanyRepository companyRepository;
+
     @Override
     public List<ContactDTO> findAll() {
         return null;
     }
 
     @Override
-    public Page<Contact> search(Pageable pageable, SearchContactDTO searchContactDTO) {
+    public Page search(Pageable pageable,
+                       SearchContactDTO searchContactDTO) {
         //Define Search Criteria
         SearchQuery qry = new SearchQuery();
         List<SearchFilter> contactCriteria = instanceContactCriteria(searchContactDTO); //Contact Filter
@@ -52,16 +63,85 @@ public class ContactServiceImpl implements IContactService {
         qry.addJoinColumnProp(joinColumnPropsContactOfficialID);
         qry.setSearchFilter(contactCriteria);
 
-        Specification<Contact> specification = SpecificationUtil.bySearchQuery(qry, Contact.class, Boolean.TRUE);
-        return contactRepository.findAll(specification, pageable);
+        //Execute query
+        Page page = null;
+        if (searchContactDTO instanceof SearchPersonDTO) {
+            Specification<Person> specification = SpecificationUtil.bySearchQuery(qry, Person.class, Boolean.TRUE);
+            page = personRepository.findAll(specification, pageable);
+        } else if (searchContactDTO instanceof SearchCompanyDTO) {
+            Specification<Company> specification = SpecificationUtil.bySearchQuery(qry, Company.class, Boolean.TRUE);
+            page = companyRepository.findAll(specification, pageable);
+        }
+
+        return page;
     }
 
+    static List<SearchFilter> instanceContactCriteria(SearchContactDTO searchContactDTO) {
+        if (searchContactDTO instanceof SearchPersonDTO) {
+            return instancePersonCriteria((SearchPersonDTO) searchContactDTO);
+        } else if (searchContactDTO instanceof SearchCompanyDTO) {
+            //TODO Mapeo para compañia
+            throw new IllegalArgumentException("PENDIENTE DE REALIZAR - TODO");
+        } else {
+            throw new IllegalArgumentException("NO EXISTE TIPO DE CRITERIO DE BUSQUEDA");
+        }
+    }
+
+    static List<SearchFilter> instancePersonCriteria(SearchPersonDTO searchPersonDTO) {
+        List<SearchFilter> filters = new ArrayList<>();
+        SearchFilter contactFilter;
+        if (searchPersonDTO.getName() != null) {
+            contactFilter = new SearchFilter();
+            contactFilter.setProperty("name");
+            contactFilter.setValue(searchPersonDTO.getName());
+            contactFilter.setOperator(searchPersonDTO.getExactCoincidence() ? OperatorEnum.EQUALS : OperatorEnum.LIKE);
+
+            filters.add(contactFilter);
+        }
+
+        if (searchPersonDTO.getSecondName() != null) {
+            contactFilter = new SearchFilter();
+            contactFilter.setProperty("secondName");
+            contactFilter.setOperator(searchPersonDTO.getExactCoincidence() ? OperatorEnum.EQUALS : OperatorEnum.LIKE);
+            contactFilter.setValue(searchPersonDTO.getSecondName());
+
+            filters.add(contactFilter);
+        }
+
+        if (searchPersonDTO.getLastName() != null) {
+            contactFilter = new SearchFilter();
+            contactFilter.setProperty("lastName");
+            contactFilter.setOperator(searchPersonDTO.getExactCoincidence() ? OperatorEnum.EQUALS : OperatorEnum.LIKE);
+            contactFilter.setValue(searchPersonDTO.getLastName());
+
+            filters.add(contactFilter);
+        }
+
+        if (searchPersonDTO.getSecondLastName() != null) {
+            contactFilter = new SearchFilter();
+            contactFilter.setProperty("secondLastName");
+            contactFilter.setOperator(searchPersonDTO.getExactCoincidence() ? OperatorEnum.EQUALS : OperatorEnum.LIKE);
+            contactFilter.setValue(searchPersonDTO.getSecondLastName());
+
+            filters.add(contactFilter);
+        }
+
+        return filters;
+    }
 
     @Override
-    public ContactDTO save(ContactDTO contactDto) {
-        Contact contact = modelMapper.map(contactDto, Contact.class);
-        contact = contactRepository.save(contact);
-        return modelMapper.map(contact, ContactDTO.class);
+    public ContactDTO save(ContactDTO contactDTO) {
+        if (contactDTO instanceof PersonDTO) {
+            Person person = modelMapper.map(contactDTO, Person.class);
+            person = contactRepository.save(person);
+            return modelMapper.map(person, PersonDTO.class);
+        } else if (contactDTO instanceof CompanyDTO) {
+            Company company = modelMapper.map(contactDTO, Company.class);
+            company = contactRepository.save(company);
+            return modelMapper.map(company, CompanyDTO.class);
+        } else {
+            throw new IllegalArgumentException("Type of ContactDTO not valid!, please review this object: " + contactDTO.getClass().getSimpleName());
+        }
     }
 
     @Override
@@ -88,47 +168,5 @@ public class ContactServiceImpl implements IContactService {
         }
 
         return contactRepository.save(contact);
-    }
-
-    static List<SearchFilter> instanceContactCriteria(SearchContactDTO searchContactDTO) {
-        List<SearchFilter> filters = new ArrayList<>();
-        SearchFilter contactFilter;
-        if (searchContactDTO.getFirstName() != null) {
-            contactFilter = new SearchFilter();
-            contactFilter.setProperty("firstName");
-            contactFilter.setValue(searchContactDTO.getFirstName());
-            contactFilter.setOperator(searchContactDTO.getExactCoincidence() ? OperatorEnum.EQUALS : OperatorEnum.LIKE);
-
-            filters.add(contactFilter);
-        }
-
-        if (searchContactDTO.getSecondName() != null) {
-            contactFilter = new SearchFilter();
-            contactFilter.setProperty("secondName");
-            contactFilter.setOperator(searchContactDTO.getExactCoincidence() ? OperatorEnum.EQUALS : OperatorEnum.LIKE);
-            contactFilter.setValue(searchContactDTO.getSecondName());
-
-            filters.add(contactFilter);
-        }
-
-        if (searchContactDTO.getLastName() != null) {
-            contactFilter = new SearchFilter();
-            contactFilter.setProperty("lastName");
-            contactFilter.setOperator(searchContactDTO.getExactCoincidence() ? OperatorEnum.EQUALS : OperatorEnum.LIKE);
-            contactFilter.setValue(searchContactDTO.getLastName());
-
-            filters.add(contactFilter);
-        }
-
-        if (searchContactDTO.getSecondLastName() != null) {
-            contactFilter = new SearchFilter();
-            contactFilter.setProperty("secondLastName");
-            contactFilter.setOperator(searchContactDTO.getExactCoincidence() ? OperatorEnum.EQUALS : OperatorEnum.LIKE);
-            contactFilter.setValue(searchContactDTO.getSecondLastName());
-
-            filters.add(contactFilter);
-        }
-
-        return filters;
     }
 }

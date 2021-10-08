@@ -53,7 +53,14 @@ public class AgreementDTO {
     }
 
     public void setJobs(List<JobDTO> jobs) {
-        this.jobs = jobs;
+        this.jobs = new ArrayList<>();
+        if (jobs == null) return;
+        for (JobDTO jobDTO : jobs) {
+            if (jobDTO.getAgreement() == null) {
+                jobDTO.setAgreement(this);
+            }
+            this.jobs.add(jobDTO);
+        }
     }
 
     public Set<ActivityPatternDTO> getActivityPatternDTOs() {

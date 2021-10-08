@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,14 +31,16 @@ public class ActivityPatternItemProcessor implements ItemProcessor<ActivityPatte
         List<Activity> activitiesToBeCreated = new ArrayList<Activity>();
         List<Agreement> agreements = activityPattern.getAgreements();
         LocalDateTime currentDate = LocalDateTime.now();
+        HashMap<User, List<Activity>> userDistribution = defineUserDistribution(users);
+
 
         for (Agreement agreement : agreements) {
             if (!agreement.applyActivityPatternToBeAssigned(currentDate, activityPattern)) continue;
 
             //Define User to be assigned
             User userToAssign = defineUserToBeAssigned(currentDate,
-                                                       users,
-                                                       activityPattern);
+                    userDistribution,
+                    activityPattern);
 
             //At this point, the activity can be created
             Activity activity = new Activity();
@@ -47,6 +50,8 @@ public class ActivityPatternItemProcessor implements ItemProcessor<ActivityPatte
             activity.setAssignedUser(userToAssign);
 
             activitiesToBeCreated.add(activity);
+
+            userDistribution.get(userToAssign).add(activity);
         }
 
         return activitiesToBeCreated.isEmpty() ? null : activitiesToBeCreated;
@@ -73,21 +78,34 @@ public class ActivityPatternItemProcessor implements ItemProcessor<ActivityPatte
 
     /***
      * Author : Andrés V.
+     * Desc : Instan map to represent distribution of activities
+     * @param users
+     * @return
+     */
+    private HashMap<User, List<Activity>> defineUserDistribution(List<User> users) {
+        HashMap<User, List<Activity>> activityDistribution = new HashMap<User, List<Activity>>();
+        for (User user : users) {
+            activityDistribution.put(user, new ArrayList<Activity>());
+        }
+        return activityDistribution;
+    }
+
+    /***
+     * Author : Andrés V.
      * Desc : Defines the user to be assigned accord user and activity pattern
      * @param users
      * @param activityPattern
      * @return
      */
     private User defineUserToBeAssigned(LocalDateTime referenceDate,
-                                        List<User> users,
+                                        HashMap<User, List<Activity>> userDistribution,
                                         ActivityPattern activityPattern) {
-        users = users.stream().filter(e -> e.canBeAssigned(referenceDate, activityPattern)).collect(Collectors.toList());
-        //TODO BALANCING!
+        List<User> users = userDistribution.keySet().stream().filter(e -> e.canBeAssigned(referenceDate, activityPattern)).collect(Collectors.toList());
         User userToBeAssigned = null;
         for (User user : users) {
             if (userToBeAssigned == null) userToBeAssigned = user;
 
-            if (userToBeAssigned.getActivities().size() < user.getActivities().size()) {
+            if (userDistribution.get(userToBeAssigned).size() > userDistribution.get(user).size()) {
                 userToBeAssigned = user;
             }
         }

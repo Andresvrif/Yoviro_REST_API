@@ -5,10 +5,11 @@ import com.yoviro.rest.config.AppConfig;
 import com.yoviro.rest.config.enums.OfficialIdTypeEnum;
 import com.yoviro.rest.dto.ActivityDTO;
 import com.yoviro.rest.dto.ResidentDTO;
-import com.yoviro.rest.dto.search.SearchContactDTO;
+import com.yoviro.rest.dto.search.SearchPersonDTO;
 import com.yoviro.rest.dto.search.SearchResidentDTO;
 import com.yoviro.rest.models.entity.Contact;
 import com.yoviro.rest.models.entity.OfficialId;
+import com.yoviro.rest.models.entity.Person;
 import com.yoviro.rest.models.entity.Resident;
 import com.yoviro.rest.service.interfaces.IResidentService;
 import com.yoviro.rest.util.JSONUtil;
@@ -46,8 +47,8 @@ public class ResidentRestController {
                                       @RequestParam(required = false) String officialIDNumber,
                                       @RequestParam(required = true) Boolean exactCoincidence,
                                       @RequestParam(required = true) String page) throws JsonProcessingException, JSONException {
-        SearchContactDTO searchContactDTO = new SearchContactDTO();
-        searchContactDTO.setFirstName(firstName);
+        SearchPersonDTO searchContactDTO = new SearchPersonDTO();
+        searchContactDTO.setName(firstName);
         searchContactDTO.setSecondName(secondName);
         searchContactDTO.setLastName(lastName);
         searchContactDTO.setSecondLastName(secondLastName);
@@ -56,11 +57,11 @@ public class ResidentRestController {
         searchContactDTO.setExactCoincidence(exactCoincidence);
 
         SearchResidentDTO searchResidentDTO = new SearchResidentDTO();
-        searchResidentDTO.setSearchContactDTO(searchContactDTO);
+        searchResidentDTO.setSearchPersonDTO(searchContactDTO);
 
         //Define Pageable
         Integer pageNumber = PageUtil.definePageNumber(page);
-        Pageable sortedByContact = PageRequest.of(pageNumber, AppConfig.PAGE_SIZE, Sort.by("contact").ascending());
+        Pageable sortedByContact = PageRequest.of(pageNumber, AppConfig.PAGE_SIZE, Sort.by("person").ascending());
 
         //Call Controller
         Page<Resident> pageResidents = residentService.searchResident(searchResidentDTO, sortedByContact);
@@ -80,26 +81,22 @@ public class ResidentRestController {
 
         Resident resident = residentService.findByActivity(activityDTO);
         if (resident == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Resident not found");
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Resident not found");
         }
 
         //Define Response
-        var response = wrapResident(resident);
-        //reurn modelMapper.map(resident, ResidentDTO.class);
-        return response;
+        return wrapResident(resident);
     }
 
     private HashMap<String, Object> wrapResident(Resident resident) {
-        Contact contact = null;
-        //resident.getContact(); TODO Refactor
-        OfficialId officialId = contact.getPrimaryOfficialID();
+        Person person = resident.getPerson();
+        OfficialId officialId = person.getPrimaryOfficialID();
 
         HashMap<String, Object> response = new HashMap<>();
 
         //Map Official ID Info
         response.put("Resident", Map.ofEntries(
-                //TODO REFACTOR
-                //Map.entry("fullName", contact.getFullName()),
+                Map.entry("fullName", person.getFullName()),
                 Map.entry("OfficialIdDto", Map.ofEntries(
                         Map.entry("officialIdType", officialId.getOfficialIdType()),
                         Map.entry("officialIdNumber", officialId.getOfficialIdNumber())

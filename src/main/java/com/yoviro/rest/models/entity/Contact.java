@@ -3,6 +3,7 @@ package com.yoviro.rest.models.entity;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.thymeleaf.util.DateUtils;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -53,13 +54,18 @@ public abstract class Contact implements Serializable {
 
     @PrePersist
     public void PrePersist() {
-        this.createAt = DateUtils.createNow().getTime();
         if (this.officialIds != null) {
             if (this.officialIds.size() == 1) {
                 OfficialId officialId = this.officialIds.get(0);
                 officialId.setPrimaryOfficialId(true);
             }
         }
+
+        if (this.internal == null) {
+            this.internal = Boolean.FALSE;
+        }
+
+        this.createAt = DateUtils.createNow().getTime();
     }
 
     public Long getId() {

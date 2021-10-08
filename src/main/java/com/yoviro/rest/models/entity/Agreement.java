@@ -44,7 +44,6 @@ public class Agreement {
     @ColumnDefault("CURRENT_TIMESTAMP(6)")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createAt;
-    //TODO evaluar establecer una property para definir el estado del contrato (planificado, en vigencia y/o)
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "agreements")
     private List<ActivityPattern> activityPatterns = new ArrayList<>();

@@ -1,15 +1,15 @@
 package com.yoviro.rest.dto.search;
 
 public class SearchResidentDTO {
-    SearchContactDTO searchContactDTO;
+    SearchPersonDTO searchPersonDTO;
     private Boolean enable;
 
-    public SearchContactDTO getSearchContactDTO() {
-        return searchContactDTO;
+    public SearchPersonDTO getSearchPersonDTO() {
+        return searchPersonDTO;
     }
 
-    public void setSearchContactDTO(SearchContactDTO searchContactDTO) {
-        this.searchContactDTO = searchContactDTO;
+    public void setSearchPersonDTO(SearchPersonDTO searchPersonDTO) {
+        this.searchPersonDTO = searchPersonDTO;
     }
 
     public Boolean getEnable() {

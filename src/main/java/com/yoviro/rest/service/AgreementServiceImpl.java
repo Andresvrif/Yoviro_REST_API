@@ -72,7 +72,6 @@ public class AgreementServiceImpl implements IAgreementService {
         //TODO Antes de crear el contrato, verificar si existe alguno vigente para el residente
 
         agreement.getJobs().add(submission);
-
         return modelMapper.map(agreement, AgreementDTO.class);
     }
 
@@ -107,7 +106,7 @@ public class AgreementServiceImpl implements IAgreementService {
                                                      SearchAgreementDTO searchAgreementDTO) {
         SearchJobDTO searchJobDTO = searchAgreementDTO.getSearchJobDTO();
         SearchResidentDTO searchResidentDTO = searchJobDTO.getSearchResidentDTO();
-        SearchContactDTO searchContactDTO = searchResidentDTO.getSearchContactDTO();
+        SearchContactDTO searchContactDTO = searchResidentDTO.getSearchPersonDTO();
 
         //Define Search Criteria
         SearchQuery qry = new SearchQuery();
@@ -121,7 +120,7 @@ public class AgreementServiceImpl implements IAgreementService {
         joinColumnPropsContactOfficialID.setSearchFilter(officialIDCriteria);
 
         JoinColumnProps joinColumnPropsResidentAndContact = new JoinColumnProps();
-        joinColumnPropsResidentAndContact.setJoinColumnName("contact");
+        joinColumnPropsResidentAndContact.setJoinColumnName("person");
         joinColumnPropsResidentAndContact.setSearchFilter(contactCriteria);
         joinColumnPropsResidentAndContact.setSubJoinColumnProps(joinColumnPropsContactOfficialID);
 

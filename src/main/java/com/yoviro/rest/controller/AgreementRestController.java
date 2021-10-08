@@ -5,16 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yoviro.rest.config.AppConfig;
 import com.yoviro.rest.config.enums.OfficialIdTypeEnum;
 import com.yoviro.rest.dto.*;
-import com.yoviro.rest.dto.search.SearchAgreementDTO;
-import com.yoviro.rest.dto.search.SearchContactDTO;
-import com.yoviro.rest.dto.search.SearchJobDTO;
-import com.yoviro.rest.dto.search.SearchResidentDTO;
+import com.yoviro.rest.dto.search.*;
 import com.yoviro.rest.handler.JobHandler;
 import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.service.interfaces.IAgreementService;
 import com.yoviro.rest.util.DateUtil;
 import com.yoviro.rest.util.JSONUtil;
 import com.yoviro.rest.util.PageUtil;
+import com.yoviro.rest.util.StringUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
@@ -25,7 +23,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -57,6 +54,7 @@ public class AgreementRestController {
 
     @PostMapping("/cancel")
     public String cancelAgreement(@RequestBody String json) throws Exception {
+        //TODO Falla
         JSONObject jsonObject = new JSONObject(json);
         String agreementNumberParam = jsonObject.get("agreementNumber").toString();
         String effectiveDateParam = jsonObject.get("effectiveDate").toString();
@@ -92,16 +90,16 @@ public class AgreementRestController {
         SearchJobDTO searchJobDTO = new SearchJobDTO();
         SearchResidentDTO searchResidentDTO = new SearchResidentDTO();
 
-        SearchContactDTO searchContactDTO = new SearchContactDTO();
-        searchContactDTO.setFirstName(firstName);
-        searchContactDTO.setSecondName(secondName);
-        searchContactDTO.setLastName(firstLastName);
-        searchContactDTO.setSecondLastName(secondLastName);
-        searchContactDTO.setOfficialIDType(officialIDTypeEnum);
-        searchContactDTO.setOfficialIDNumber(officialIDNumber);
-        searchContactDTO.setExactCoincidence(exactCoincidence);
+        SearchPersonDTO searchPersonDTO = new SearchPersonDTO();
+        searchPersonDTO.setName(firstName);
+        searchPersonDTO.setSecondName(secondName);
+        searchPersonDTO.setLastName(firstLastName);
+        searchPersonDTO.setSecondLastName(secondLastName);
+        searchPersonDTO.setOfficialIDType(officialIDTypeEnum);
+        searchPersonDTO.setOfficialIDNumber(officialIDNumber);
+        searchPersonDTO.setExactCoincidence(exactCoincidence);
 
-        searchResidentDTO.setSearchContactDTO(searchContactDTO);
+        searchResidentDTO.setSearchPersonDTO(searchPersonDTO);
         searchJobDTO.setSearchResidentDTO(searchResidentDTO);
         searchAgreementDTO.setSearchJobDTO(searchJobDTO);
 
@@ -133,14 +131,12 @@ public class AgreementRestController {
 
         for (Agreement agreement : agreements) {
             Job job = JobHandler.lastJobFromAgreement(agreement);
-            Contact contact = null;
-                    //job.getResident().getContact(); TODO Refactor
-            OfficialId primaryOfficialID = contact.getPrimaryOfficialID();
+            Person person = job.getResident().getPerson();
+            OfficialId primaryOfficialID = person.getPrimaryOfficialID();
 
             //Put data
             rowData = new HashMap<String, Object>();
-            //TODO REFACTOR
-            //rowData.put("fullName", StringUtil.capitalizeWord(contact.getFullName()));
+            rowData.put("fullName", StringUtil.capitalizeWord(person.getFullName()));
             rowData.put("officialIdType", primaryOfficialID.getOfficialIdType());
             rowData.put("officialIdNumber", primaryOfficialID.getOfficialIdNumber());
             rowData.put("agreementNumber", agreement.getAgreementNumber());

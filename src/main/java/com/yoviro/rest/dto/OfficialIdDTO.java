@@ -3,6 +3,7 @@ package com.yoviro.rest.dto;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yoviro.rest.config.enums.OfficialIdTypeEnum;
+import com.yoviro.rest.models.entity.OfficialId;
 
 public class OfficialIdDTO {
     @JsonIgnore
@@ -12,6 +13,16 @@ public class OfficialIdDTO {
     private OfficialIdTypeEnum officialIdTypeEnum;
     private String officialIdNumber;
     private Boolean primaryOfficialId;
+
+    public static OfficialIdDTO instanceFromEntity(OfficialId officialId) {
+        OfficialIdDTO officialIdDTO = new OfficialIdDTO();
+        officialIdDTO.setId(officialId.getId());
+        officialIdDTO.setPrimaryOfficialId(officialId.getPrimaryOfficialId());
+        officialIdDTO.setOfficialIdType(officialId.getOfficialIdType());
+        officialIdDTO.setOfficialIdNumber(officialId.getOfficialIdNumber());
+
+        return officialIdDTO;
+    }
 
     public Long getId() {
         return id;

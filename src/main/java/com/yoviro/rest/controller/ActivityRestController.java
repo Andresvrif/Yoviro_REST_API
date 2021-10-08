@@ -3,6 +3,7 @@ package com.yoviro.rest.controller;
 import com.yoviro.rest.config.enums.ActivityStatusEnum;
 import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.service.interfaces.IActivityService;
+import com.yoviro.rest.util.StringUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -93,7 +94,7 @@ public class ActivityRestController {
 
         Job job;
         Resident resident;
-        Contact contact;
+        Person person;
         OfficialId primaryOfficialID;
         List<Map<String, Object>> wrapActivities = new ArrayList<>();
         Map<String, Object> rowData;
@@ -101,13 +102,11 @@ public class ActivityRestController {
         for (Activity activity : activities) {
             job = activity.getJob();
             resident = job.getResident();
-            //TODO Refactor
-            contact = null;//resident.getContact();
-            primaryOfficialID = contact.getPrimaryOfficialID();
+            person = resident.getPerson();
+            primaryOfficialID = person.getPrimaryOfficialID();
             rowData = new HashMap<String, Object>();
             rowData.put("id", activity.getId());
-            //TODO refactor
-            //rowData.put("fullName", StringUtil.capitalizeWord(contact.getFullName()));
+            rowData.put("fullName", StringUtil.capitalizeWord(person.getFullName()));
             rowData.put("officialIdNumber", primaryOfficialID.getOfficialIdNumber());
             rowData.put("officialIdType", primaryOfficialID.getOfficialIdType());
             rowData.put("status", activity.getStatus());

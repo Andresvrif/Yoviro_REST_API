@@ -3,19 +3,22 @@ package com.yoviro.rest.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
 
 @JsonPropertyOrder({"firstName", "secondName", "lastName", "secondLastName", "birthDate", "photo", "email", "officialIdDTOs"})
 public class PersonDTO extends ContactDTO {
+
     private String secondName;
+
     private String lastName;
+
     private String secondLastName;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
-    private String photo;
 
-    public PersonDTO() {
-        super();
-    }
+    private String photo;
 
     public String getFirstName() {
         return this.getName();

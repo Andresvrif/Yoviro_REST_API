@@ -8,6 +8,7 @@ import com.yoviro.rest.dto.JobDTO;
 import com.yoviro.rest.dto.SubmissionDTO;
 import com.yoviro.rest.dto.search.SearchContactDTO;
 import com.yoviro.rest.dto.search.SearchJobDTO;
+import com.yoviro.rest.dto.search.SearchPersonDTO;
 import com.yoviro.rest.dto.search.SearchResidentDTO;
 import com.yoviro.rest.models.entity.Cancellation;
 import com.yoviro.rest.models.entity.Job;
@@ -51,17 +52,16 @@ public class JobRestController {
                                       @RequestParam(required = true) String page) throws JsonProcessingException, JSONException {
         SearchJobDTO searchJobDTO = new SearchJobDTO();
         SearchResidentDTO searchResidentDTO = new SearchResidentDTO();
-        SearchContactDTO searchContactDTO = new SearchContactDTO();
+        SearchPersonDTO searchPersonDTO = new SearchPersonDTO();
+        searchPersonDTO.setFirstName(firstName);
+        searchPersonDTO.setSecondName(secondName);
+        searchPersonDTO.setLastName(firstLastName);
+        searchPersonDTO.setSecondLastName(secondLastName);
+        searchPersonDTO.setOfficialIDType(officialIDTypeEnum);
+        searchPersonDTO.setOfficialIDNumber(officialIDNumber);
+        searchPersonDTO.setExactCoincidence(exactCoincidence);
 
-        searchContactDTO.setFirstName(firstName);
-        searchContactDTO.setSecondName(secondName);
-        searchContactDTO.setLastName(firstLastName);
-        searchContactDTO.setSecondLastName(secondLastName);
-        searchContactDTO.setOfficialIDType(officialIDTypeEnum);
-        searchContactDTO.setOfficialIDNumber(officialIDNumber);
-        searchContactDTO.setExactCoincidence(exactCoincidence);
-
-        searchResidentDTO.setSearchContactDTO(searchContactDTO);
+        searchResidentDTO.setSearchPersonDTO(searchPersonDTO);
         searchJobDTO.setSearchResidentDTO(searchResidentDTO);
 
         //Define Pageable

@@ -1,11 +1,10 @@
 package com.yoviro.rest.config.mapper;
 
-import com.yoviro.rest.dto.AgreementDTO;
-import com.yoviro.rest.dto.JobDTO;
-import com.yoviro.rest.dto.ResidentDTO;
-import com.yoviro.rest.dto.SubmissionDTO;
+import com.yoviro.rest.dto.*;
 import com.yoviro.rest.models.entity.Agreement;
+import com.yoviro.rest.models.entity.Contractor;
 import com.yoviro.rest.models.entity.Job;
+import com.yoviro.rest.models.entity.Resident;
 import org.modelmapper.Condition;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -14,45 +13,35 @@ import org.modelmapper.spi.MappingContext;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /***
  * Author : Andrés V.
  * Desc : Configuration for model mapper at App level
  */
 public class MapperConfig {
+
     public static ModelMapper config(ModelMapper modelMapper) {
-        //MAPPING JOB to JOB DTO ---------------------------------------------------------------------------------
-        TypeMap<Agreement, AgreementDTO> typeMap = modelMapper.createTypeMap(Agreement.class, AgreementDTO.class);  //TYPE MAP
-        Condition srcNotNullDestNull = ctx -> ctx.getSource() != null && ctx.getDestination() == null;              //CONDITION
+        //Job List MAPPER in AGREEMENT ------------------------------------------------------------------------
+        TypeMap<Agreement, AgreementDTO> agreementTypeMap = modelMapper.createTypeMap(Agreement.class, AgreementDTO.class);  //TYPE MAP for Agreement
+        agreementTypeMap.addMappings(mapper -> {
+            mapper.using(new ContractorToDTOConverter())
+                    .map(Agreement::getContractor, AgreementDTO::setContractor);
 
-        Converter<List<Job>, List<JobDTO>> jobConverter = new Converter<List<Job>, List<JobDTO>>() {
-            @Override
-            public List<JobDTO> convert(MappingContext<List<Job>, List<JobDTO>> mappingContext) {
-                List<Job> src = mappingContext.getSource();
-                List<JobDTO> dest = mappingContext.getDestination();
-                if (src != null && dest == null) {
-                    ModelMapper mapper = new ModelMapper();
-                    LinkedList<JobDTO> jobDTOS = new LinkedList<JobDTO>();
-                    for (Job jobRef : src) {
-                        JobDTO submissionDTO = new SubmissionDTO();
-                        submissionDTO.setId(jobRef.getId());
-                        submissionDTO.setStartDate(jobRef.getStartDate());
-                        submissionDTO.setEndDate(jobRef.getEndDate());
-                        submissionDTO.setEffectiveDate(jobRef.getEffectiveDate());
-                        submissionDTO.setJobNumber(jobRef.getJobNumber());
-                        submissionDTO.setResident(mapper.map(jobRef.getResident(), ResidentDTO.class));
+            mapper.when(ctx -> ctx.getSource() != null && ctx.getDestination() == null)
+                    .using(new JobListConverter())
+                    .map(Agreement::getJobs, AgreementDTO::setJobs);
 
-                        jobDTOS.add(submissionDTO);
-                    }
-                    return jobDTOS;
-                }
-                return null;
-            }
-        };
 
-        typeMap.addMappings(mapper -> mapper.when(srcNotNullDestNull)
-                                            .using(jobConverter)
-                                            .map(Agreement::getJobs, AgreementDTO::setJobs));
+        });
+
+        //Contact MAPPER in RESIDENT --------------------------------------------------------------------------
+        TypeMap<Resident, ResidentDTO> residentTypeMap = modelMapper.createTypeMap(Resident.class, ResidentDTO.class);  //TYPE MAP for Agreement
+        residentTypeMap.addMappings(mapping -> {
+            mapping.using(new ContactToDTOConverter())
+                    .map(Resident::getPerson, ResidentDTO::setPerson);
+        });
+
         return modelMapper;
     }
 }

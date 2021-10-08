@@ -2,46 +2,27 @@ package com.yoviro.rest.dto.search;
 
 import com.yoviro.rest.config.enums.OfficialIdTypeEnum;
 
-public class SearchContactDTO {
-    private String firstName;
-    private String secondName;
-    private String lastName;
-    private String secondLastName;
+public abstract class SearchContactDTO {
+    private String name;
+    private String email;
     private OfficialIdTypeEnum officialIDTypeEnum;
     private String officialIDNumber;
-    private String email;
     private Boolean exactCoincidence;
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getSecondName() {
-        return secondName;
+    public OfficialIdTypeEnum getOfficialIDTypeEnum() {
+        return officialIDTypeEnum;
     }
 
-    public void setSecondName(String secondName) {
-        this.secondName = secondName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getSecondLastName() {
-        return secondLastName;
-    }
-
-    public void setSecondLastName(String secondLastName) {
-        this.secondLastName = secondLastName;
+    public void setOfficialIDTypeEnum(OfficialIdTypeEnum officialIDTypeEnum) {
+        this.officialIDTypeEnum = officialIDTypeEnum;
     }
 
     public OfficialIdTypeEnum getOfficialIDType() {

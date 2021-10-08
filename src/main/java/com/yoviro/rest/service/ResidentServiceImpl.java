@@ -8,6 +8,7 @@ import com.yoviro.rest.dto.search.SearchContactDTO;
 import com.yoviro.rest.dto.search.SearchResidentDTO;
 import com.yoviro.rest.models.entity.Activity;
 import com.yoviro.rest.models.entity.Contact;
+import com.yoviro.rest.models.entity.Person;
 import com.yoviro.rest.models.entity.Resident;
 import com.yoviro.rest.models.repository.ActivityRepository;
 import com.yoviro.rest.models.repository.ResidentRepository;
@@ -54,8 +55,7 @@ public class ResidentServiceImpl implements IResidentService {
             Contact contact = contactService.getOrCreateContact(contactDTO);
             resident = new Resident();
             resident.setEnable(Boolean.TRUE);
-            //TODO Refactor
-            //resident.setContact(contact);
+            resident.setPerson((Person) contact);
 
             return resident;
         } else {
@@ -66,7 +66,7 @@ public class ResidentServiceImpl implements IResidentService {
     @Override
     public Page<Resident> searchResident(SearchResidentDTO searchResidentDTO,
                                          Pageable pageable) {
-        SearchContactDTO searchContactDTO = searchResidentDTO.getSearchContactDTO();
+        SearchContactDTO searchContactDTO = searchResidentDTO.getSearchPersonDTO();
 
         //Define Search Criteria
         SearchQuery qry = new SearchQuery();
@@ -78,7 +78,7 @@ public class ResidentServiceImpl implements IResidentService {
         joinColumnPropsContactOfficialID.setSearchFilter(officialIDCriteria);
 
         JoinColumnProps joinColumnPropsResidentAndContact = new JoinColumnProps();
-        joinColumnPropsResidentAndContact.setJoinColumnName("contact");
+        joinColumnPropsResidentAndContact.setJoinColumnName("person");
         joinColumnPropsResidentAndContact.setSearchFilter(contactCriteria);
         joinColumnPropsResidentAndContact.setSubJoinColumnProps(joinColumnPropsContactOfficialID);
 

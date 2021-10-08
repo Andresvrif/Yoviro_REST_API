@@ -15,11 +15,11 @@ public class ContractorDTO {
     private String contractorNumber;
 
     @JsonProperty("contactDTO")
-    private PersonDTO personDTO;
+    private PersonDTO person;
 
     @JsonProperty("agreementDTOs")
     @JsonManagedReference
-    private List<AgreementDTO> agreements;
+    private List<AgreementDTO> agreements = new ArrayList<>();
 
     private Date createAt;
 
@@ -39,12 +39,12 @@ public class ContractorDTO {
         this.contractorNumber = contractorNumber;
     }
 
-    public PersonDTO getPersonDTO() {
-        return personDTO;
+    public PersonDTO getPerson() {
+        return person;
     }
 
-    public void setPersonDTO(PersonDTO personDTO) {
-        this.personDTO = personDTO;
+    public void setPerson(PersonDTO person) {
+        this.person = person;
     }
 
     public List<AgreementDTO> getAgreements() {

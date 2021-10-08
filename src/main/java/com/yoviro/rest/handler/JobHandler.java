@@ -42,19 +42,21 @@ public class JobHandler {
         LocalDateTime endDate = job.getEndDate();
         LocalDateTime effectiveDate = job.getEffectiveDate();
         if (job instanceof Submission) {
-            Submission submission = (Submission) job;
-            if (referenceDate.compareTo(endDate) > 0) {
-                //AFTER TERM
-                return StatusTermEnum.NO_VIGENT;
-            } else if (referenceDate.compareTo(startDate) < 0) {
-                //BEFORE TERM
-                return StatusTermEnum.PLANNED;
-            } else if (startDate.compareTo(referenceDate) <= 0 && referenceDate.compareTo(endDate) <= 0) {
-                return StatusTermEnum.VIGENT;
+            if (endDate == null) {
+                return referenceDate.compareTo(startDate) < 0 ? StatusTermEnum.PLANNED : StatusTermEnum.VIGENT;
+            } else {
+                if (referenceDate.compareTo(endDate) > 0) {
+                    //AFTER TERM
+                    return StatusTermEnum.NO_VIGENT;
+                } else if (referenceDate.compareTo(startDate) < 0) {
+                    //BEFORE TERM
+                    return StatusTermEnum.PLANNED;
+                } else if (startDate.compareTo(referenceDate) <= 0 && referenceDate.compareTo(endDate) <= 0) {
+                    return StatusTermEnum.VIGENT;
+                }
             }
             return null;
         } else if (job instanceof Cancellation) {
-            Cancellation cancellation = (Cancellation) job;
             if (referenceDate.compareTo(endDate) > 0) {
                 //AFTER TERM
                 return StatusTermEnum.NO_VIGENT;

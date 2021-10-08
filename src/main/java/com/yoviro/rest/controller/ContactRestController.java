@@ -8,7 +8,9 @@ import com.yoviro.rest.dto.CompanyDTO;
 import com.yoviro.rest.dto.ContactDTO;
 import com.yoviro.rest.dto.OfficialIdDTO;
 import com.yoviro.rest.dto.PersonDTO;
+import com.yoviro.rest.dto.search.SearchCompanyDTO;
 import com.yoviro.rest.dto.search.SearchContactDTO;
+import com.yoviro.rest.dto.search.SearchPersonDTO;
 import com.yoviro.rest.models.entity.Contact;
 import com.yoviro.rest.models.entity.Person;
 import com.yoviro.rest.service.interfaces.IContactService;
@@ -22,7 +24,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -51,14 +55,9 @@ public class ContactRestController {
             return contactService.save(personDTO);
         } else if (isCompany) {
             return null;
+        } else {
+            throw new IllegalArgumentException("Type of ContactDTO not valid!");
         }
-        return null;
-        /*
-        ContactDTO contactDTO = objectMapper.readValue(jsonObject.get("contactDTO").toString(), ContactDTO.class);
-
-        return contactService.save(contactDTO);
-        return contactService.save(contactDTO);
-         */
     }
 
     @GetMapping("/findContactByOfficialID")
@@ -77,7 +76,8 @@ public class ContactRestController {
     }
 
     @GetMapping("/search")
-    public Map<String, Object> search(@RequestParam(required = false) String firstName,
+    public Map<String, Object> search(@RequestParam(required = false) String contactType,
+                                      @RequestParam(required = false) String name,
                                       @RequestParam(required = false) String secondName,
                                       @RequestParam(required = false) String lastName,
                                       @RequestParam(required = false) String secondLastName,
@@ -85,26 +85,49 @@ public class ContactRestController {
                                       @RequestParam(required = false) String officialIDNumber,
                                       @RequestParam(required = true) Boolean exactCoincidence,
                                       @RequestParam(required = true) String page) throws JsonProcessingException, JSONException {
-        SearchContactDTO searchContactDTO = new SearchContactDTO();
-        searchContactDTO.setFirstName(firstName);
-        searchContactDTO.setSecondName(secondName);
-        searchContactDTO.setLastName(lastName);
-        searchContactDTO.setSecondLastName(secondLastName);
-        searchContactDTO.setOfficialIDType(officialIDTypeEnum);
-        searchContactDTO.setOfficialIDNumber(officialIDNumber);
-        searchContactDTO.setExactCoincidence(exactCoincidence);
+        Boolean isPerson = contactType.compareToIgnoreCase("PERSON") == 0;
+        Boolean isCompany = contactType.compareToIgnoreCase("COMPANY") == 0;
+        SearchContactDTO searchContactDTO = null;
+        if (isPerson) {
+            SearchPersonDTO searchPersonDTO = new SearchPersonDTO();
+            searchPersonDTO.setName(name);
+            searchPersonDTO.setSecondName(secondName);
+            searchPersonDTO.setLastName(lastName);
+            searchPersonDTO.setSecondLastName(secondLastName);
+            searchPersonDTO.setOfficialIDType(officialIDTypeEnum);
+            searchPersonDTO.setOfficialIDNumber(officialIDNumber);
+            searchPersonDTO.setExactCoincidence(exactCoincidence);
+
+            searchContactDTO = searchPersonDTO;
+        } else if (isCompany) {
+            SearchCompanyDTO searchCompanyDTO = new SearchCompanyDTO();
+            searchCompanyDTO.setName(name);
+
+            searchContactDTO = searchCompanyDTO;
+        } else {
+            throw new IllegalArgumentException("Not defined contact type");
+        }
 
         //Define Pageable
         Integer pageNumber = PageUtil.definePageNumber(page);
-        Pageable sortedByFirstName = PageRequest.of(pageNumber, AppConfig.PAGE_SIZE, Sort.by("firstName").ascending());
+        Pageable sortedByFirstName = PageRequest.of(pageNumber, AppConfig.PAGE_SIZE, Sort.by("name").ascending());
 
         //Call Controller
-        Page<Contact> pageContacts = contactService.search(sortedByFirstName, searchContactDTO);
+        Page pageContacts = contactService.search(sortedByFirstName, searchContactDTO);
+        if (pageContacts.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Contact not found");
+        }
 
         //Define Response
         Map<String, Object> response = new HashMap<String, Object>();
         response.put(AppConfig.METADATA_TAG, JSONUtil.pageToJson(pageContacts));
-        response.put("contacts", pageContacts.getContent().stream().map(c -> modelMapper.map(c, ContactDTO.class)).collect(Collectors.toList()));
+        if (isPerson) {
+            response.put("contacts", pageContacts.getContent().stream().map(c -> modelMapper.map(c, PersonDTO.class)).collect(Collectors.toList()));
+        } else if (isCompany) {
+            response.put("contacts", pageContacts.getContent().stream().map(c -> modelMapper.map(c, PersonDTO.class)).collect(Collectors.toList()));
+        } else {
+            throw new IllegalArgumentException("Not defined contact type");
+        }
 
         return response;
     }

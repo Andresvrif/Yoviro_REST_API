@@ -1,9 +1,9 @@
 package com.yoviro.rest.config.enums;
 
 public enum InventoryRequestStatusEnum {
-    PENDING,
-    IN_PROGRESS,
-    COVERED,
-    OBSERVED,
-    REJECTED
+    PENDING, //Pendiente
+    IN_PROGRESS, //En progreso
+    COMPLETED, //Despachado
+    OBSERVED, //Observado
+    REJECTED //Rechazado
 }

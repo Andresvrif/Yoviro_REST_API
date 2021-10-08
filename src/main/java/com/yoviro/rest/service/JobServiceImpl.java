@@ -28,9 +28,10 @@ public class JobServiceImpl implements IJobService {
     private JobAgreementRepository jobAgreementRepository;
 
     @Override
-    public Page<Job> search(Pageable pageable, SearchJobDTO searchJobDTO) {
+    public Page<Job> search(Pageable pageable,
+                            SearchJobDTO searchJobDTO) {
         SearchResidentDTO searchResidentDTO = searchJobDTO.getSearchResidentDTO();
-        SearchContactDTO searchContactDTO = searchResidentDTO.getSearchContactDTO();
+        SearchContactDTO searchContactDTO = searchResidentDTO.getSearchPersonDTO();
 
         //Define Search Criteria
         SearchQuery qry = new SearchQuery();
@@ -43,7 +44,7 @@ public class JobServiceImpl implements IJobService {
         joinColumnPropsContactOfficialID.setSearchFilter(officialIDCriteria);
 
         JoinColumnProps joinColumnPropsResidentAndContact = new JoinColumnProps();
-        joinColumnPropsResidentAndContact.setJoinColumnName("contact");
+        joinColumnPropsResidentAndContact.setJoinColumnName("person");
         joinColumnPropsResidentAndContact.setSearchFilter(contactCriteria);
         joinColumnPropsResidentAndContact.setSubJoinColumnProps(joinColumnPropsContactOfficialID);
 

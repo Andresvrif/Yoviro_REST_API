@@ -1,8 +1,10 @@
 package com.yoviro.rest.models.entity;
 
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.thymeleaf.util.DateUtils;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -25,7 +27,7 @@ public class Contractor implements Serializable {
 
     private String contractorNumber;
 
-    @OneToOne(cascade = CascadeType.PERSIST,fetch = FetchType.LAZY, optional = false)
+    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "contact_id", nullable = false)
     private Person person;
 
@@ -62,11 +64,11 @@ public class Contractor implements Serializable {
     }
 
     public Person getPerson() {
-        return person;
+        return (Person) Hibernate.unproxy(person);
     }
 
     public void setPerson(Person person) {
-        this.person = person;
+        this.person = (Person) Hibernate.unproxy(person);
     }
 
     public List<Agreement> getAgreements() {

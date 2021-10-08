@@ -4,21 +4,26 @@ import com.fasterxml.jackson.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public abstract class ContactDTO {
-
     @JsonIgnore
     private Long id;
+
     @JsonIgnore
     private String name;
+
     private String email;
+
     @JsonManagedReference
     @JsonProperty("officialIdDTOs")
-    private List<OfficialIdDTO> officialIds;
+    private List<OfficialIdDTO> officialIds = new ArrayList<>();
+
     @JsonIgnore
     private Boolean internal;
+
     @JsonIgnore
     private Date createAt;
 
