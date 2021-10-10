@@ -2,12 +2,15 @@ package com.yoviro.rest.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.yoviro.rest.config.enums.FormRequestedEnum;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Set;
 
+@JsonPropertyOrder({"patternCode", "dayFrequency", "hourFrequency", "startDate", "endDate", "subject", "description", "enable", "relatedForm", "colorCode", "agreements"})
 public class ActivityPatternDTO {
     @JsonIgnore
     private Long id;
@@ -20,13 +23,11 @@ public class ActivityPatternDTO {
     private String subject;
     private String description;
     private Boolean enable;
-    private Set<AgreementDTO> agreements;
+    private Set<AgreementDTO> agreementDTOs;
     private FormRequestedEnum relatedForm;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime hourFrequency;
-
-    private Set<AgreementDTO> agreementDTOs;
 
     private String colorCode;
 
@@ -84,14 +85,6 @@ public class ActivityPatternDTO {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
-    }
-
-    public Set<AgreementDTO> getAgreements() {
-        return agreements;
-    }
-
-    public void setAgreements(Set<AgreementDTO> agreements) {
-        this.agreements = agreements;
     }
 
     public String getSubject() {

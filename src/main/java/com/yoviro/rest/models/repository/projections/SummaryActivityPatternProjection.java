@@ -1,5 +1,7 @@
 package com.yoviro.rest.models.repository.projections;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 public interface SummaryActivityPatternProjection {
@@ -11,11 +13,11 @@ public interface SummaryActivityPatternProjection {
 
     String getSubject();
 
-    Date getStartDate();
+    LocalDate getStartDate();
 
-    Date getEndDate();
+    LocalDate getEndDate();
 
-    String getDayFrequency();
+    Integer getDayFrequency();
 
-    Date getHourFrequency();
+    LocalTime getHourFrequency();
 }
