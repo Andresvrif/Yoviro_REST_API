@@ -35,19 +35,23 @@ public interface SummaryVitalSignProjection {
     LocalDateTime getCreateAt();
 
     default String getFullName() {
-        String fullName = getFirstName().concat(" ");
+        String fullName = null;
+        if (getFirstName() != null) {
+            fullName = fullName == null ? getFirstName().concat(" ") : fullName.concat(getFirstName()).concat(" ");
+        }
+
         if (getSecondName() != null) {
-            fullName = fullName.concat(getSecondName()).concat(" ");
+            fullName = fullName == null ? getSecondName().concat(" ") : fullName.concat(getSecondName()).concat(" ");
         }
 
         if (getLastName() != null) {
-            fullName = fullName.concat(getLastName().concat(" "));
+            fullName = fullName == null ? getLastName().concat(" ") : fullName.concat(getLastName()).concat(" ");
         }
 
         if (getSecondLastName() != null) {
-            fullName = fullName.concat(getSecondLastName().concat(" "));
+            fullName = fullName == null ? getSecondLastName().concat(" ") : fullName.concat(getSecondLastName().concat(" "));
         }
 
-        return StringUtil.capitalizeWord(fullName);
+        return fullName == null ? fullName : StringUtil.capitalizeWord(fullName);
     }
 }

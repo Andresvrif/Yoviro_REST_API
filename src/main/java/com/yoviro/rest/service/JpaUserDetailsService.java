@@ -49,7 +49,8 @@ public class JpaUserDetailsService implements UserDetailsService {
         }
 
         //At this point the user exist and his roles
-        Person person = user.getWorker().getPerson();
+        Worker worker = user.getWorker();
+        Person person = worker.getPerson();
         return new CustomUserDetails(user,
                 authorities,
                 person.getName(),

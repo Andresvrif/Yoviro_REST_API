@@ -5,30 +5,41 @@ drop trigger if exists before_insert_contrato;
 create trigger before_insert_contrato before insert on agreement for each row begin IF (NEW.agreement_number IS NULL) THEN SELECT MAX(agreement_number) INTO @max_label FROM agreement; IF (@max_label IS NULL) THEN SET NEW.agreement_number = CONCAT('CTR000001'); ELSE SET NEW.agreement_number = CONCAT(SUBSTR(@max_label, 1, 3), LPAD(SUBSTR(@max_label, 4) + 1, 6, '0')); END IF; END IF; end
 drop trigger if exists before_insert_job;
 create trigger before_insert_job before insert on job for each row begin IF (NEW.job_number IS NULL) THEN SELECT MAX(job_number) INTO @max_label FROM job; IF (@max_label IS NULL) THEN SET NEW.job_number = CONCAT('JOB000001'); ELSE SET NEW.job_number = CONCAT(SUBSTR(@max_label, 1, 3), LPAD(SUBSTR(@max_label, 4) + 1, 6, '0')); END IF; END IF; end
+drop trigger if exists before_insert_inventory_request;
+create trigger before_insert_inventory_request before insert on inventory_request for each row begin IF (NEW.inventory_request_number IS NULL) THEN SELECT MAX(inventory_request_number) INTO @max_label FROM inventory_request; IF (@max_label IS NULL) THEN SET NEW.inventory_request_number = CONCAT('SOLIC0000001'); ELSE SET NEW.inventory_request_number = CONCAT(SUBSTR(@max_label, 1, 5), LPAD(SUBSTR(@max_label, 6) + 1, 7, '0')); END IF; END IF; end
+drop trigger if exists before_insert_proposal;
+create trigger before_insert_proposal before insert on proposal for each row begin IF (NEW.proposal_number IS NULL) THEN SELECT MAX(proposal_number) INTO @max_label FROM proposal; IF (@max_label IS NULL) THEN SET NEW.proposal_number = CONCAT('PROPO0000001'); ELSE SET NEW.proposal_number = CONCAT(SUBSTR(@max_label, 1, 5), LPAD(SUBSTR(@max_label, 6) + 1, 7, '0')); END IF; END IF; end
 
 /* WORK SHIFTS */
 INSERT INTO db_yoviro.work_shift (id, name) VALUES (1,'Lunes y Miercoles Full');
 INSERT INTO db_yoviro.work_shift (id, name) VALUES (2,'Martes y Jueves Full');
 INSERT INTO db_yoviro.work_shift (id, name) VALUES (3,'Viernes y Domingo Full');
 INSERT INTO db_yoviro.work_shift (id, name) VALUES (4,'Sabado Full');
+INSERT INTO db_yoviro.work_shift (id, name) VALUES (5, 'Lunes a viernes de 9am a 5pm');
+
 
 /* WORK SHIFT ITEMS de 6 a 6, horario 24hrs */
 INSERT INTO db_yoviro.workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('MONDAY', '06:00:00', '23:59:59', 1); /* START - LUNES FULL DAY */
 INSERT INTO db_yoviro.workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('TUESDAY', '00:00:00', '05:59:59', 1); /* END - LUNES FULL DAY */
 INSERT INTO db_yoviro.workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('WEDNESDAY', '06:00:00', '23:59:59', 1); /* START - MIERCOLES FULL DAY */
 INSERT INTO db_yoviro.workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('THURSDAY', '00:00:00', '05:59:59', 1); /* END - MIERCOLES FULL DAY */
-
 INSERT INTO db_yoviro.workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('TUESDAY', '06:00:00', '23:59:59', 2);/* START - MARTES FULL DAY */
 INSERT INTO db_yoviro.workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('WEDNESDAY', '00:00:00', '05:59:59', 2);/* END - MARTES FULL DAY */
 INSERT INTO db_yoviro.workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('THURSDAY', '06:00:00', '23:59:59', 2);/* START - JUEVES FULL DAY */
 INSERT INTO db_yoviro.workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('FRIDAY', '00:00:00', '05:59:59', 2);/* END - JUEVES FULL DAY */
-
 INSERT INTO db_yoviro.workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('FRIDAY', '06:00:00', '23:59:59', 3); /* START - VIERNES FULL DAY */
 INSERT INTO db_yoviro.workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('SATURDAY', '00:00:00', '05:59:59', 3); /* START - VIERNES FULL DAY */
 INSERT INTO db_yoviro.workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('SUNDAY', '06:00:00', '23:59:59', 3); /* START - DOMINGO FULL DAY */
 INSERT INTO db_yoviro.workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('MONDAY', '00:00:00', '05:59:59', 3); /* START - DOMINGO FULL DAY */
 INSERT INTO db_yoviro.workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('SATURDAY', '06:00:00', '23:59:59', 4); /* START - SABADO FULL DAY */
 INSERT INTO db_yoviro.workshift_item (day_of_week, start_time, end_time, work_shift_id) VALUES ('SUNDAY', '00:00:00', '05:59:59', 4); /* START - SABADO FULL DAY */
+
+/*  WORK SHIFT ITEMS de L a V, horario 8 hrs de 9 a 17 */
+INSERT INTO db_yoviro.workshift_item (day_of_week, end_time, start_time, work_shift_id) VALUES ('MONDAY', '09:00:00', '17:00:00', 5);
+INSERT INTO db_yoviro.workshift_item (day_of_week, end_time, start_time, work_shift_id) VALUES ('TUESDAY', '09:00:00', '17:00:00', 5);
+INSERT INTO db_yoviro.workshift_item (day_of_week, end_time, start_time, work_shift_id) VALUES ('WEDNESDAY', '09:00:00', '17:00:00', 5);
+INSERT INTO db_yoviro.workshift_item (day_of_week, end_time, start_time, work_shift_id) VALUES ('THURSDAY', '09:00:00', '17:00:00', 5);
+INSERT INTO db_yoviro.workshift_item (day_of_week, end_time, start_time, work_shift_id) VALUES ('FRIDAY', '09:00:00', '17:00:00', 5);
 
 /* USERS */
 INSERT INTO db_yoviro.users (username, password, enabled) VALUES('avila', '$2a$10$X.1R6428OlgxcWCEpX2SSuFKMIBPpQ/EFG/e3GTZm57BWvzZEzdAO', 1);
@@ -39,6 +50,7 @@ INSERT INTO db_yoviro.users (enabled, password, username) VALUES (true, '$2a$10$
 INSERT INTO db_yoviro.users (enabled, password, username) VALUES (true, '$2a$10$X.1R6428OlgxcWCEpX2SSuFKMIBPpQ/EFG/e3GTZm57BWvzZEzdAO', 'rcuadros');
 INSERT INTO db_yoviro.users (enabled, password, username) VALUES (true, '$2a$10$X.1R6428OlgxcWCEpX2SSuFKMIBPpQ/EFG/e3GTZm57BWvzZEzdAO', 'gevan');
 INSERT INTO db_yoviro.users (enabled, password, username) VALUES (true, '$2a$10$X.1R6428OlgxcWCEpX2SSuFKMIBPpQ/EFG/e3GTZm57BWvzZEzdAO', 'fserrato');
+INSERT INTO db_yoviro.users (enabled, password, username) VALUES (true, '$2a$10$X.1R6428OlgxcWCEpX2SSuFKMIBPpQ/EFG/e3GTZm57BWvzZEzdAO', 'ghinojoza');
 
 /* CONTACTS */
 /* CONTACTS - WORKERS */
@@ -50,6 +62,7 @@ INSERT INTO db_yoviro.contact (contact_type, create_at, email, internal, name, b
 INSERT INTO db_yoviro.contact (contact_type, create_at, email, internal, name, birth_date, last_name, photo, second_last_name, second_name) VALUES ('PERSON', DEFAULT, 'rcuadros@gmail.com', 1, 'ricardo', '1990-12-28', 'garcia', null, 'cuadros', null);
 INSERT INTO db_yoviro.contact (contact_type, create_at, email, internal, name, birth_date, last_name, photo, second_last_name, second_name) VALUES ('PERSON', DEFAULT, null, 1, 'gloria', '2000-09-28', 'evangelista', null, 'candiotti', null);
 INSERT INTO db_yoviro.contact (contact_type, create_at, email, internal, name, birth_date, last_name, photo, second_last_name, second_name) VALUES ('PERSON', DEFAULT, 'fserrato@gmail.com', 1, 'fernando', '1989-09-05', 'serrato', null, 'montalvan', null);
+INSERT INTO db_yoviro.contact (contact_type, create_at, email, internal, name, birth_date, last_name, photo, second_last_name, second_name) VALUES ('PERSON', DEFAULT, 'ghinojoza@gmail.com', 1, 'gonzalo', '1989-09-05', 'hinojoza', null, 'santillan', null);
 
 /* CONTACTS - RESIDENT */
 INSERT INTO db_yoviro.contact (contact_type, create_at, email, internal, name, birth_date, last_name, photo, second_last_name, second_name) VALUES ('PERSON', DEFAULT, null, 0, 'aura', '1924-12-30', 'llontop', null, 'enriquez', 'berthina');
@@ -90,18 +103,19 @@ INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary
 INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('98740087', 'DNI', 1, 6);
 INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('66008877', 'DNI', 1, 7);
 INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('04842147', 'DNI', 1, 8);
-INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('29242147', 'DNI', 1, 9);
-INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('07918010', 'DNI', 1, 10);
-INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('06181637', 'DNI', 1, 11);
-INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('21401947', 'DNI', 1, 12);
-INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('10063132', 'DNI', 1, 13);
-INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('09300621', 'DNI', 1, 14);
-INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('02586289', 'DNI', 1, 15);
-INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('06300288', 'DNI', 1, 16);
-INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('09147773', 'DNI', 1, 17);
-INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('08827599', 'DNI', 1, 18);
-INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('10063165', 'DNI', 1, 19);
-INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('41663523', 'DNI', 1, 20);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('04333147', 'DNI', 1, 9);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('29242147', 'DNI', 1, 10);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('07918010', 'DNI', 1, 11);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('06181637', 'DNI', 1, 12);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('21401947', 'DNI', 1, 13);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('10063132', 'DNI', 1, 14);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('09300621', 'DNI', 1, 15);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('02586289', 'DNI', 1, 16);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('06300288', 'DNI', 1, 17);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('09147773', 'DNI', 1, 18);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('08827599', 'DNI', 1, 19);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('10063165', 'DNI', 1, 20);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('41663523', 'DNI', 1, 21);
 
 /* Official ID - FOR CONTRACTOR */
 INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('98475645', 'DNI', 1, 21);
@@ -122,14 +136,15 @@ INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary
 
 
 /* WORKER */
-INSERT INTO db_yoviro.worker (contact_id, user_id, work_shift_id) VALUES (1, 1, 1);
-INSERT INTO db_yoviro.worker (contact_id, user_id, work_shift_id) VALUES (2, 2, 1);
-INSERT INTO db_yoviro.worker (contact_id, user_id, work_shift_id) VALUES (3, 3, 2);
-INSERT INTO db_yoviro.worker (contact_id, user_id, work_shift_id) VALUES (4, 4, 2);
-INSERT INTO db_yoviro.worker (contact_id, user_id, work_shift_id) VALUES (5, 5, 3);
-INSERT INTO db_yoviro.worker (contact_id, user_id, work_shift_id) VALUES (6, 6, 3);
-INSERT INTO db_yoviro.worker (contact_id, user_id, work_shift_id) VALUES (7, 7, 4);
-INSERT INTO db_yoviro.worker (contact_id, user_id, work_shift_id) VALUES (8, 8, 4);
+INSERT INTO db_yoviro.worker (worker_type, contact_id, user_id, work_shift_id) VALUES ('NURSE', 1, 1, 1);
+INSERT INTO db_yoviro.worker (worker_type, contact_id, user_id, work_shift_id) VALUES ('NURSE', 2, 2, 1);
+INSERT INTO db_yoviro.worker (worker_type, contact_id, user_id, work_shift_id) VALUES ('NURSE', 3, 3, 2);
+INSERT INTO db_yoviro.worker (worker_type, contact_id, user_id, work_shift_id) VALUES ('NURSE', 4, 4, 2);
+INSERT INTO db_yoviro.worker (worker_type, contact_id, user_id, work_shift_id) VALUES ('NURSE', 5, 5, 3);
+INSERT INTO db_yoviro.worker (worker_type, contact_id, user_id, work_shift_id) VALUES ('NURSE', 6, 6, 3);
+INSERT INTO db_yoviro.worker (worker_type, contact_id, user_id, work_shift_id) VALUES ('NURSE', 7, 7, 4);
+INSERT INTO db_yoviro.worker (worker_type, contact_id, user_id, work_shift_id) VALUES ('NURSE', 8, 8, 4);
+INSERT INTO db_yoviro.worker (worker_type, contact_id, user_id, work_shift_id) VALUES ('STOREKEEPER', 9, 9, 1);
 
 /* RELATON BETWEEN CONTRACTOR AND CONTACT */
 INSERT INTO db_yoviro.contractor (contractor_number, create_at, contact_id) VALUES (null, DEFAULT, 21);
@@ -146,7 +161,6 @@ INSERT INTO db_yoviro.contractor (contractor_number, create_at, contact_id) VALU
 INSERT INTO db_yoviro.contractor (contractor_number, create_at, contact_id) VALUES (null, DEFAULT, 32);
 
 /* RELATION BETWEEN RESIDENT AND CONTACT */
-INSERT INTO db_yoviro.resident (create_at, enable, contact_id) VALUES (DEFAULT, true, 9);
 INSERT INTO db_yoviro.resident (create_at, enable, contact_id) VALUES (DEFAULT, true, 10);
 INSERT INTO db_yoviro.resident (create_at, enable, contact_id) VALUES (DEFAULT, true, 11);
 INSERT INTO db_yoviro.resident (create_at, enable, contact_id) VALUES (DEFAULT, true, 12);
@@ -158,6 +172,7 @@ INSERT INTO db_yoviro.resident (create_at, enable, contact_id) VALUES (DEFAULT, 
 INSERT INTO db_yoviro.resident (create_at, enable, contact_id) VALUES (DEFAULT, true, 18);
 INSERT INTO db_yoviro.resident (create_at, enable, contact_id) VALUES (DEFAULT, true, 19);
 INSERT INTO db_yoviro.resident (create_at, enable, contact_id) VALUES (DEFAULT, true, 20);
+INSERT INTO db_yoviro.resident (create_at, enable, contact_id) VALUES (DEFAULT, true, 21);
 
 /* ROLES */
 INSERT INTO db_yoviro.role (id, role_code) VALUES(1,'ROLE_ADMIN');
@@ -299,3 +314,26 @@ INSERT INTO db_yoviro.activity_pattern_agreement (activity_pattern_id, agreement
 INSERT INTO db_yoviro.activity_pattern_agreement (activity_pattern_id, agreement_id) VALUES (10, 12);
 INSERT INTO db_yoviro.activity_pattern_agreement (activity_pattern_id, agreement_id) VALUES (12, 12);
 INSERT INTO db_yoviro.activity_pattern_agreement (activity_pattern_id, agreement_id) VALUES (17, 12);
+
+/* INVENTORY */
+INSERT INTO db_yoviro.product (description, name) VALUES ('marca : practipañal, modelo : plenitud,talla : XL', 'practipañal plenitud XL');
+INSERT INTO db_yoviro.product (description, name) VALUES ('marca : practipañal,  modelo : plenitud fenme, talla : XL', 'practipañal plenitud fenme XL');
+INSERT INTO db_yoviro.product (description, name) VALUES ('marca : secos, modelo : fenme,talla : M', 'practipañal secos G');
+INSERT INTO db_yoviro.product (description, name) VALUES ('marca : colgate, pasta dental', 'pasta dental colgate');
+
+/* REQUEST INVENTORY */
+INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now() - INTERVAL 1 HOUR, 'IN_PROGRESS', 1, 7);
+INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now(), 'IN_PROGRESS', 3, 7);
+INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now(), 'PENDING', 2, 8);
+
+/* REQUEST INVENTORY DETAIL */
+INSERT INTO db_yoviro.inventory_request_detail (unit_measure, quantity, inventory_request_id, product_id) VALUES ('UNIT', 21, 1, 1);
+INSERT INTO db_yoviro.inventory_request_detail (unit_measure, quantity, inventory_request_id, product_id) VALUES ('UNIT', 20, 2, 2);
+INSERT INTO db_yoviro.inventory_request_detail (unit_measure, quantity, inventory_request_id, product_id) VALUES ('UNIT', 20, 3, 4);
+
+/* PROPOSAL */
+INSERT INTO db_yoviro.proposal (create_at, rejected_reason, status, worker_id) VALUES (now(), null, 'REQUESTED', 9);
+
+/* REQUEST INVENTORY WITH ASSSIGNED PROPOSAL */
+INSERT INTO db_yoviro.inventory_request_proposal (proposal_id, inventory_request_id) VALUES (1, 1);
+INSERT INTO db_yoviro.inventory_request_proposal (proposal_id, inventory_request_id) VALUES (1, 2);

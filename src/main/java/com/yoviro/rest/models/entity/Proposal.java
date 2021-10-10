@@ -1,7 +1,9 @@
 package com.yoviro.rest.models.entity;
 
 import com.yoviro.rest.config.enums.StatusProposalEnum;
-
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -14,7 +16,15 @@ public class Proposal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Generated(GenerationTime.INSERT)
+    protected String proposalNumber;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "worker_id", nullable = false)
+    private StoreKeeper author;
+
     @NotNull
+    @ColumnDefault("CURRENT_TIMESTAMP(6)")
     private LocalDateTime createAt;
 
     @NotNull
@@ -22,7 +32,7 @@ public class Proposal {
     private StatusProposalEnum status;
 
     @Column
-    private String description;
+    private String rejectedReason;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "inventory_request_proposal",
@@ -44,6 +54,22 @@ public class Proposal {
         this.id = id;
     }
 
+    public String getProposalNumber() {
+        return proposalNumber;
+    }
+
+    public void setProposalNumber(String proposalNumber) {
+        this.proposalNumber = proposalNumber;
+    }
+
+    public StoreKeeper getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(StoreKeeper author) {
+        this.author = author;
+    }
+
     public LocalDateTime getCreateAt() {
         return createAt;
     }
@@ -52,12 +78,12 @@ public class Proposal {
         this.createAt = createAt;
     }
 
-    public String getDescription() {
-        return description;
+    public String getRejectedReason() {
+        return rejectedReason;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setRejectedReason(String rejectedReason) {
+        this.rejectedReason = rejectedReason;
     }
 
     public List<InventoryRequest> getInventoryRequests() {
@@ -82,6 +108,11 @@ public class Proposal {
 
     public void setStatus(StatusProposalEnum status) {
         this.status = status;
+    }
+
+    @PrePersist
+    public void PrePersist() {
+        this.createAt = LocalDateTime.now();
     }
 
     private static final long serialVersionUID = 1L;

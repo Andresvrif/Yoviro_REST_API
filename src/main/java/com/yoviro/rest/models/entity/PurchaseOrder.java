@@ -22,6 +22,10 @@ public class PurchaseOrder {
     @ManyToOne
     private Company company;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "worker_id")
+    private StoreKeeper author;
+
     @NotNull
     @NotEmpty
     @OneToMany(mappedBy = "purchaseOrder", fetch = FetchType.LAZY)
@@ -62,6 +66,14 @@ public class PurchaseOrder {
 
     public void setStatus(PurcharseOrderEnum status) {
         this.status = status;
+    }
+
+    public StoreKeeper getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(StoreKeeper author) {
+        this.author = author;
     }
 
     public Company getCompany() {

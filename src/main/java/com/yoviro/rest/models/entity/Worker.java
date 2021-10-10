@@ -6,7 +6,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "worker")
-public class Worker {
+@DiscriminatorColumn(name = "workerType", discriminatorType = DiscriminatorType.STRING)
+public abstract class Worker {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,11 +23,6 @@ public class Worker {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "work_shift_id")
     private WorkShift workShift;
-
-    @OneToMany(mappedBy = "worker",
-            fetch = FetchType.LAZY,
-            orphanRemoval = true)
-    private List<InventoryRequest> inventoryRequests = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -54,14 +50,6 @@ public class Worker {
 
     public WorkShift getWorkShift() {
         return workShift;
-    }
-
-    public List<InventoryRequest> getInventoryRequests() {
-        return inventoryRequests;
-    }
-
-    public void setInventoryRequests(List<InventoryRequest> inventoryRequests) {
-        this.inventoryRequests = inventoryRequests;
     }
 
     public void setWorkShift(WorkShift workShift) {
