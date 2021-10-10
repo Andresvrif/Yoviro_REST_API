@@ -60,15 +60,14 @@ public class ActivityPatternRestController {
     }
 
     @GetMapping("/summaryList")
-    public Map<String, Object> summaryList(@RequestParam(required = false) String searchByFirstName,
+    public Map<String, Object> summaryList(@RequestParam(required = false) String search,
                                            @RequestParam(required = true) String page) {
         //Define pagination
         Integer pageNumber = PageUtil.definePageNumber(page);
         Pageable pageable = PageRequest.of(pageNumber, AppConfig.PAGE_SIZE, Sort.by("subject").ascending());
 
         //Call Service and retrieve data
-        Page<SummaryActivityPatternProjection> pageSummary = searchByFirstName != null ? activityPatternService.summaryList(pageable, searchByFirstName) :
-                activityPatternService.summaryList(pageable);
+        Page<SummaryActivityPatternProjection> pageSummary = search != null ? activityPatternService.summaryList(pageable, search) : activityPatternService.summaryList(pageable);
 
         //Transform projection to DTO
         List<ActivityPatternDTO> resultDTO = pageSummary.stream()
