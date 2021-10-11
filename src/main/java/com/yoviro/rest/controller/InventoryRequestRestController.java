@@ -7,6 +7,7 @@ import com.yoviro.rest.dto.InventoryRequestDetailDTO;
 import com.yoviro.rest.dto.OfficialIdDTO;
 import com.yoviro.rest.dto.ProductDTO;
 import com.yoviro.rest.models.entity.Activity;
+import com.yoviro.rest.models.entity.InventoryRequest;
 import com.yoviro.rest.models.repository.projections.SummaryListInventoryRequestNurseProjection;
 import com.yoviro.rest.security.service.IJWTService;
 import com.yoviro.rest.service.interfaces.IInventoryRequestService;
@@ -103,13 +104,13 @@ public class InventoryRequestRestController {
         OfficialIdDTO officialIdDTO = objectMapper.readValue(jsonObject.get("resident").toString(), OfficialIdDTO.class);
 
         // Inventory Request Info
-        String inventoryRequest = jsonObject.has("inventoryRequestNumber") ? jsonObject.getString("inventoryRequestNumber").toString() : null;
+        String inventoryRequestNumber = jsonObject.has("inventoryRequestNumber") ? jsonObject.getString("inventoryRequestNumber").toString() : null;
 
         // Inventory Request Detail Info
         List<InventoryRequestDetailDTO> details = jsonToInventoryRequestDetails(jsonObject.getJSONArray("details"));
+        InventoryRequest inventoryRequest = inventoryRequestService.createOrUpdate(userName, inventoryRequestNumber, officialIdDTO, details);
 
-        System.out.println(" ---> " + details.size());
-        return null;
+        return inventoryRequest.getInventoryRequestNumber();
     }
 
     private List<InventoryRequestDetailDTO> jsonToInventoryRequestDetails(JSONArray jsonDetails) throws JSONException {

@@ -13,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +33,11 @@ public class ProductServiceImpl implements IProductService {
 
         Specification<Product> specification = SpecificationUtil.bySearchQuery(qry, Product.class, Boolean.FALSE);
         return productRepository.findAll(specification, pageable);
+    }
+
+    @Override
+    public List<Product> findAllBySkuIn(List<String> skus) {
+        return productRepository.findAllBySkuIn(skus);
     }
 
     static List<SearchFilter> instanceContactCriteria(SearchProductDTO searchProductDTO) {
