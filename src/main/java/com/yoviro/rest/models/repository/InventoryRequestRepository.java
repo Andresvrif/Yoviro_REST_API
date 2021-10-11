@@ -12,4 +12,6 @@ public interface InventoryRequestRepository extends PagingAndSortingRepository<I
     Page<SummaryListInventoryRequestNurseProjection> summaryListByNurseUserNameWithCreateAtDesc(Pageable pageable, String userName);
 
     Page<SummaryListInventoryRequestNurseProjection> summaryListByNurseUserNameWithCreateAtAsc(Pageable pageable, String userName);
+
+
 }

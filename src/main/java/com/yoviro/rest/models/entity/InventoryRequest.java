@@ -67,7 +67,7 @@ public class InventoryRequest {
     private Long id;
 
     @Generated(GenerationTime.INSERT)
-    protected String inventoryRequestNumber;
+    private String inventoryRequestNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "worker_id")
@@ -155,6 +155,12 @@ public class InventoryRequest {
 
     public void setCreateAt(LocalDateTime createAt) {
         this.createAt = createAt;
+    }
+
+    @PrePersist
+    public void PrePersist() {
+        this.createAt = LocalDateTime.now();
+        this.status = InventoryRequestStatusEnum.PENDING;
     }
 
     private static final long serialVersionUID = 1L;

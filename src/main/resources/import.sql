@@ -9,6 +9,8 @@ drop trigger if exists before_insert_inventory_request;
 create trigger before_insert_inventory_request before insert on inventory_request for each row begin IF (NEW.inventory_request_number IS NULL) THEN SELECT MAX(inventory_request_number) INTO @max_label FROM inventory_request; IF (@max_label IS NULL) THEN SET NEW.inventory_request_number = CONCAT('SOLIC0000001'); ELSE SET NEW.inventory_request_number = CONCAT(SUBSTR(@max_label, 1, 5), LPAD(SUBSTR(@max_label, 6) + 1, 7, '0')); END IF; END IF; end
 drop trigger if exists before_insert_proposal;
 create trigger before_insert_proposal before insert on proposal for each row begin IF (NEW.proposal_number IS NULL) THEN SELECT MAX(proposal_number) INTO @max_label FROM proposal; IF (@max_label IS NULL) THEN SET NEW.proposal_number = CONCAT('PROPO0000001'); ELSE SET NEW.proposal_number = CONCAT(SUBSTR(@max_label, 1, 5), LPAD(SUBSTR(@max_label, 6) + 1, 7, '0')); END IF; END IF; end
+drop trigger if exists before_insert_product;
+create trigger before_insert_product before insert on product for each row begin IF (NEW.sku IS NULL) THEN SELECT MAX(sku) INTO @max_label FROM product; IF (@max_label IS NULL) THEN SET NEW.sku = CONCAT('SKU0000001'); ELSE SET NEW.sku = CONCAT(SUBSTR(@max_label, 1, 3), LPAD(SUBSTR(@max_label, 4) + 1, 7, '0')); END IF; END IF; end
 
 /* WORK SHIFTS */
 INSERT INTO db_yoviro.work_shift (id, name) VALUES (1,'Lunes y Miercoles Full');
@@ -316,10 +318,10 @@ INSERT INTO db_yoviro.activity_pattern_agreement (activity_pattern_id, agreement
 INSERT INTO db_yoviro.activity_pattern_agreement (activity_pattern_id, agreement_id) VALUES (17, 12);
 
 /* INVENTORY */
-INSERT INTO db_yoviro.product (description, name) VALUES ('marca : practipañal, modelo : plenitud,talla : XL', 'practipañal plenitud XL');
-INSERT INTO db_yoviro.product (description, name) VALUES ('marca : practipañal,  modelo : plenitud fenme, talla : XL', 'practipañal plenitud fenme XL');
-INSERT INTO db_yoviro.product (description, name) VALUES ('marca : secos, modelo : fenme,talla : M', 'practipañal secos G');
-INSERT INTO db_yoviro.product (description, name) VALUES ('marca : colgate, pasta dental', 'pasta dental colgate');
+INSERT INTO db_yoviro.product (unit_measure, category, create_at, description, name) VALUES ('UNIT', 'PERSONAL_CARE', now() - INTERVAL 3 MONTH, 'marca : practipañal, modelo : plenitud,talla : XL', 'practipañal plenitud XL');
+INSERT INTO db_yoviro.product (unit_measure, category, create_at, description, name) VALUES ('UNIT', 'PERSONAL_CARE', now() - INTERVAL 2 MONTH,'marca : practipañal,  modelo : plenitud fenme, talla : XL', 'practipañal plenitud fenme XL');
+INSERT INTO db_yoviro.product (unit_measure, category, create_at, description, name) VALUES ('UNIT', 'PERSONAL_CARE', now() - INTERVAL 1 MONTH,'marca : secos, modelo : fenme,talla : M', 'practipañal secos G');
+INSERT INTO db_yoviro.product (unit_measure, category, create_at, description, name) VALUES ('UNIT', 'PERSONAL_CARE', now() - INTERVAL 9 MONTH,'marca : colgate, pasta dental', 'pasta dental grande colgate');
 
 /* REQUEST INVENTORY */
 INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now() - INTERVAL 1 HOUR, 'IN_PROGRESS', 1, 7);
