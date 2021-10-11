@@ -72,8 +72,10 @@ public class InventoryRequestServiceImpl implements IInventoryRequestService {
             //We're talking about an update
             if (inventoryRequest.getStatus() != InventoryRequestStatusEnum.PENDING)
                 throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "Inventory request can't be update, because his status is : " + inventoryRequest.getStatus());
+
+            //TODO make update
         }
-        
+
         return inventoryRequestRepository.save(inventoryRequest);
     }
 
