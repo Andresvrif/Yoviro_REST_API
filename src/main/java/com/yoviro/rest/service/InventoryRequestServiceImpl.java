@@ -4,6 +4,7 @@ import com.yoviro.rest.config.enums.InventoryRequestStatusEnum;
 import com.yoviro.rest.dto.InventoryRequestDetailDTO;
 import com.yoviro.rest.dto.OfficialIdDTO;
 import com.yoviro.rest.models.entity.*;
+import com.yoviro.rest.models.repository.InventoryRequestDetailRepository;
 import com.yoviro.rest.models.repository.InventoryRequestRepository;
 import com.yoviro.rest.models.repository.UserRepository;
 import com.yoviro.rest.models.repository.projections.SummaryListInventoryRequestNurseProjection;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
@@ -26,6 +28,9 @@ import java.util.stream.Collectors;
 public class InventoryRequestServiceImpl implements IInventoryRequestService {
     @Autowired
     private InventoryRequestRepository inventoryRequestRepository;
+
+    @Autowired
+    private InventoryRequestDetailRepository inventoryRequestDetailRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -44,12 +49,19 @@ public class InventoryRequestServiceImpl implements IInventoryRequestService {
                 inventoryRequestRepository.summaryListByNurseUserNameWithCreateAtDesc(pageable, userName);
     }
 
+    @Transactional
     @Override
     public InventoryRequest createOrUpdate(String userName,
                                            String inventoryRequestNumber,
                                            OfficialIdDTO officialIdDTO,
                                            List<InventoryRequestDetailDTO> detailDTOS) {
         InventoryRequest inventoryRequest = inventoryRequestRepository.findInventoryRequestByInventoryRequestNumber(inventoryRequestNumber);
+
+        //Stablish Resident
+        Resident resident = residentService.findByOfficialID(officialIdDTO);
+        if (resident == null)
+            throw new ResponseStatusException(HttpStatus.CHECKPOINT, "Resident not found by Official Ids");
+
         if (inventoryRequest == null) {
             //We're talking about a new instance
             User user = userRepository.findByUsername(userName);
@@ -59,24 +71,33 @@ public class InventoryRequestServiceImpl implements IInventoryRequestService {
 
             inventoryRequest = new InventoryRequest();
             inventoryRequest.setAuthor(worker);
-            Resident resident = residentService.findByOfficialID(officialIdDTO);
-            if (resident == null)
-                throw new ResponseStatusException(HttpStatus.CHECKPOINT, "Resident not found by Official Ids");
-
+            //Stablish inventory request detail
             List<InventoryRequestDetail> details = defineDetails(detailDTOS);
             for (InventoryRequestDetail detail : details) detail.setInventoryRequest(inventoryRequest);
-
-            inventoryRequest.setDetails(details);
+            inventoryRequest.getDetails().addAll(details);
             inventoryRequest.setResident(resident);
+
+            return inventoryRequestRepository.save(inventoryRequest);
         } else {
             //We're talking about an update
             if (inventoryRequest.getStatus() != InventoryRequestStatusEnum.PENDING)
                 throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "Inventory request can't be update, because his status is : " + inventoryRequest.getStatus());
 
-            //TODO make update
-        }
+            inventoryRequest.getDetails().clear();
+            inventoryRequest = inventoryRequestRepository.save(inventoryRequest);
+            List<InventoryRequestDetail> details = defineDetails(detailDTOS);
+            for (InventoryRequestDetail detail : details) detail.setInventoryRequest(inventoryRequest);
+            inventoryRequest.getDetails().addAll(details);
 
-        return inventoryRequestRepository.save(inventoryRequest);
+            return inventoryRequestRepository.save(inventoryRequest);
+/*
+
+            List<InventoryRequestDetail> details = defineDetails(detailDTOS);
+            for (InventoryRequestDetail detail : details) detail.setInventoryRequest(inventoryRequest);
+            inventoryRequest.getDetails().addAll(details);
+
+            return inventoryRequestRepository.save(inventoryRequest);*/
+        }
     }
 
     private List<InventoryRequestDetail> defineDetails(List<InventoryRequestDetailDTO> detailDTOS) {
@@ -91,7 +112,7 @@ public class InventoryRequestServiceImpl implements IInventoryRequestService {
             productToJoin = products.stream().filter(e -> e.getSku().compareToIgnoreCase(detailDTO.getProductDTO().getSku()) == 0).findFirst().get();
             InventoryRequestDetail detail = new InventoryRequestDetail();
             detail.setProduct(productToJoin);
-            detail.setQuantity(detail.getQuantity());
+            detail.setQuantity(detailDTO.getQuantity());
 
             details.add(detail);
         }

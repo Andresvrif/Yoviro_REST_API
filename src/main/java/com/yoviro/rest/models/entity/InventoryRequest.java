@@ -5,6 +5,7 @@ import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -82,8 +83,10 @@ public class InventoryRequest {
     @Enumerated(EnumType.STRING)
     private InventoryRequestStatusEnum status;
 
-    @NotNull
-    @OneToMany(mappedBy = "inventoryRequest", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "inventoryRequest",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private List<InventoryRequestDetail> details = new ArrayList<>();
 
     @NotNull

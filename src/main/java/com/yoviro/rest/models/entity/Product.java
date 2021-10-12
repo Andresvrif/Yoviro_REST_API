@@ -2,6 +2,7 @@ package com.yoviro.rest.models.entity;
 
 import com.yoviro.rest.config.enums.ProductCategoryEnum;
 import com.yoviro.rest.config.enums.UnitMeasureEnum;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -12,7 +13,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @Column(nullable = false)
     private String sku;
 
     @Enumerated(EnumType.STRING)
@@ -21,6 +22,7 @@ public class Product {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String description;
 
     @NotNull
@@ -30,7 +32,7 @@ public class Product {
     private UnitMeasureEnum unitMeasure;
 
     @NotNull
-    @Column(columnDefinition="tinyint(1) default 1")
+    @Column(columnDefinition = "tinyint(1) default 1")
     private Boolean enable;
 
     public Long getId() {

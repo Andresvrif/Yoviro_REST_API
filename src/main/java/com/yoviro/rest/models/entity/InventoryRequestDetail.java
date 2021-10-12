@@ -1,9 +1,6 @@
 package com.yoviro.rest.models.entity;
 
-import com.yoviro.rest.config.enums.InventoryRequestStatusEnum;
-
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Entity
@@ -12,17 +9,12 @@ public class InventoryRequestDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private InventoryRequestStatusEnum unitMeasure;
-
     @ManyToOne(fetch = FetchType.LAZY)
     Product product;
 
-    @NotNull
+    @Column(nullable = false)
     private BigDecimal quantity;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "inventory_request_id")
     private InventoryRequest inventoryRequest;
@@ -33,14 +25,6 @@ public class InventoryRequestDetail {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public InventoryRequestStatusEnum getUnitMeasure() {
-        return unitMeasure;
-    }
-
-    public void setUnitMeasure(InventoryRequestStatusEnum unitMeasure) {
-        this.unitMeasure = unitMeasure;
     }
 
     public Product getProduct() {

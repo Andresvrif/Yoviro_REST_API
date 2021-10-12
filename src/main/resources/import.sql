@@ -329,9 +329,9 @@ INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_
 INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now(), 'PENDING', 2, 8);
 
 /* REQUEST INVENTORY DETAIL */
-INSERT INTO db_yoviro.inventory_request_detail (unit_measure, quantity, inventory_request_id, product_id) VALUES ('UNIT', 21, 1, 1);
-INSERT INTO db_yoviro.inventory_request_detail (unit_measure, quantity, inventory_request_id, product_id) VALUES ('UNIT', 20, 2, 2);
-INSERT INTO db_yoviro.inventory_request_detail (unit_measure, quantity, inventory_request_id, product_id) VALUES ('UNIT', 20, 3, 4);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (21, 1, 1);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (20, 2, 2);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (20, 3, 4);
 
 /* PROPOSAL */
 INSERT INTO db_yoviro.proposal (create_at, rejected_reason, status, worker_id) VALUES (now(), null, 'REQUESTED', 9);

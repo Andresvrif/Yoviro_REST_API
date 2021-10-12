@@ -47,9 +47,13 @@ public class InventoryRequestRestController {
     private IJWTService jwtService;
 
     @GetMapping("/summaryList")
-    public Map<String, Object> summaryList(@RequestParam(required = true) String userName,
+    public Map<String, Object> summaryList(@RequestHeader(name = "Authorization") String authorization,
                                            @RequestParam(required = true) String page,
                                            @RequestParam(required = true) Boolean ascending) {
+        //Retrieve userName from token
+        String token = jwtService.retrieveToken(authorization);
+        String userName = jwtService.getUserName(token);
+
         //Resolve UI Params
         Integer pageNumber = PageUtil.definePageNumber(page);
         Pageable pageable = PageRequest.of(pageNumber, AppConfig.PAGE_SIZE);
