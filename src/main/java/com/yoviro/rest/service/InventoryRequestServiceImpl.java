@@ -88,15 +88,9 @@ public class InventoryRequestServiceImpl implements IInventoryRequestService {
             List<InventoryRequestDetail> details = defineDetails(detailDTOS);
             for (InventoryRequestDetail detail : details) detail.setInventoryRequest(inventoryRequest);
             inventoryRequest.getDetails().addAll(details);
+            inventoryRequest.setResident(resident);
 
             return inventoryRequestRepository.save(inventoryRequest);
-/*
-
-            List<InventoryRequestDetail> details = defineDetails(detailDTOS);
-            for (InventoryRequestDetail detail : details) detail.setInventoryRequest(inventoryRequest);
-            inventoryRequest.getDetails().addAll(details);
-
-            return inventoryRequestRepository.save(inventoryRequest);*/
         }
     }
 
