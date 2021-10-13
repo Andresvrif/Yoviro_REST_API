@@ -19,13 +19,21 @@ public class Proposal {
     @Generated(GenerationTime.INSERT)
     protected String proposalNumber;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "worker_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "store_keeper_id", nullable = false)
     private StoreKeeper author;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "director_id", nullable = true)
+    private Director evaluator;
 
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP(6)")
     private LocalDateTime createAt;
+
+    @NotNull
+    @ColumnDefault("CURRENT_TIMESTAMP(6)")
+    private LocalDateTime updateAt;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -70,12 +78,28 @@ public class Proposal {
         this.author = author;
     }
 
+    public Director getEvaluator() {
+        return evaluator;
+    }
+
+    public void setEvaluator(Director evaluator) {
+        this.evaluator = evaluator;
+    }
+
     public LocalDateTime getCreateAt() {
         return createAt;
     }
 
     public void setCreateAt(LocalDateTime createAt) {
         this.createAt = createAt;
+    }
+
+    public LocalDateTime getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(LocalDateTime updateAt) {
+        this.updateAt = updateAt;
     }
 
     public String getRejectedReason() {

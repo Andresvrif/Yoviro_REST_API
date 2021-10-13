@@ -140,7 +140,7 @@ INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary
 /* WORKER */
 INSERT INTO db_yoviro.worker (worker_type, contact_id, user_id, work_shift_id) VALUES ('NURSE', 1, 1, 1);
 INSERT INTO db_yoviro.worker (worker_type, contact_id, user_id, work_shift_id) VALUES ('NURSE', 2, 2, 1);
-INSERT INTO db_yoviro.worker (worker_type, contact_id, user_id, work_shift_id) VALUES ('NURSE', 3, 3, 2);
+INSERT INTO db_yoviro.worker (worker_type, contact_id, user_id, work_shift_id) VALUES ('DIRECTOR', 3, 3, 2);
 INSERT INTO db_yoviro.worker (worker_type, contact_id, user_id, work_shift_id) VALUES ('NURSE', 4, 4, 2);
 INSERT INTO db_yoviro.worker (worker_type, contact_id, user_id, work_shift_id) VALUES ('NURSE', 5, 5, 3);
 INSERT INTO db_yoviro.worker (worker_type, contact_id, user_id, work_shift_id) VALUES ('NURSE', 6, 6, 3);
@@ -180,6 +180,7 @@ INSERT INTO db_yoviro.resident (create_at, enable, contact_id) VALUES (DEFAULT, 
 INSERT INTO db_yoviro.role (id, role_code) VALUES(1,'ROLE_ADMIN');
 INSERT INTO db_yoviro.role (id, role_code) VALUES(2,'ROLE_USER');
 INSERT INTO db_yoviro.role (id, role_code) VALUES(3,'ROLE_NURSE');
+INSERT INTO db_yoviro.role (id, role_code) VALUES(4,'ROLE_STORE_KEEPER');
 
 /* ROLES PARA USUARIOS */
 INSERT INTO db_yoviro.user_role (user_id, role_id) VALUES(1, 3);
@@ -191,6 +192,7 @@ INSERT INTO db_yoviro.user_role (user_id, role_id) VALUES(5, 3);
 INSERT INTO db_yoviro.user_role (user_id, role_id) VALUES(6, 3);
 INSERT INTO db_yoviro.user_role (user_id, role_id) VALUES(7, 3);
 INSERT INTO db_yoviro.user_role (user_id, role_id) VALUES(8, 3);
+INSERT INTO db_yoviro.user_role (user_id, role_id) VALUES(9, 4); -- STORE KEEPER ROLE
 
 /* TEAMS */
 INSERT INTO db_yoviro.team (team_type) VALUES('ADMINISTRATORS');
@@ -334,7 +336,7 @@ INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, 
 INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (20, 3, 4);
 
 /* PROPOSAL */
-INSERT INTO db_yoviro.proposal (create_at, rejected_reason, status, worker_id) VALUES (now(), null, 'REQUESTED', 9);
+INSERT INTO db_yoviro.proposal (create_at, update_at, rejected_reason, status, store_keeper_id, director_id) VALUES (now(),now(), null, 'REQUESTED', 9, null);
 
 /* REQUEST INVENTORY WITH ASSSIGNED PROPOSAL */
 INSERT INTO db_yoviro.inventory_request_proposal (proposal_id, inventory_request_id) VALUES (1, 1);

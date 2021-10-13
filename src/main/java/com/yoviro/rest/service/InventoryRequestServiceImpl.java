@@ -42,11 +42,18 @@ public class InventoryRequestServiceImpl implements IInventoryRequestService {
     private IProductService productService;
 
     @Override
-    public Page<SummaryListInventoryRequestNurseProjection> summaryListByNurseUserName(Pageable pageable,
+    public Page<SummaryListInventoryRequestNurseProjection> summaryListByNurseUserName(String search,
+                                                                                       Pageable pageable,
                                                                                        String userName,
                                                                                        Boolean ascendant) {
-        return ascendant ? inventoryRequestRepository.summaryListByNurseUserNameWithCreateAtAsc(pageable, userName) :
-                inventoryRequestRepository.summaryListByNurseUserNameWithCreateAtDesc(pageable, userName);
+        if (search != null) {
+            search = "%".concat(search).concat("%");
+            return ascendant ? inventoryRequestRepository.summaryListByNurseUserNameAndLikeInventoryRequestNumberWithCreateAtAsc(pageable, userName, search) :
+                               inventoryRequestRepository.summaryListByNurseUserNameAndLikeInventoryRequestNumberWithCreateAtDesc(pageable, userName, search);
+        } else {
+            return ascendant ? inventoryRequestRepository.summaryListByNurseUserNameWithCreateAtAsc(pageable, userName) :
+                               inventoryRequestRepository.summaryListByNurseUserNameWithCreateAtDesc(pageable, userName);
+        }
     }
 
     @Transactional

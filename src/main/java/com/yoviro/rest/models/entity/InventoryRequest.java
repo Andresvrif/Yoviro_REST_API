@@ -35,7 +35,7 @@ import java.util.List;
                         "inner join Person rp on rp = r.person " +
                         "inner join Nurse n on n.user = ir.author " +
                         "inner join User nu on nu = n.user " +
-                        "where nu.username = ?1 " +
+                        "where nu.username = ?1" +
                         "order by ir.createAt desc"),
         @NamedQuery(name = "InventoryRequest.summaryListByNurseUserNameWithCreateAtAsc",
                 query = "select ir.inventoryRequestNumber as inventoryRequestNumber, " +
@@ -59,7 +59,55 @@ import java.util.List;
                         "inner join Person rp on rp = r.person " +
                         "inner join Nurse n on n.user = ir.author " +
                         "inner join User nu on nu = n.user " +
-                        "where nu.username = ?1 " +
+                        "where nu.username = ?1" +
+                        "order by ir.createAt asc"),
+        @NamedQuery(name = "InventoryRequest.summaryListByNurseUserNameAndLikeInventoryRequestNumberWithCreateAtDesc",
+                query = "select ir.inventoryRequestNumber as inventoryRequestNumber, " +
+                        "rp.name as residentFirstName, " +
+                        "rp.secondName as residentSecondName, " +
+                        "rp.lastName as residentLastName, " +
+                        "rp.secondName as residentSecondLastName, " +
+                        "ir.status as status, " +
+                        "skp.name as storeKeeperFirstName, " +
+                        "skp.secondName as storeKeeperSecondName, " +
+                        "skp.lastName as storeKeeperLastName, " +
+                        "skp.secondLastName as storeKeeperSecondLastName, " +
+                        "p.proposalNumber as proposalNumber, " +
+                        "ir.createAt as createAt " +
+                        "from InventoryRequest ir " +
+                        "left join ir.proposals irp " +
+                        "left join Proposal p on irp.id = p.id " +
+                        "left join StoreKeeper sk on p.author = sk " +
+                        "left join Person skp on sk.person = skp " +
+                        "inner join Resident r on r = ir.resident " +
+                        "inner join Person rp on rp = r.person " +
+                        "inner join Nurse n on n.user = ir.author " +
+                        "inner join User nu on nu = n.user " +
+                        "where nu.username = ?1 and ir.inventoryRequestNumber like ?2" +
+                        "order by ir.createAt desc"),
+        @NamedQuery(name = "InventoryRequest.summaryListByNurseUserNameAndLikeInventoryRequestNumberWithCreateAtAsc",
+                query = "select ir.inventoryRequestNumber as inventoryRequestNumber, " +
+                        "rp.name as residentFirstName, " +
+                        "rp.secondName as residentSecondName, " +
+                        "rp.lastName as residentLastName, " +
+                        "rp.secondName as residentSecondLastName, " +
+                        "ir.status as status, " +
+                        "skp.name as storeKeeperFirstName, " +
+                        "skp.secondName as storeKeeperSecondName, " +
+                        "skp.lastName as storeKeeperLastName, " +
+                        "skp.secondLastName as storeKeeperSecondLastName, " +
+                        "p.proposalNumber as proposalNumber, " +
+                        "ir.createAt as createAt " +
+                        "from InventoryRequest ir " +
+                        "left join ir.proposals irp " +
+                        "left join Proposal p on irp.id = p.id " +
+                        "left join StoreKeeper sk on p.author = sk " +
+                        "left join Person skp on sk.person = skp " +
+                        "inner join Resident r on r = ir.resident " +
+                        "inner join Person rp on rp = r.person " +
+                        "inner join Nurse n on n.user = ir.author " +
+                        "inner join User nu on nu = n.user " +
+                        "where nu.username = ?1 and ir.inventoryRequestNumber like ?2" +
                         "order by ir.createAt asc")
 })
 public class InventoryRequest {

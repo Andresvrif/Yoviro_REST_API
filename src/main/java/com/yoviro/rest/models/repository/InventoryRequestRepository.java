@@ -14,8 +14,10 @@ import java.util.List;
 @Repository
 public interface InventoryRequestRepository extends PagingAndSortingRepository<InventoryRequest, Long> {
     Page<SummaryListInventoryRequestNurseProjection> summaryListByNurseUserNameWithCreateAtDesc(Pageable pageable, String userName);
-
     Page<SummaryListInventoryRequestNurseProjection> summaryListByNurseUserNameWithCreateAtAsc(Pageable pageable, String userName);
+    Page<SummaryListInventoryRequestNurseProjection> summaryListByNurseUserNameAndLikeInventoryRequestNumberWithCreateAtDesc(Pageable pageable, String userName, String search);
+    Page<SummaryListInventoryRequestNurseProjection> summaryListByNurseUserNameAndLikeInventoryRequestNumberWithCreateAtAsc(Pageable pageable, String userName, String search);
+
 
     InventoryRequest findInventoryRequestByInventoryRequestNumber(String inventoryRequestNumber);
 

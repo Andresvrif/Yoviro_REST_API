@@ -60,6 +60,7 @@ public class InventoryRequestRestController {
 
     @GetMapping("/mySummaryList")
     public Map<String, Object> summaryList(@RequestHeader(name = "Authorization") String authorization,
+                                           @RequestParam(required = false) String search,
                                            @RequestParam(required = true) String page,
                                            @RequestParam(required = true) Boolean ascending) {
         //Retrieve userName from token
@@ -71,7 +72,7 @@ public class InventoryRequestRestController {
         Pageable pageable = PageRequest.of(pageNumber, AppConfig.PAGE_SIZE);
 
         //Call Service and retrieve data
-        Page<SummaryListInventoryRequestNurseProjection> pageSummary = inventoryRequestService.summaryListByNurseUserName(pageable, userName, ascending);
+        Page<SummaryListInventoryRequestNurseProjection> pageSummary = inventoryRequestService.summaryListByNurseUserName(search, pageable, userName, ascending);
 
         //Define Response
         Map<String, Object> response = new HashMap<String, Object>();

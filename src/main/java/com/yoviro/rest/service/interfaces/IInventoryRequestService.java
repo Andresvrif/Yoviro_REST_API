@@ -10,7 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface IInventoryRequestService {
-    Page<SummaryListInventoryRequestNurseProjection> summaryListByNurseUserName(Pageable pageable,
+    Page<SummaryListInventoryRequestNurseProjection> summaryListByNurseUserName(String search,
+                                                                                Pageable pageable,
                                                                                 String userName,
                                                                                 Boolean ascendant); //Bring All pageable
 
