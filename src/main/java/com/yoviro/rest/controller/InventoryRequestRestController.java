@@ -46,7 +46,19 @@ public class InventoryRequestRestController {
     @Autowired
     private IJWTService jwtService;
 
-    @GetMapping("/summaryList")
+    @DeleteMapping("")
+    public void deleteInventoryRequest(@RequestBody(required = true) String json) throws JSONException {
+        //Map Json
+        JSONObject jsonObject = new JSONObject(json);
+        JSONArray arrayInventoryRequestNumbers = jsonObject.getJSONArray("requestToDelete");
+        List<String> inventoryRequestNumberToDelete = new ArrayList<>();
+        for (int i = 0; i < arrayInventoryRequestNumbers.length(); i++)
+            inventoryRequestNumberToDelete.add(arrayInventoryRequestNumbers.getString(i));
+
+        inventoryRequestService.deleteAllByInventoryRequestNumberIn(inventoryRequestNumberToDelete);
+    }
+
+    @GetMapping("/mySummaryList")
     public Map<String, Object> summaryList(@RequestHeader(name = "Authorization") String authorization,
                                            @RequestParam(required = true) String page,
                                            @RequestParam(required = true) Boolean ascending) {

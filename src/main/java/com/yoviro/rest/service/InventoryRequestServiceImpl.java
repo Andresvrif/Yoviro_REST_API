@@ -83,6 +83,7 @@ public class InventoryRequestServiceImpl implements IInventoryRequestService {
             if (inventoryRequest.getStatus() != InventoryRequestStatusEnum.PENDING)
                 throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "Inventory request can't be update, because his status is : " + inventoryRequest.getStatus());
 
+            //TODO refactorizars
             inventoryRequest.getDetails().clear();
             inventoryRequest = inventoryRequestRepository.save(inventoryRequest);
             List<InventoryRequestDetail> details = defineDetails(detailDTOS);
@@ -92,6 +93,11 @@ public class InventoryRequestServiceImpl implements IInventoryRequestService {
 
             return inventoryRequestRepository.save(inventoryRequest);
         }
+    }
+
+    @Override
+    public void deleteAllByInventoryRequestNumberIn(List<String> inventoryRequest) {
+        inventoryRequestRepository.deleteAllByInventoryRequestNumberIn(inventoryRequest);
     }
 
     private List<InventoryRequestDetail> defineDetails(List<InventoryRequestDetailDTO> detailDTOS) {

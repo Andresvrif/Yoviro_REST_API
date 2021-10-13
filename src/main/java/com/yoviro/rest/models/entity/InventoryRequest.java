@@ -89,7 +89,6 @@ public class InventoryRequest {
             orphanRemoval = true)
     private List<InventoryRequestDetail> details = new ArrayList<>();
 
-    @NotNull
     @ManyToMany(mappedBy = "inventoryRequests")
     private List<Proposal> proposals = new ArrayList<>();
 
