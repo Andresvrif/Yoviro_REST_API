@@ -2,7 +2,6 @@ package com.yoviro.rest.models.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -22,9 +21,6 @@ public class PurcharseOrderDetail {
 
     @NotNull
     private Integer quantity;
-
-    @NotNull
-    private BigDecimal unitValue;
 
     @NotNull
     private LocalDateTime createAt;
@@ -59,14 +55,6 @@ public class PurcharseOrderDetail {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
-    }
-
-    public BigDecimal getUnitValue() {
-        return unitValue;
-    }
-
-    public void setUnitValue(BigDecimal unitValue) {
-        this.unitValue = unitValue;
     }
 
     public LocalDateTime getCreateAt() {

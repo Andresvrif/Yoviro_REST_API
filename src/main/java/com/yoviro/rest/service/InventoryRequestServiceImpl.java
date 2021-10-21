@@ -21,7 +21,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,10 +48,10 @@ public class InventoryRequestServiceImpl implements IInventoryRequestService {
         if (search != null) {
             search = "%".concat(search).concat("%");
             return ascendant ? inventoryRequestRepository.summaryListByNurseUserNameAndLikeInventoryRequestNumberWithCreateAtAsc(pageable, userName, search) :
-                               inventoryRequestRepository.summaryListByNurseUserNameAndLikeInventoryRequestNumberWithCreateAtDesc(pageable, userName, search);
+                    inventoryRequestRepository.summaryListByNurseUserNameAndLikeInventoryRequestNumberWithCreateAtDesc(pageable, userName, search);
         } else {
             return ascendant ? inventoryRequestRepository.summaryListByNurseUserNameWithCreateAtAsc(pageable, userName) :
-                               inventoryRequestRepository.summaryListByNurseUserNameWithCreateAtDesc(pageable, userName);
+                    inventoryRequestRepository.summaryListByNurseUserNameWithCreateAtDesc(pageable, userName);
         }
     }
 
@@ -107,16 +106,21 @@ public class InventoryRequestServiceImpl implements IInventoryRequestService {
         inventoryRequestRepository.deleteAllByInventoryRequestNumberIn(inventoryRequest);
     }
 
+    @Override
+    public InventoryRequest findInventoryRequestByReqNumber(String inventoryReqNumber) {
+        return inventoryRequestRepository.findInventoryRequestByInventoryRequestNumber(inventoryReqNumber);
+    }
+
     private List<InventoryRequestDetail> defineDetails(List<InventoryRequestDetailDTO> detailDTOS) {
         List<InventoryRequestDetail> details = new ArrayList<>();
-        List<String> skus = detailDTOS.stream().map(e -> e.getProductDTO().getSku()).collect(Collectors.toList());
+        List<String> skus = detailDTOS.stream().map(e -> e.getProduct().getSku()).collect(Collectors.toList());
         List<Product> products = productService.findAllBySkuIn(skus);
         if (products.isEmpty())
             throw new ResponseStatusException(HttpStatus.CHECKPOINT, "Products not found");
 
         Product productToJoin = null;
         for (InventoryRequestDetailDTO detailDTO : detailDTOS) {
-            productToJoin = products.stream().filter(e -> e.getSku().compareToIgnoreCase(detailDTO.getProductDTO().getSku()) == 0).findFirst().get();
+            productToJoin = products.stream().filter(e -> e.getSku().compareToIgnoreCase(detailDTO.getProduct().getSku()) == 0).findFirst().get();
             InventoryRequestDetail detail = new InventoryRequestDetail();
             detail.setProduct(productToJoin);
             detail.setQuantity(detailDTO.getQuantity());

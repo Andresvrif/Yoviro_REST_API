@@ -1,12 +1,12 @@
 package com.yoviro.rest.dto;
 
-import com.yoviro.rest.config.enums.InventoryRequestStatusEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.math.BigDecimal;
 
 public class InventoryRequestDetailDTO {
+    @JsonIgnore
     private Long id;
-    private InventoryRequestStatusEnum unitMeasure;
-    private ProductDTO productDTO;
+    private ProductDTO product;
     private BigDecimal quantity;
     private InventoryRequestDTO inventoryRequestDTO;
 
@@ -18,20 +18,12 @@ public class InventoryRequestDetailDTO {
         this.id = id;
     }
 
-    public InventoryRequestStatusEnum getUnitMeasure() {
-        return unitMeasure;
+    public ProductDTO getProduct() {
+        return product;
     }
 
-    public void setUnitMeasure(InventoryRequestStatusEnum unitMeasure) {
-        this.unitMeasure = unitMeasure;
-    }
-
-    public ProductDTO getProductDTO() {
-        return productDTO;
-    }
-
-    public void setProductDTO(ProductDTO productDTO) {
-        this.productDTO = productDTO;
+    public void setProduct(ProductDTO product) {
+        this.product = product;
     }
 
     public BigDecimal getQuantity() {

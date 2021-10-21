@@ -3,11 +3,8 @@ package com.yoviro.rest.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yoviro.rest.config.AppConfig;
-import com.yoviro.rest.dto.InventoryRequestDetailDTO;
-import com.yoviro.rest.dto.OfficialIdDTO;
-import com.yoviro.rest.dto.ProductDTO;
-import com.yoviro.rest.models.entity.Activity;
-import com.yoviro.rest.models.entity.InventoryRequest;
+import com.yoviro.rest.dto.*;
+import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.models.repository.projections.SummaryListInventoryRequestNurseProjection;
 import com.yoviro.rest.security.service.IJWTService;
 import com.yoviro.rest.service.interfaces.IInventoryRequestService;
@@ -26,10 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/inventoryRequest")
@@ -154,11 +148,67 @@ public class InventoryRequestRestController {
             //Instance inventory detail
             requestDetailDTO = new InventoryRequestDetailDTO();
             requestDetailDTO.setQuantity(new BigDecimal(jsonRequestDetail.getString("quantity")));
-            requestDetailDTO.setProductDTO(productDTO);
+            requestDetailDTO.setProduct(productDTO);
 
             detailDTOS.add(requestDetailDTO);
         }
 
         return detailDTOS;
+    }
+
+    @GetMapping("/{inventoryRequestNumber}")
+    public Map<String, Object> inventoryRequestByReqNumber(@PathVariable String inventoryRequestNumber) throws Exception {
+        InventoryRequest inventoryRequest = inventoryRequestService.findInventoryRequestByReqNumber(inventoryRequestNumber);
+        if (inventoryRequest == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Inventory request not found with that number");
+        }
+
+        return wrapInventoryRequest(inventoryRequest);
+    }
+
+    private Map wrapInventoryRequest(InventoryRequest inventoryRequest) {
+        Person person = inventoryRequest.getResident().getPerson(); //Resident Info
+        OfficialId officialId = person.getPrimaryOfficialID();
+        Product product = null;
+        Map contentJson = null;
+        Map residentJson = null;
+
+        //Map inventory request detail (products)
+        List detailsJson = new ArrayList();
+        Map detailJson = null;
+        for (InventoryRequestDetail detail : inventoryRequest.getDetails()) {
+            product = detail.getProduct();
+            detailJson = Map.ofEntries(
+                    Map.entry("sku", product.getSku()),
+                    Map.entry("quantity", detail.getQuantity()),
+                    Map.entry("unitMeasure", product.getUnitMeasure()),
+                    Map.entry("description", product.getDescription()),
+                    Map.entry("name", product.getName())
+            );
+            detailsJson.add(detailJson);
+        }
+
+        //Map resident info
+        residentJson = Map.ofEntries(
+                Map.entry("firstName", person.getName()),
+                Map.entry("secondName", Optional.ofNullable(person.getSecondName())),
+                Map.entry("lastName", person.getLastName()),
+                Map.entry("secondLastName", Optional.ofNullable(person.getSecondLastName())),
+                Map.entry("birthDate", person.getBirthDate()),
+                Map.entry("email", Optional.ofNullable(person.getEmail())),
+                Map.entry("officlaId", Map.ofEntries(
+                        Map.entry("officialIdNumber", officialId.getOfficialIdNumber()),
+                        Map.entry("officialIdType", officialId.getOfficialIdType())
+                ))
+        );
+
+        //Map final json result
+        contentJson = Map.ofEntries(
+                Map.entry("inventoryRequestNumber", inventoryRequest.getInventoryRequestNumber()),
+                Map.entry("resident", residentJson),
+                Map.entry("details", detailsJson)
+        );
+
+        return contentJson;
     }
 }

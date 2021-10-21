@@ -40,7 +40,7 @@ public class Proposal {
     private StatusProposalEnum status;
 
     @Column
-    private String rejectedReason;
+    private String reasonForDenied; //Can be rejected or canceled
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "inventory_request_proposal",
@@ -102,12 +102,12 @@ public class Proposal {
         this.updateAt = updateAt;
     }
 
-    public String getRejectedReason() {
-        return rejectedReason;
+    public String getReasonForDenied() {
+        return reasonForDenied;
     }
 
-    public void setRejectedReason(String rejectedReason) {
-        this.rejectedReason = rejectedReason;
+    public void setReasonForDenied(String rejectedReason) {
+        this.reasonForDenied = rejectedReason;
     }
 
     public List<InventoryRequest> getInventoryRequests() {

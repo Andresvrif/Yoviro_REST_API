@@ -22,4 +22,6 @@ public interface IInventoryRequestService {
                                     List<InventoryRequestDetailDTO> detailDTOS);
 
     void deleteAllByInventoryRequestNumberIn(List<String> inventoryRequest);
+
+    InventoryRequest findInventoryRequestByReqNumber(String inventoryReqNumber);
 }

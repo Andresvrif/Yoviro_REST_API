@@ -336,7 +336,7 @@ INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, 
 INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (20, 3, 4);
 
 /* PROPOSAL */
-INSERT INTO db_yoviro.proposal (create_at, update_at, rejected_reason, status, store_keeper_id, director_id) VALUES (now(),now(), null, 'REQUESTED', 9, null);
+INSERT INTO db_yoviro.proposal (create_at, update_at, reason_for_denied, status, store_keeper_id, director_id) VALUES (now(),now(), null, 'REQUESTED', 9, null);
 
 /* REQUEST INVENTORY WITH ASSSIGNED PROPOSAL */
 INSERT INTO db_yoviro.inventory_request_proposal (proposal_id, inventory_request_id) VALUES (1, 1);
