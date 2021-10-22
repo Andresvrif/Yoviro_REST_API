@@ -11,4 +11,12 @@ import java.time.LocalDate;
 public class Company extends Contact{
 
     private LocalDate startDate;
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
 }

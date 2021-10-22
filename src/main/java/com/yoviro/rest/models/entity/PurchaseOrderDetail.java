@@ -2,10 +2,11 @@ package com.yoviro.rest.models.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-public class PurcharseOrderDetail {
+public class PurchaseOrderDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,7 +21,7 @@ public class PurcharseOrderDetail {
     private Product product;
 
     @NotNull
-    private Integer quantity;
+    private BigDecimal quantity;
 
     @NotNull
     private LocalDateTime createAt;
@@ -49,11 +50,11 @@ public class PurcharseOrderDetail {
         this.product = product;
     }
 
-    public Integer getQuantity() {
+    public BigDecimal getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
+    public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
     }
 

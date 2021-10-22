@@ -11,6 +11,8 @@ drop trigger if exists before_insert_proposal;
 create trigger before_insert_proposal before insert on proposal for each row begin IF (NEW.proposal_number IS NULL) THEN SELECT MAX(proposal_number) INTO @max_label FROM proposal; IF (@max_label IS NULL) THEN SET NEW.proposal_number = CONCAT('PROPO0000001'); ELSE SET NEW.proposal_number = CONCAT(SUBSTR(@max_label, 1, 5), LPAD(SUBSTR(@max_label, 6) + 1, 7, '0')); END IF; END IF; end
 drop trigger if exists before_insert_product;
 create trigger before_insert_product before insert on product for each row begin IF (NEW.sku IS NULL) THEN SELECT MAX(sku) INTO @max_label FROM product; IF (@max_label IS NULL) THEN SET NEW.sku = CONCAT('SKU0000001'); ELSE SET NEW.sku = CONCAT(SUBSTR(@max_label, 1, 3), LPAD(SUBSTR(@max_label, 4) + 1, 7, '0')); END IF; END IF; end
+drop trigger if exists before_insert_purchase_order;
+create trigger before_insert_purchase_order before insert on purchase_order for each row begin IF (NEW.purchase_order_number IS NULL) THEN SELECT MAX(purchase_order_number) INTO @max_label FROM purchase_order; IF (@max_label IS NULL) THEN SET NEW.purchase_order_number = CONCAT('PUO0000001'); ELSE SET NEW.purchase_order_number = CONCAT(SUBSTR(@max_label, 1, 3), LPAD(SUBSTR(@max_label, 4) + 1, 7, '0')); END IF; END IF; end
 
 /* WORK SHIFTS */
 INSERT INTO db_yoviro.work_shift (id, name) VALUES (1,'Lunes y Miercoles Full');
@@ -96,6 +98,9 @@ INSERT INTO db_yoviro.contact (contact_type, create_at, email, internal, name, s
 INSERT INTO db_yoviro.contact (contact_type, create_at, email, internal, name, start_date, birth_date, last_name, photo, second_last_name, second_name) VALUES ('PERSON', DEFAULT, null, DEFAULT, 'luis', null, '1990-01-01', 'villalobos', null, 'leonord', null);
 INSERT INTO db_yoviro.contact (contact_type, create_at, email, internal, name, start_date, birth_date, last_name, photo,second_last_name, second_name) VALUES ('PERSON', DEFAULT, null, DEFAULT, 'ronald', null, '1987-10-15', 'rojas', null, 'calderon', null);
 
+/* CONTACTS - COMPANY */
+INSERT INTO db_yoviro.contact (contact_type, create_at, email, internal, name, start_date) VALUES ('COMPANY', DEFAULT, 'contacto@universal.com', 1, 'FARMACIA UNIVERSAL S.A.C.', '1961-10-01');
+
 /* Official ID */
 INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('70007861', 'DNI', 1, 1);
 INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('48813667', 'DNI', 1, 2);
@@ -135,7 +140,8 @@ INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary
 INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('59800771', 'DNI', 1, 33);
 INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('60000620', 'DNI', 1, 34);
 
-
+/* Official ID - FOR COMPANIES */
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('20100025168', 'RUC', 1, 35);
 
 /* WORKER */
 INSERT INTO db_yoviro.worker (worker_type, contact_id, user_id, work_shift_id) VALUES ('NURSE', 1, 1, 1);
@@ -329,15 +335,49 @@ INSERT INTO db_yoviro.product (unit_measure, category, create_at, description, n
 INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now() - INTERVAL 1 HOUR, 'IN_PROGRESS', 1, 7);
 INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now(), 'IN_PROGRESS', 3, 7);
 INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now(), 'PENDING', 2, 8);
+    /*IN PROGRESS WITH A PROPOSAL APPROVED */
+INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now() - INTERVAL 1 HOUR, 'IN_PROGRESS', 1, 7);
+INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now(), 'IN_PROGRESS', 3, 7);
+
 
 /* REQUEST INVENTORY DETAIL */
 INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (21, 1, 1);
 INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (20, 2, 2);
 INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (20, 3, 4);
 
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (10, 4, 1);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (20, 4, 2);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (30, 4, 3);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (40, 4, 4);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (10, 5, 1);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (20, 5, 2);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (30, 5, 3);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (40, 5, 4);
+
 /* PROPOSAL */
-INSERT INTO db_yoviro.proposal (create_at, update_at, reason_for_denied, status, store_keeper_id, director_id) VALUES (now(),now(), null, 'REQUESTED', 9, null);
+INSERT INTO db_yoviro.proposal (create_at, update_at, reason_for_denied, status, store_keeper_id, director_id) VALUES (now(),now(), null, 'PENDING', 9, null);
+INSERT INTO db_yoviro.proposal (create_at, update_at, reason_for_denied, status, store_keeper_id, director_id) VALUES (now(),now(), null, 'APPROVED', 9, 3);
 
 /* REQUEST INVENTORY WITH ASSSIGNED PROPOSAL */
 INSERT INTO db_yoviro.inventory_request_proposal (proposal_id, inventory_request_id) VALUES (1, 1);
 INSERT INTO db_yoviro.inventory_request_proposal (proposal_id, inventory_request_id) VALUES (1, 2);
+INSERT INTO db_yoviro.inventory_request_proposal (proposal_id, inventory_request_id) VALUES (2, 4);
+INSERT INTO db_yoviro.inventory_request_proposal (proposal_id, inventory_request_id) VALUES (2, 5);
+
+/* PURCHASE ORDER */
+INSERT INTO db_yoviro.purchase_order (attachment_document, create_at, status, total_price, worker_id, company_id)VALUES (null, now(), 'QUOTED', 50.22, 7, 36);
+INSERT INTO db_yoviro.purchase_order (attachment_document, create_at, status, total_price, worker_id, company_id)VALUES (null, now(), 'QUOTED', 75.32, 7, 36);
+
+/* PURCHASE ORDER DETAIL */
+INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 10, 1, 1);
+INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 20, 1, 2);
+INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 30, 1, 3);
+INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 40, 1, 4);
+INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 10, 2, 1);
+INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 20, 2, 2);
+INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 30, 2, 3);
+INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 40, 2, 4);
+
+/* PURCHASE ORDER WITH PROPOSAL ASSIGNED */
+INSERT INTO db_yoviro.purchase_order_proposal (proposal_id, purchase_order_id) VALUES (2, 1);
+INSERT INTO db_yoviro.purchase_order_proposal (proposal_id, purchase_order_id) VALUES (2, 2);

@@ -4,8 +4,14 @@ import com.yoviro.rest.config.enums.StatusProposalEnum;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
+import org.javamoney.moneta.Money;
+
+import javax.money.CurrencyUnit;
+import javax.money.MonetaryAmount;
+import javax.money.spi.MonetaryCurrenciesSingletonSpi;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -137,6 +143,27 @@ public class Proposal {
     @PrePersist
     public void PrePersist() {
         this.createAt = LocalDateTime.now();
+        this.updateAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void PreUpdate() {
+        this.updateAt = LocalDateTime.now();
+    }
+
+    public MonetaryAmount getTotalPrice() {
+        if (this.purchaseOrders.isEmpty()) {
+            return Money.of(BigDecimal.ZERO, "PEN");
+        }
+
+        MonetaryAmount totalPrice = Money.of(BigDecimal.ZERO, "PEN");
+        MonetaryAmount aux = null;
+        for (PurchaseOrder purchaseOrder : this.purchaseOrders) {
+            aux = Money.of(purchaseOrder.getTotalPrice(), "PEN");
+            totalPrice = totalPrice.add(aux);
+        }
+
+        return totalPrice;
     }
 
     private static final long serialVersionUID = 1L;

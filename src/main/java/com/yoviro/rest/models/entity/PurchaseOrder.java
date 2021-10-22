@@ -5,6 +5,7 @@ import com.yoviro.rest.config.enums.PurcharseOrderEnum;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +16,11 @@ public class PurchaseOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String purchaseOrderNumber;
+
     private String attachmentDocument;
 
+    @Enumerated(EnumType.STRING)
     private PurcharseOrderEnum status;
 
     @ManyToOne
@@ -29,7 +33,7 @@ public class PurchaseOrder {
     @NotNull
     @NotEmpty
     @OneToMany(mappedBy = "purchaseOrder", fetch = FetchType.LAZY)
-    private List<PurcharseOrderDetail> purcharseOrderDetails = new ArrayList<>();
+    private List<PurchaseOrderDetail> purchaseOrderDetails = new ArrayList<>();
 
     @NotNull
     @ManyToMany(mappedBy = "purchaseOrders")
@@ -42,6 +46,9 @@ public class PurchaseOrder {
     List<OutputTransactionByPurchaseOrder> outputTransactionsByPurchaseOrder = new ArrayList<>();
 
     @NotNull
+    private BigDecimal totalPrice;
+
+    @NotNull
     private LocalDateTime createAt;
 
     public Long getId() {
@@ -50,6 +57,14 @@ public class PurchaseOrder {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getPurchaseOrderNumber() {
+        return purchaseOrderNumber;
+    }
+
+    public void setPurchaseOrderNumber(String purchaseOrderNumber) {
+        this.purchaseOrderNumber = purchaseOrderNumber;
     }
 
     public String getAttachmentDocument() {
@@ -84,12 +99,12 @@ public class PurchaseOrder {
         this.company = company;
     }
 
-    public List<PurcharseOrderDetail> getPurcharseOrderDetails() {
-        return purcharseOrderDetails;
+    public List<PurchaseOrderDetail> getPurcharseOrderDetails() {
+        return purchaseOrderDetails;
     }
 
-    public void setPurcharseOrderDetails(List<PurcharseOrderDetail> purcharseOrderDetails) {
-        this.purcharseOrderDetails = purcharseOrderDetails;
+    public void setPurcharseOrderDetails(List<PurchaseOrderDetail> purchaseOrderDetails) {
+        this.purchaseOrderDetails = purchaseOrderDetails;
     }
 
     public List<Proposal> getProposals() {
@@ -114,6 +129,14 @@ public class PurchaseOrder {
 
     public void setOutputTransactionsByPurchaseOrder(List<OutputTransactionByPurchaseOrder> outputTransactionsByPurchaseOrder) {
         this.outputTransactionsByPurchaseOrder = outputTransactionsByPurchaseOrder;
+    }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
     public LocalDateTime getCreateAt() {

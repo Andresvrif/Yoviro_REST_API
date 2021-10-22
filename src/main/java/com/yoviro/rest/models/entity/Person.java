@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class Person extends Contact {
     private String secondName;
 
-    @Column(nullable = false)
+    @NotNull
     private String lastName;
 
     @NotEmpty
@@ -22,7 +22,7 @@ public class Person extends Contact {
     @Column
     private String secondLastName;
 
-    @Column(nullable = false)
+    @NotNull
     private LocalDate birthDate;
 
     private String photo;
