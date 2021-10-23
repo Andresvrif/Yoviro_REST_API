@@ -3,17 +3,23 @@ package com.yoviro.rest.service;
 import com.yoviro.rest.config.enums.InventoryRequestStatusEnum;
 import com.yoviro.rest.dto.InventoryRequestDetailDTO;
 import com.yoviro.rest.dto.OfficialIdDTO;
+import com.yoviro.rest.dto.search.SearchInventoryRequestDTO;
 import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.models.repository.InventoryRequestDetailRepository;
 import com.yoviro.rest.models.repository.InventoryRequestRepository;
 import com.yoviro.rest.models.repository.UserRepository;
 import com.yoviro.rest.models.repository.projections.SummaryListInventoryRequestNurseProjection;
+import com.yoviro.rest.models.repository.specification.handler.OperatorEnum;
+import com.yoviro.rest.models.repository.specification.handler.SearchFilter;
+import com.yoviro.rest.models.repository.specification.handler.SearchQuery;
+import com.yoviro.rest.models.repository.specification.handler.SpecificationUtil;
 import com.yoviro.rest.service.interfaces.IInventoryRequestService;
 import com.yoviro.rest.service.interfaces.IProductService;
 import com.yoviro.rest.service.interfaces.IResidentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,6 +116,59 @@ public class InventoryRequestServiceImpl implements IInventoryRequestService {
     public InventoryRequest findInventoryRequestByReqNumber(String inventoryReqNumber) {
         return inventoryRequestRepository.findInventoryRequestByInventoryRequestNumber(inventoryReqNumber);
     }
+
+    @Override
+    public Page<InventoryRequest> search(Pageable pageable, SearchInventoryRequestDTO criteria) {
+        SearchQuery qry = new SearchQuery();
+        List<SearchFilter> inventoryReqCriteria = instanceInventoryReqCriteria(criteria); //Proposal Filter
+        qry.setSearchFilter(inventoryReqCriteria);
+
+        Specification<InventoryRequest> specification = SpecificationUtil.bySearchQuery(qry, InventoryRequest.class, Boolean.FALSE);
+        return inventoryRequestRepository.findAll(specification, pageable);
+    }
+
+    static List<SearchFilter> instanceInventoryReqCriteria(SearchInventoryRequestDTO criteria) {
+        List<SearchFilter> filters = new ArrayList<>();
+        SearchFilter productFilter;
+        if (criteria.getInventoryRequestNumber() != null) {
+            productFilter = new SearchFilter();
+            productFilter.setProperty("inventoryRequestNumber");
+            productFilter.setValue(criteria.getInventoryRequestNumber());
+            productFilter.setOperator(OperatorEnum.LIKE);
+
+            filters.add(productFilter);
+        }
+
+        if (criteria.getStatus() != null) {
+            productFilter = new SearchFilter();
+            productFilter.setProperty("status");
+            productFilter.setValue(criteria.getStatus());
+            productFilter.setOperator(OperatorEnum.EQUALS);
+
+            filters.add(productFilter);
+        }
+
+        if (criteria.getStartDate() != null) {
+            productFilter = new SearchFilter();
+            productFilter.setProperty("createAt");
+            productFilter.setValue(criteria.getStartDate().atStartOfDay().minusSeconds(1));
+            productFilter.setOperator(OperatorEnum.GREATER_THAN);
+
+            filters.add(productFilter);
+        }
+
+        if (criteria.getEndDate() != null) {
+            productFilter = new SearchFilter();
+            productFilter.setProperty("createAt");
+            productFilter.setValue(criteria.getEndDate().plusDays(1).atStartOfDay());
+            productFilter.setOperator(OperatorEnum.LESS_THAN);
+
+            filters.add(productFilter);
+        }
+
+        return filters;
+    }
+
 
     private List<InventoryRequestDetail> defineDetails(List<InventoryRequestDetailDTO> detailDTOS) {
         List<InventoryRequestDetail> details = new ArrayList<>();

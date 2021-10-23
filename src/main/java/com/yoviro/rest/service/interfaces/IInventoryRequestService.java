@@ -2,6 +2,8 @@ package com.yoviro.rest.service.interfaces;
 
 import com.yoviro.rest.dto.InventoryRequestDetailDTO;
 import com.yoviro.rest.dto.OfficialIdDTO;
+import com.yoviro.rest.dto.search.SearchInventoryRequestDTO;
+import com.yoviro.rest.dto.search.SearchProductDTO;
 import com.yoviro.rest.models.entity.InventoryRequest;
 import com.yoviro.rest.models.repository.projections.SummaryListInventoryRequestNurseProjection;
 import org.springframework.data.domain.Page;
@@ -24,4 +26,6 @@ public interface IInventoryRequestService {
     void deleteAllByInventoryRequestNumberIn(List<String> inventoryRequest);
 
     InventoryRequest findInventoryRequestByReqNumber(String inventoryReqNumber);
+
+    Page<InventoryRequest> search(Pageable pageable, SearchInventoryRequestDTO criteria);
 }

@@ -73,4 +73,9 @@ public class DateUtil {
         LocalTime localTime = LocalTime.of(AppConfig.EFFECTIVE_TIME, 0);
         return LocalDateTime.of(referenceDate, localTime);
     }
+
+    public static LocalDateTime test(LocalDate referenceDate) {
+        LocalTime localTime = LocalTime.of(AppConfig.EFFECTIVE_TIME, 0);
+        return LocalDateTime.of(referenceDate, localTime);
+    }
 }

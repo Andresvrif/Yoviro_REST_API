@@ -3,7 +3,10 @@ package com.yoviro.rest.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yoviro.rest.config.AppConfig;
+import com.yoviro.rest.config.enums.InventoryRequestStatusEnum;
 import com.yoviro.rest.dto.*;
+import com.yoviro.rest.dto.search.SearchInventoryRequestDTO;
+import com.yoviro.rest.dto.search.SearchProductDTO;
 import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.models.repository.projections.SummaryListInventoryRequestNurseProjection;
 import com.yoviro.rest.security.service.IJWTService;
@@ -18,11 +21,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.*;
 
 @RestController
@@ -210,5 +215,56 @@ public class InventoryRequestRestController {
         );
 
         return contentJson;
+    }
+
+    @GetMapping("/search")
+    public Map<String, Object> inventoryRequestByReqNumber(@RequestParam(required = false) String inventoryRequestNumber,
+                                                           @RequestParam(required = false) InventoryRequestStatusEnum status,
+                                                           @RequestParam(required = false) LocalDate startDate,
+                                                           @RequestParam(required = false) LocalDate endDate,
+                                                           @RequestParam(required = true) String page) {
+        //Define Search criteria
+        SearchInventoryRequestDTO criteria = new SearchInventoryRequestDTO();
+        criteria.setInventoryRequestNumber(inventoryRequestNumber);
+        criteria.setStatus(status);
+        criteria.setStartDate(startDate);
+        criteria.setEndDate(endDate);
+
+        //Define Page criteria
+        Integer pageNumber = PageUtil.definePageNumber(page);
+        Pageable pageableByInventoryReqNumber = PageRequest.of(pageNumber, AppConfig.PAGE_SIZE, Sort.by("inventoryRequestNumber").ascending());
+
+        Page<InventoryRequest> pageResult = inventoryRequestService.search(pageableByInventoryReqNumber, criteria);
+        if (pageResult.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No proposals found");
+        }
+
+        //Define Response
+        Map<String, Object> response = Map.ofEntries(
+                Map.entry(AppConfig.METADATA_TAG, JSONUtil.pageToJson(pageResult)),
+                Map.entry("content", wrapSearchResult(pageResult.getContent()))
+        );
+
+        return response;
+    }
+
+    private ArrayList<Map> wrapSearchResult(List<InventoryRequest> inventoryRequests) {
+        List dataList = new ArrayList<>();
+        Map item = null;
+        Person claimant = null; //Person who create the inventory request
+        for (InventoryRequest inventoryRequest : inventoryRequests) {
+            claimant = inventoryRequest.getAuthor().getPerson();
+
+            item = Map.ofEntries(
+                    Map.entry("inventoryRequestNumber", inventoryRequest.getInventoryRequestNumber()),
+                    Map.entry("status", inventoryRequest.getStatus()),
+                    Map.entry("author", claimant.getFullName()),
+                    Map.entry("createAt", inventoryRequest.getCreateAt())
+            );
+
+            dataList.add(item);
+        }
+
+        return (ArrayList<Map>) dataList;
     }
 }
