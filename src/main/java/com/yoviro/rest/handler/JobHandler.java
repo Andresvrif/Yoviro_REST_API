@@ -6,10 +6,11 @@ import com.yoviro.rest.util.DateUtil;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class JobHandler {
     public static Job lastJobFromAgreement(Agreement agreement) {
-        List<Job> jobs = agreement.getJobs();
+        List<Job> jobs = agreement.getJobs().stream().collect(Collectors.toList());
         if (jobs.isEmpty()) return null;
 
         jobs.sort(Comparator.comparing(Job::getId));

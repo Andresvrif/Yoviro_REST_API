@@ -36,7 +36,11 @@ import java.util.Set;
                         "inner join Agreement ag on aap.id=ag.id " +
                         "inner join Job j on j.agreement=ag " +
                         "inner join Resident r on r=j.resident " +
-                        "inner join Person p on r.person=p")
+                        "inner join Person p on r.person=p"),
+        @NamedQuery(name ="ActivityPattern.enableActivityPatternsWithAgreements",
+                query = "select distinct ap from ActivityPattern ap " +
+                        "join fetch ap.agreements ag " +
+                        "where ap.enable=true")
 })
 public class ActivityPattern {
 

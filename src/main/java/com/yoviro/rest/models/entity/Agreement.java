@@ -34,7 +34,7 @@ public class Agreement {
     private Contractor contractor;
 
     @OneToMany(mappedBy = "agreement",
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             orphanRemoval = true
     )
     private List<Job> jobs = new ArrayList<>();
@@ -121,20 +121,14 @@ public class Agreement {
      * @return
      */
     public Boolean applyActivityPatternToBeAssigned(LocalDateTime referenceDate,
-                                                    ActivityPattern activityPattern) {
-        try {
-            //Can't create activities in not vigent agreements
-            StatusTermEnum statusTermEnum = this.getStatus(referenceDate);
-            if (statusTermEnum != StatusTermEnum.VIGENT) return Boolean.FALSE;
+                                                    ActivityPattern activityPattern) throws Exception {
+        //Can't create activities in not vigent agreements
+        StatusTermEnum statusTermEnum = this.getStatus(referenceDate);
+        if (statusTermEnum != StatusTermEnum.VIGENT) return Boolean.FALSE;
 
-            //Can't re create the same activity in the same date
-            var flag = this.getJobs().stream().anyMatch(job -> JobHandler.hasJobActivityRelated(job, activityPattern, referenceDate));
-            if (flag) return Boolean.FALSE;
-
-            return Boolean.TRUE;
-        } catch (Exception ex) {
-            return Boolean.FALSE;
-        }
+        //Can't re create the same activity in the same date
+        var flag = this.getJobs().stream().anyMatch(job -> JobHandler.hasJobActivityRelated(job, activityPattern, referenceDate));
+        return !flag;
     }
 
     private static final long serialVersionUID = 1L;

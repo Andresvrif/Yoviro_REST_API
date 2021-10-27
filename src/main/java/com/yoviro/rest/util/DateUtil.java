@@ -29,7 +29,7 @@ public class DateUtil {
 
     public static int compareIgnoreTime(LocalDateTime date1,
                                         LocalDateTime date2) {
-        return DateTimeComparator.getDateOnlyInstance().compare(date1, date2);
+        return date1.toLocalDate().compareTo(date2.toLocalDate());
     }
 
     public static int compareIgnoreTime(LocalDate date1,
