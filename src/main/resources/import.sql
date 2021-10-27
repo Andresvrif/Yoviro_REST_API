@@ -55,6 +55,7 @@ INSERT INTO db_yoviro.users (enabled, password, username) VALUES (true, '$2a$10$
 INSERT INTO db_yoviro.users (enabled, password, username) VALUES (true, '$2a$10$X.1R6428OlgxcWCEpX2SSuFKMIBPpQ/EFG/e3GTZm57BWvzZEzdAO', 'gevan');
 INSERT INTO db_yoviro.users (enabled, password, username) VALUES (true, '$2a$10$X.1R6428OlgxcWCEpX2SSuFKMIBPpQ/EFG/e3GTZm57BWvzZEzdAO', 'fserrato');
 INSERT INTO db_yoviro.users (enabled, password, username) VALUES (true, '$2a$10$X.1R6428OlgxcWCEpX2SSuFKMIBPpQ/EFG/e3GTZm57BWvzZEzdAO', 'ghinojoza');
+INSERT INTO db_yoviro.users (enabled, password, username) VALUES (true, '$2a$10$X.1R6428OlgxcWCEpX2SSuFKMIBPpQ/EFG/e3GTZm57BWvzZEzdAO', 'system');
 
 /* CONTACTS */
 /* CONTACTS - WORKERS */
@@ -187,6 +188,7 @@ INSERT INTO db_yoviro.role (id, role_code) VALUES(1,'ROLE_ADMIN');
 INSERT INTO db_yoviro.role (id, role_code) VALUES(2,'ROLE_USER');
 INSERT INTO db_yoviro.role (id, role_code) VALUES(3,'ROLE_NURSE');
 INSERT INTO db_yoviro.role (id, role_code) VALUES(4,'ROLE_STORE_KEEPER');
+INSERT INTO db_yoviro.role (id, role_code) VALUES(5,'SYSTEM');
 
 /* ROLES PARA USUARIOS */
 INSERT INTO db_yoviro.user_role (user_id, role_id) VALUES(1, 3);
@@ -199,6 +201,7 @@ INSERT INTO db_yoviro.user_role (user_id, role_id) VALUES(6, 3);
 INSERT INTO db_yoviro.user_role (user_id, role_id) VALUES(7, 3);
 INSERT INTO db_yoviro.user_role (user_id, role_id) VALUES(8, 3);
 INSERT INTO db_yoviro.user_role (user_id, role_id) VALUES(9, 4); -- STORE KEEPER ROLE
+INSERT INTO db_yoviro.user_role (user_id, role_id) VALUES(10, 5); -- SYSTEM ADMIN ROLE
 
 /* TEAMS */
 INSERT INTO db_yoviro.team (team_type) VALUES('ADMINISTRATORS');

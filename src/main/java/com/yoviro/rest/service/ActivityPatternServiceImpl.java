@@ -3,8 +3,10 @@ package com.yoviro.rest.service;
 import com.yoviro.rest.dto.ActivityPatternDTO;
 import com.yoviro.rest.models.entity.ActivityPattern;
 import com.yoviro.rest.models.entity.Agreement;
+import com.yoviro.rest.models.entity.Job;
 import com.yoviro.rest.models.repository.ActivityPatternRepository;
 import com.yoviro.rest.models.repository.AgreementRepository;
+import com.yoviro.rest.models.repository.JobAgreementRepository;
 import com.yoviro.rest.models.repository.projections.AgreementResidentProjection;
 import com.yoviro.rest.models.repository.projections.SummaryActivityPatternProjection;
 import com.yoviro.rest.service.interfaces.IActivityPatternService;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ActivityPatternServiceImpl implements IActivityPatternService {
@@ -27,6 +30,9 @@ public class ActivityPatternServiceImpl implements IActivityPatternService {
 
     @Autowired
     AgreementRepository agreementRepository;
+
+    @Autowired
+    JobAgreementRepository jobAgreementRepository;
 
     @Override
     public Iterable<ActivityPattern> findAll() {
@@ -71,8 +77,11 @@ public class ActivityPatternServiceImpl implements IActivityPatternService {
     }
 
     @Override
-    public Iterable<ActivityPattern> findAllByEnable(Boolean enable) {
-        return activityPatternRepository.enableActivityPatterns(enable);
+    public List<ActivityPattern> bringCandidatesToCreateActivities() {
+        //Bring activitPatterns with agreements
+        List<ActivityPattern> activityPatterns = activityPatternRepository.enableActivityPatternsWithAgreements();
+
+        return activityPatterns;
     }
 
     @Transactional

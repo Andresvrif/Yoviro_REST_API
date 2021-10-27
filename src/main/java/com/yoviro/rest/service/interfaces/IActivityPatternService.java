@@ -34,7 +34,7 @@ public interface IActivityPatternService {
      */
     public Page<AgreementResidentProjection> agreementsResidentRelated(Pageable pageable, String patternCode);
 
-    public Iterable<ActivityPattern> findAllByEnable(Boolean enable);
+    public List<ActivityPattern> bringCandidatesToCreateActivities();
 
     public ActivityPattern createOrUpdateActivityPatternWithAgreements(ActivityPatternDTO activityPatternDTO,
                                                                        List<String> agreementNumbers);

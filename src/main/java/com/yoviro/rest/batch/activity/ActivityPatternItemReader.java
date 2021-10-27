@@ -3,6 +3,7 @@ package com.yoviro.rest.batch.activity;
 import com.yoviro.rest.models.entity.ActivityPattern;
 import com.yoviro.rest.service.interfaces.IActivityPatternService;
 import com.yoviro.rest.util.DateUtil;
+import org.hibernate.Hibernate;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.item.ItemReader;
@@ -16,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 public class ActivityPatternItemReader implements ItemReader<ActivityPattern> {
     Date currentDate = new Date();
@@ -27,7 +29,16 @@ public class ActivityPatternItemReader implements ItemReader<ActivityPattern> {
 
     @BeforeStep
     public void before(StepExecution stepExecution) {
-        activityPatternIterator = activityPatternService.findAllByEnable(Boolean.TRUE).iterator();
+        List<ActivityPattern> activityPatterns = activityPatternService.bringCandidatesToCreateActivities();
+        System.out.println("----------------------- START - before -----------------------");
+        for (ActivityPattern activityPattern : activityPatterns) {
+            System.out.println("\tPattern Code : " + activityPattern.getPatternCode() + "\n" +
+                    "\t\tAgreement Size : " + activityPattern.getAgreements().size() + "\n" +
+                    "\t\t\tJob Size : " + activityPattern.getAgreements().stream().findFirst().get().getJobs().size() + "\n"
+            );
+        }
+        System.out.println("-----------------------  END  - before -----------------------");
+        activityPatternIterator = activityPatterns.iterator();
     }
 
     @Override
@@ -38,13 +49,14 @@ public class ActivityPatternItemReader implements ItemReader<ActivityPattern> {
     /**
      * Author : Andrés V.
      * Desc : Defines if the activity pattern applies to be created
+     *
      * @param iterator
      * @return
      */
     public ActivityPattern processActivityPattern(Iterator<ActivityPattern> iterator) {
         LocalDateTime currentDate = LocalDateTime.now();
         while (iterator.hasNext()) {
-            ActivityPattern candidate = activityPatternIterator.next();
+            ActivityPattern candidate = iterator.next();
             return applyActivityPattern(currentDate, candidate) ? candidate : processActivityPattern(iterator);
         }
         return null;

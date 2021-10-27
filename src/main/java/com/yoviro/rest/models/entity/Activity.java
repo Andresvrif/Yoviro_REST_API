@@ -26,7 +26,7 @@ public class Activity {
     private ActivityPattern activityPattern;
 
     @NotNull
-    @ManyToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.DETACH, fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id")
     private Job job;
 
