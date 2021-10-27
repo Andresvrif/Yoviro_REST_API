@@ -141,7 +141,7 @@ INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary
 INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('60000620', 'DNI', 1, 34);
 
 /* Official ID - FOR COMPANIES */
-INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('20100025168', 'RUC', 1, 35);
+INSERT INTO db_yoviro.official_id (official_id_number, official_id_type, primary_official_id, contact_id) VALUES ('20100025168', 'RUC', 1, 36);
 
 /* WORKER */
 INSERT INTO db_yoviro.worker (worker_type, contact_id, user_id, work_shift_id) VALUES ('NURSE', 1, 1, 1);

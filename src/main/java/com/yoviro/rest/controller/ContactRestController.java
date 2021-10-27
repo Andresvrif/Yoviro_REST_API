@@ -76,7 +76,7 @@ public class ContactRestController {
     }
 
     @GetMapping("/search")
-    public Map<String, Object> search(@RequestParam(required = false) String contactType,
+    public Map<String, Object> search(@RequestParam(required = true) String contactType,
                                       @RequestParam(required = false) String name,
                                       @RequestParam(required = false) String secondName,
                                       @RequestParam(required = false) String lastName,
@@ -102,6 +102,7 @@ public class ContactRestController {
         } else if (isCompany) {
             SearchCompanyDTO searchCompanyDTO = new SearchCompanyDTO();
             searchCompanyDTO.setName(name);
+            searchCompanyDTO.setExactCoincidence(exactCoincidence);
 
             searchContactDTO = searchCompanyDTO;
         } else {

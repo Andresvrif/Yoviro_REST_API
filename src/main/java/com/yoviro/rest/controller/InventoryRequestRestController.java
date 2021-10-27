@@ -267,4 +267,48 @@ public class InventoryRequestRestController {
 
         return (ArrayList<Map>) dataList;
     }
+
+    @GetMapping("/explicit/{inventoryRequestNumber}")
+    public Map<String, Object> explicitInventoryRequestByReqNumber(@PathVariable String inventoryRequestNumber) throws Exception {
+        InventoryRequest inventoryRequest = inventoryRequestService.findInventoryRequestByReqNumber(inventoryRequestNumber);
+        if (inventoryRequest == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Inventory request not found with that number");
+        }
+
+        return wrapExplicitInventoryRequest(inventoryRequest);
+    }
+
+    private Map wrapExplicitInventoryRequest(InventoryRequest inventoryRequest) {
+        Person person = inventoryRequest.getResident().getPerson(); //Resident Info
+        Person author = inventoryRequest.getAuthor().getPerson(); //Author Info
+        Product product = null;
+        Map contentJson = null;
+
+        //Map inventory request detail (products)
+        List detailsJson = new ArrayList();
+        Map detailJson = null;
+        for (InventoryRequestDetail detail : inventoryRequest.getDetails()) {
+            product = detail.getProduct();
+            detailJson = Map.ofEntries(
+                    Map.entry("sku", product.getSku()),
+                    Map.entry("quantity", detail.getQuantity()),
+                    Map.entry("unitMeasure", product.getUnitMeasure()),
+                    Map.entry("description", product.getDescription()),
+                    Map.entry("name", product.getName())
+            );
+            detailsJson.add(detailJson);
+        }
+
+        //Map final json result
+        contentJson = Map.ofEntries(
+                Map.entry("inventoryRequestNumber", inventoryRequest.getInventoryRequestNumber()),
+                Map.entry("author", author.getFullName()),
+                Map.entry("resident", person.getFullName()),
+                Map.entry("status", inventoryRequest.getStatus()),
+                Map.entry("createAt", inventoryRequest.getCreateAt()),
+                Map.entry("details", detailsJson)
+        );
+
+        return contentJson;
+    }
 }

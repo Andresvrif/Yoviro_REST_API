@@ -80,8 +80,7 @@ public class ContactServiceImpl implements IContactService {
         if (searchContactDTO instanceof SearchPersonDTO) {
             return instancePersonCriteria((SearchPersonDTO) searchContactDTO);
         } else if (searchContactDTO instanceof SearchCompanyDTO) {
-            //TODO Mapeo para compañia
-            throw new IllegalArgumentException("PENDIENTE DE REALIZAR - TODO");
+            return instanceCompanyCriteria((SearchCompanyDTO) searchContactDTO);
         } else {
             throw new IllegalArgumentException("NO EXISTE TIPO DE CRITERIO DE BUSQUEDA");
         }
@@ -124,6 +123,21 @@ public class ContactServiceImpl implements IContactService {
             contactFilter.setValue(searchPersonDTO.getSecondLastName());
 
             filters.add(contactFilter);
+        }
+
+        return filters;
+    }
+
+    static List<SearchFilter> instanceCompanyCriteria(SearchCompanyDTO criteria) {
+        List<SearchFilter> filters = new ArrayList<>();
+        SearchFilter companyFilter;
+        if (criteria.getName() != null) {
+            companyFilter = new SearchFilter();
+            companyFilter.setProperty("name");
+            companyFilter.setValue(criteria.getName());
+            companyFilter.setOperator(criteria.getExactCoincidence() ? OperatorEnum.EQUALS : OperatorEnum.LIKE);
+
+            filters.add(companyFilter);
         }
 
         return filters;
