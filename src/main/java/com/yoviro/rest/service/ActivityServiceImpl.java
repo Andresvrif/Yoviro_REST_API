@@ -23,8 +23,8 @@ public class ActivityServiceImpl implements IActivityService {
     ActivityRepository activityRepository;
 
     @Override
-    public Iterable<Activity> saveAll(List<Activity> activities) {
-        return activityRepository.saveAll(activities);
+    public List<Activity> saveAll(List<Activity> activities) {
+        return (List<Activity>) activityRepository.saveAll(activities);
     }
 
     @Override

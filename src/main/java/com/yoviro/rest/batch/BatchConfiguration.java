@@ -3,12 +3,8 @@ package com.yoviro.rest.batch;
 import com.yoviro.rest.batch.activity.*;
 import com.yoviro.rest.models.entity.Activity;
 import com.yoviro.rest.models.entity.ActivityPattern;
-import com.yoviro.rest.service.interfaces.IActivityPatternService;
-import com.yoviro.rest.util.DateUtil;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
@@ -20,9 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import java.time.LocalDateTime;
-import java.util.Iterator;
+
+import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 @EnableBatchProcessing
@@ -32,6 +29,17 @@ public class BatchConfiguration {
 
     @Autowired
     StepBuilderFactory stepBuilderFactory;
+
+    @Value("${batch.activities.code}")
+    public String ACTIVITY_BATCH_CODE;
+
+    @Value("${batch.activities.step.code}")
+    public String ACTIVITY_CREATE_ACTIVITIES_STEP_CODE;
+
+    @Bean(name = "batchAndSteps")
+    public Map<String, String> batchsAndSteps() {
+        return Map.ofEntries(Map.entry(this.ACTIVITY_BATCH_CODE, this.ACTIVITY_CREATE_ACTIVITIES_STEP_CODE));
+    }
 
     @Bean
     @StepScope
@@ -50,21 +58,21 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Job job() {
-        Job job = jobBuilderFactory.get("job1")
+    public Job activities() {
+        Job job = jobBuilderFactory.get(ACTIVITY_BATCH_CODE)
                 .incrementer(new RunIdIncrementer())
                 .listener(new ActivityPatternJobExecutionListener())
                 .preventRestart()
-                .flow(step())
+                .flow(createActivities())
                 .end()
                 .build();
         return job;
     }
 
     @Bean
-    public Step step() {
-        TaskletStep step = stepBuilderFactory.get("step1")
-                .<ActivityPattern, List<Activity>>chunk(100)
+    public Step createActivities() {
+        TaskletStep step = stepBuilderFactory.get(ACTIVITY_CREATE_ACTIVITIES_STEP_CODE)
+                .<ActivityPattern, List<Activity>>chunk(1)
                 .reader(reader())
                 .processor(processor())
                 .writer(writer())

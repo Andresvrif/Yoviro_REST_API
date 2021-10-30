@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface IActivityService {
-    Iterable<Activity> saveAll(List<Activity> activities);
+    List<Activity> saveAll(List<Activity> activities);
     List<Activity> findActivitiesAssignedForUserForToday(String userName);
     List<Activity> findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(LocalDateTime referenceDate, LocalDateTime endDate, String userName);
 

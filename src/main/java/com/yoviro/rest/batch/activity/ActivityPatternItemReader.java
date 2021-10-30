@@ -29,16 +29,7 @@ public class ActivityPatternItemReader implements ItemReader<ActivityPattern> {
 
     @BeforeStep
     public void before(StepExecution stepExecution) {
-        List<ActivityPattern> activityPatterns = activityPatternService.bringCandidatesToCreateActivities();
-        System.out.println("----------------------- START - before -----------------------");
-        for (ActivityPattern activityPattern : activityPatterns) {
-            System.out.println("\tPattern Code : " + activityPattern.getPatternCode() + "\n" +
-                    "\t\tAgreement Size : " + activityPattern.getAgreements().size() + "\n" +
-                    "\t\t\tJob Size : " + activityPattern.getAgreements().stream().findFirst().get().getJobs().size() + "\n"
-            );
-        }
-        System.out.println("-----------------------  END  - before -----------------------");
-        activityPatternIterator = activityPatterns.iterator();
+        activityPatternIterator = activityPatternService.bringCandidatesToCreateActivities().iterator();
     }
 
     @Override

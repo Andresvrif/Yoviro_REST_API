@@ -32,7 +32,10 @@ public class BatchTaskScheduler {
     }
 
     public String createActivities() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
-        JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis()).toJobParameters();
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addLong("time", System.currentTimeMillis())
+                .addString("userName", "system")
+                .toJobParameters();
         JobExecution jobExecution = jobLauncher.run(job, jobParameters);
         return jobExecution.getStatus().toString();
     }
