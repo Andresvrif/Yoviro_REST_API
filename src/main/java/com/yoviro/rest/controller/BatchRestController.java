@@ -49,14 +49,17 @@ public class BatchRestController {
         //Retrieve userName from token
         String token = jwtService.retrieveToken(authorization);
         String userName = jwtService.getUserName(token);
+        try {
+            JobParameters jobParameters = new JobParametersBuilder()
+                    .addLong("time", System.currentTimeMillis())
+                    .addString("userName", userName)
+                    .toJobParameters();
 
-
-        JobParameters jobParameters = new JobParametersBuilder()
-                .addLong("time", System.currentTimeMillis())
-                .addString("userName", userName)
-                .toJobParameters();
-        JobExecution jobExecution = jobLauncher.run(job, jobParameters);
-        return jobExecution.getStatus().toString();
+            JobExecution jobExecution = jobLauncher.run(job, jobParameters);
+            return jobExecution.getStatus().toString();
+        } catch (Exception ex) {
+            return BatchStatus.FAILED.toString();
+        }
     }
 
     @GetMapping("/statistics")
@@ -69,7 +72,7 @@ public class BatchRestController {
     private Map<String, Object> retrieveStaticsFromJobInstance(String batchCode,
                                                                String stepCode) {
         JobInstance jobInstance = jobExplorer.getLastJobInstance(batchCode);
-        JobExecution jobExecution = jobExplorer.getJobExecution(jobInstance.getInstanceId());
+        JobExecution jobExecution = jobExplorer.getLastJobExecution(jobInstance);
         StepExecution stepExecution = jobRepository.getLastStepExecution(jobInstance, stepCode);
 
         return Map.ofEntries(
