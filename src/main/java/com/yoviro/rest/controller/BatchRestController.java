@@ -45,7 +45,7 @@ public class BatchRestController {
 
     @PostMapping("/run")
     public String runBatch(@RequestHeader(name = "Authorization") String authorization,
-                           @RequestParam String batchName) throws Exception {
+                           @RequestParam String batchCode) throws Exception {
         //Retrieve userName from token
         String token = jwtService.retrieveToken(authorization);
         String userName = jwtService.getUserName(token);
@@ -71,7 +71,6 @@ public class BatchRestController {
         JobInstance jobInstance = jobExplorer.getLastJobInstance(batchCode);
         JobExecution jobExecution = jobExplorer.getJobExecution(jobInstance.getInstanceId());
         StepExecution stepExecution = jobRepository.getLastStepExecution(jobInstance, stepCode);
-        DateFormat format = DateFormat.getDateTimeInstance();
 
         return Map.ofEntries(
                 Map.entry("batchCode", batchCode),
