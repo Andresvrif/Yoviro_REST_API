@@ -11,6 +11,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.text.DateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @RestController
@@ -67,6 +71,8 @@ public class BatchRestController {
         JobInstance jobInstance = jobExplorer.getLastJobInstance(batchCode);
         JobExecution jobExecution = jobExplorer.getJobExecution(jobInstance.getInstanceId());
         StepExecution stepExecution = jobRepository.getLastStepExecution(jobInstance, stepCode);
+        DateFormat format = DateFormat.getDateTimeInstance();
+
         return Map.ofEntries(
                 Map.entry("batchCode", batchCode),
                 Map.entry("stepCode", stepExecution.getStepName()),
@@ -74,8 +80,8 @@ public class BatchRestController {
                 Map.entry("readCount", stepExecution.getReadCount()),
                 Map.entry("writeCount", stepExecution.getWriteCount()),
                 Map.entry("status", stepExecution.getExitStatus().getExitCode()),
-                Map.entry("start", stepExecution.getStartTime()),
-                Map.entry("end", stepExecution.getEndTime())
+                Map.entry("startDate", LocalDateTime.ofInstant(stepExecution.getStartTime().toInstant(), ZoneId.systemDefault())),
+                Map.entry("endDate", LocalDateTime.ofInstant(stepExecution.getEndTime().toInstant(), ZoneId.systemDefault()))
         );
     }
 }
