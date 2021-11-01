@@ -1,27 +1,33 @@
 package com.yoviro.rest.controller;
 
 import com.yoviro.rest.config.AppConfig;
+import com.yoviro.rest.config.enums.OfficialIdTypeEnum;
 import com.yoviro.rest.config.enums.StatusProposalEnum;
+import com.yoviro.rest.dto.*;
 import com.yoviro.rest.dto.search.SearchProductDTO;
 import com.yoviro.rest.dto.search.SearchProposalDTO;
+import com.yoviro.rest.models.entity.InventoryRequest;
+import com.yoviro.rest.models.entity.OfficialId;
 import com.yoviro.rest.models.entity.Person;
 import com.yoviro.rest.models.entity.Proposal;
 import com.yoviro.rest.service.interfaces.IProductService;
 import com.yoviro.rest.service.interfaces.IProposalService;
 import com.yoviro.rest.util.JSONUtil;
 import com.yoviro.rest.util.PageUtil;
+import org.javamoney.moneta.Money;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @RestController
@@ -82,4 +88,94 @@ public class ProposalRestController {
         }
         return (ArrayList<Map>) dataList;
     }
+
+    @PostMapping("/createOrUpdate")
+    public String newProposal(@RequestBody String json) throws JSONException {
+        JSONObject jsonObject = new JSONObject(json);
+        JSONArray inventoryRequestsJson = jsonObject.getJSONArray("inventoryRequests");
+
+        //DTOs
+        List<InventoryRequestDTO> inventoryRequestDTOS = wrapInventoryRequests(jsonObject.getJSONArray("inventoryRequests"));
+        List<PurchaseOrderDTO> purchaseOrdersDTOS = wrapPurchaseOrders(jsonObject.getJSONArray("purchaseOrders"));
+
+        //Map Proposal
+        ProposalDTO proposal = new ProposalDTO();
+        proposal.setInventoryRequests(inventoryRequestDTOS);
+        proposal.setPurchaseOrders(purchaseOrdersDTOS);
+
+        System.out.println(proposal);
+
+        return null;
+    }
+
+    private List<InventoryRequestDTO> wrapInventoryRequests(JSONArray json) throws JSONException {
+        ArrayList<InventoryRequestDTO> inventoryRequestDTOS = new ArrayList<>();
+        InventoryRequestDTO inventoryRequestDTO = null;
+        for (int i = 0; i < json.length(); i++) {
+            inventoryRequestDTO = new InventoryRequestDTO();
+            inventoryRequestDTO.setInventoryRequestNumber(json.getString(i));
+
+            inventoryRequestDTOS.add(inventoryRequestDTO);
+        }
+
+        return inventoryRequestDTOS;
+    }
+
+    private List<PurchaseOrderDTO> wrapPurchaseOrders(JSONArray json) throws JSONException {
+        ArrayList<PurchaseOrderDTO> purchaseOrderDTOS = new ArrayList<>();
+        JSONObject officialIdJson = null;
+        JSONObject purcharOrderJson = null;
+        PurchaseOrderDTO purchaseOrderDTO = null;
+        CompanyDTO companyDTO = null;
+        OfficialIdDTO officialIdDTO = null;
+        for (int i = 0; i < json.length(); i++) {
+            purcharOrderJson = json.getJSONObject(i);
+
+            //Map DTO
+            purchaseOrderDTO = new PurchaseOrderDTO();
+
+            //Map Provider
+            companyDTO = new CompanyDTO();
+            officialIdJson = purcharOrderJson.getJSONObject("provider");
+            officialIdDTO = new OfficialIdDTO();
+            officialIdDTO.setOfficialIdType(OfficialIdTypeEnum.valueOf(officialIdJson.getString("officialIdType")));
+            officialIdDTO.setOfficialIdNumber(officialIdJson.getString("officialIdNumber"));
+            ///Map Official ID of provider
+            companyDTO.setOfficialIds(Arrays.asList(officialIdDTO));
+
+            //Map Purchase Order
+            purchaseOrderDTO.setCompany(companyDTO);
+            var totalPrice = Money.of(purcharOrderJson.getDouble("totalPrice"), "PEN");
+
+            purchaseOrderDTO.setTotalPrice(totalPrice.getNumberStripped());
+            purchaseOrderDTO.setPurchaseOrderDetails(wrapPurchaseOrderDetails(purcharOrderJson.getJSONArray("details")));
+
+            purchaseOrderDTOS.add(purchaseOrderDTO);
+        }
+
+        return purchaseOrderDTOS;
+    }
+
+    private List<PurchaseOrderDetailDTO> wrapPurchaseOrderDetails(JSONArray json) throws JSONException {
+        ArrayList<PurchaseOrderDetailDTO> detailDTOS = new ArrayList<>();
+        ProductDTO productDTO = null;
+        PurchaseOrderDetailDTO purchaseOrderDetailDTO = null;
+        JSONObject purchaseOrderDetailJson = null;
+        for (int j = 0; j < json.length(); j++) {
+            purchaseOrderDetailJson = json.getJSONObject(j);
+
+            //Map Detail
+            purchaseOrderDetailDTO = new PurchaseOrderDetailDTO();
+
+            ///Map Product
+            productDTO = new ProductDTO();
+            productDTO.setSku(purchaseOrderDetailJson.getString("sku"));
+            purchaseOrderDetailDTO.setProduct(productDTO);
+            purchaseOrderDetailDTO.setQuantity(new BigDecimal(purchaseOrderDetailJson.getDouble("quantity")));
+
+            detailDTOS.add(purchaseOrderDetailDTO);
+        }
+        return detailDTOS;
+    }
+
 }

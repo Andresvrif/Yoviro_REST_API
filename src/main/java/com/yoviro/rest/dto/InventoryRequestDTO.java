@@ -17,8 +17,7 @@ public class InventoryRequestDTO {
     protected ResidentDTO resident;
     protected InventoryRequestStatusEnum status;
     private List<InventoryRequestDetailDTO> details = new ArrayList<>();
-    //TODO
-    //private List<Proposal> proposals = new ArrayList<>();
+    private List<ProposalDTO> proposals = new ArrayList<>();
     protected LocalDateTime createAt;
 
     public Long getId() {
@@ -68,6 +67,8 @@ public class InventoryRequestDTO {
     public void setDetails(List<InventoryRequestDetailDTO> details) {
         this.details = details;
     }
+
+
 
     public LocalDateTime getCreateAt() {
         return createAt;

@@ -33,7 +33,7 @@ public class PurchaseOrder {
     @NotNull
     @NotEmpty
     @OneToMany(mappedBy = "purchaseOrder", fetch = FetchType.LAZY)
-    private List<PurchaseOrderDetail> purchaseOrderDetails = new ArrayList<>();
+    private List<PurchaseOrderDetail> details = new ArrayList<>();
 
     @NotNull
     @ManyToMany(mappedBy = "purchaseOrders")
@@ -100,11 +100,11 @@ public class PurchaseOrder {
     }
 
     public List<PurchaseOrderDetail> getPurcharseOrderDetails() {
-        return purchaseOrderDetails;
+        return details;
     }
 
     public void setPurcharseOrderDetails(List<PurchaseOrderDetail> purchaseOrderDetails) {
-        this.purchaseOrderDetails = purchaseOrderDetails;
+        this.details = purchaseOrderDetails;
     }
 
     public List<Proposal> getProposals() {
