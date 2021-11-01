@@ -112,9 +112,7 @@ public class ProposalServiceImpl implements IProposalService {
         //We update the status in inventory request related to proposals
         inventoryRequests.forEach(e -> e.setStatus(InventoryRequestStatusEnum.IN_PROGRESS));
 
-        inventoryRequestRepository.saveAll(inventoryRequests);
-
-        return inventoryRequests;
+        return (List<InventoryRequest>) inventoryRequestRepository.saveAll(inventoryRequests);
     }
 
     private List<PurchaseOrder> mapNewPurchaseOrder(StoreKeeper author,
