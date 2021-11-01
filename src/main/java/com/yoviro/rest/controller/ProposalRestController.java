@@ -10,6 +10,7 @@ import com.yoviro.rest.models.entity.InventoryRequest;
 import com.yoviro.rest.models.entity.OfficialId;
 import com.yoviro.rest.models.entity.Person;
 import com.yoviro.rest.models.entity.Proposal;
+import com.yoviro.rest.security.service.IJWTService;
 import com.yoviro.rest.service.interfaces.IProductService;
 import com.yoviro.rest.service.interfaces.IProposalService;
 import com.yoviro.rest.util.JSONUtil;
@@ -35,6 +36,9 @@ import java.util.*;
 public class ProposalRestController {
     @Autowired
     IProposalService proposalService;
+
+    @Autowired
+    private IJWTService jwtService;
 
     @GetMapping("/search")
     public Map<String, Object> search(@RequestParam(required = false) String proposalNumber,
@@ -90,20 +94,25 @@ public class ProposalRestController {
     }
 
     @PostMapping("/createOrUpdate")
-    public String newProposal(@RequestBody String json) throws JSONException {
+    public String newProposal(@RequestHeader(name = "Authorization") String authorization,
+                              @RequestBody String json) throws Exception {
+
+        //Retrieve userName from token
+        String token = jwtService.retrieveToken(authorization);
+        String userName = jwtService.getUserName(token);
+
         JSONObject jsonObject = new JSONObject(json);
-        JSONArray inventoryRequestsJson = jsonObject.getJSONArray("inventoryRequests");
 
         //DTOs
         List<InventoryRequestDTO> inventoryRequestDTOS = wrapInventoryRequests(jsonObject.getJSONArray("inventoryRequests"));
         List<PurchaseOrderDTO> purchaseOrdersDTOS = wrapPurchaseOrders(jsonObject.getJSONArray("purchaseOrders"));
 
         //Map Proposal
-        ProposalDTO proposal = new ProposalDTO();
-        proposal.setInventoryRequests(inventoryRequestDTOS);
-        proposal.setPurchaseOrders(purchaseOrdersDTOS);
+        ProposalDTO proposalDTO = new ProposalDTO();
+        proposalDTO.setInventoryRequests(inventoryRequestDTOS);
+        proposalDTO.setPurchaseOrders(purchaseOrdersDTOS);
 
-        System.out.println(proposal);
+        proposalService.createOrUpdate(userName, proposalDTO);
 
         return null;
     }

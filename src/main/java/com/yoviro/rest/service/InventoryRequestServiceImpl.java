@@ -79,7 +79,7 @@ public class InventoryRequestServiceImpl implements IInventoryRequestService {
             User user = userRepository.findByUsername(userName);
             Worker worker = user.getWorker();
             if (worker == null)
-                throw new ResponseStatusException(HttpStatus.CHECKPOINT, "User not found by UserName");
+                throw new ResponseStatusException(HttpStatus.CHECKPOINT, "Worker not found by UserName");
 
             inventoryRequest = new InventoryRequest();
             inventoryRequest.setAuthor(worker);

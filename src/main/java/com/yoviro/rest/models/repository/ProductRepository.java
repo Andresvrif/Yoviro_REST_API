@@ -13,4 +13,5 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends PagingAndSortingRepository<Product, Long>, JpaSpecificationExecutor<Product> {
     List<Product> findAllBySkuIn(List<String> skus);
+    Product findBySku(String sku);
 }

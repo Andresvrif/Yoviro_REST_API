@@ -1,5 +1,7 @@
 package com.yoviro.rest.models.repository;
 
+import com.yoviro.rest.config.enums.InventoryRequestStatusEnum;
+import com.yoviro.rest.config.enums.StatusProposalEnum;
 import com.yoviro.rest.models.entity.InventoryRequest;
 import com.yoviro.rest.models.entity.Product;
 import com.yoviro.rest.models.repository.projections.SummaryListInventoryRequestNurseProjection;
@@ -24,6 +26,8 @@ public interface InventoryRequestRepository extends PagingAndSortingRepository<I
     Page<SummaryListInventoryRequestNurseProjection> summaryListByNurseUserNameAndLikeInventoryRequestNumberWithCreateAtAsc(Pageable pageable, String userName, String search);
 
     InventoryRequest findInventoryRequestByInventoryRequestNumber(String inventoryRequestNumber);
+
+    List<InventoryRequest> findInventoryRequestByInventoryRequestNumberInAndStatus(List<String> inventoryRequestNumbers, InventoryRequestStatusEnum status);
 
     @Transactional
     @Modifying

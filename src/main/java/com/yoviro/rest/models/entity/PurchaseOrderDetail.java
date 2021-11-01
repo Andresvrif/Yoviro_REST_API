@@ -12,7 +12,7 @@ public class PurchaseOrderDetail {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "purchase_order_id")
     private PurchaseOrder purchaseOrder;
 
@@ -64,6 +64,11 @@ public class PurchaseOrderDetail {
 
     public void setCreateAt(LocalDateTime createAt) {
         this.createAt = createAt;
+    }
+
+    @PrePersist
+    public void PrePersist() {
+        this.createAt = LocalDateTime.now();
     }
 
     private static final long serialVersionUID = 1L;

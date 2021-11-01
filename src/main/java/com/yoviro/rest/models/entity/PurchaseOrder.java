@@ -27,12 +27,12 @@ public class PurchaseOrder {
     private Company company;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "worker_id")
+    @JoinColumn(name = "worker_id", nullable = false)
     private StoreKeeper author;
 
     @NotNull
     @NotEmpty
-    @OneToMany(mappedBy = "purchaseOrder", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "purchaseOrder", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<PurchaseOrderDetail> details = new ArrayList<>();
 
     @NotNull
@@ -145,6 +145,11 @@ public class PurchaseOrder {
 
     public void setCreateAt(LocalDateTime createAt) {
         this.createAt = createAt;
+    }
+
+    @PrePersist
+    public void PrePersist() {
+        this.createAt = LocalDateTime.now();
     }
 
     private static final long serialVersionUID = 1L;
