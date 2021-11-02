@@ -111,10 +111,13 @@ public class ProposalRestController {
         ProposalDTO proposalDTO = new ProposalDTO();
         proposalDTO.setInventoryRequests(inventoryRequestDTOS);
         proposalDTO.setPurchaseOrders(purchaseOrdersDTOS);
+        if (jsonObject.has("proposalNumber")) {
+            proposalDTO.setProposalNumber(jsonObject.getString("proposalNumber"));
+        }
 
-        proposalService.createOrUpdate(userName, proposalDTO);
+        Proposal proposal = proposalService.createOrUpdate(userName, proposalDTO);
 
-        return null;
+        return proposal.getProposalNumber();
     }
 
     private List<InventoryRequestDTO> wrapInventoryRequests(JSONArray json) throws JSONException {

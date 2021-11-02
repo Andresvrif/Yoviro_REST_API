@@ -68,51 +68,100 @@ public class ProposalServiceImpl implements IProposalService {
     @Override
     public Proposal createOrUpdate(String userName,
                                    ProposalDTO proposalDTO) throws Exception {
-        Boolean isNew = proposalDTO.getProposalNumber() == null;
-        Proposal proposal = null;
+        return proposalDTO.getProposalNumber() == null ? createProposal(userName, proposalDTO) :
+                updateProposal(userName, proposalDTO);
+    }
 
-        //Create new one
-        if (isNew) {
-            //Find author (worker)
-            User user = userRepository.findByUsername(userName);
-            Worker worker = user.getWorker();
-            if (worker == null)
-                throw new ResponseStatusException(HttpStatus.CHECKPOINT, "Worker not found by UserName");
+    private Proposal updateProposal(String userName,
+                                    ProposalDTO proposalDTO) throws Exception {
+        Proposal proposal = proposalRepository.findProposalsByProposalNumber(proposalDTO.getProposalNumber());
+        if (proposal == null)
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Isn't exist a proposal with number : " + proposalDTO.getProposalNumber());
 
-            if (!(worker instanceof StoreKeeper))
-                throw new ResponseStatusException(HttpStatus.CHECKPOINT, "The worker has to be a store keeper");
+        if (proposal.getStatus() != StatusProposalEnum.PENDING)
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Can't update a proposal with a status : " + proposal.getStatus());
 
-            List<String> inventoryRequestNumbers = proposalDTO.getInventoryRequests().stream().map(e -> e.getInventoryRequestNumber()).collect(Collectors.toList());
-            List<InventoryRequest> inventoryRequests = bringAvailableInventoryRequests(inventoryRequestNumbers);
-            List<PurchaseOrder> purchaseOrders = mapNewPurchaseOrder((StoreKeeper) worker, proposalDTO.getPurchaseOrders());
-
-            //Save purchase orders
-            purchaseOrders = (List<PurchaseOrder>) purchaseOrderRepository.saveAll(purchaseOrders);
-
-            //Create Proposal
-            proposal = new Proposal();
-            proposal.setAuthor((StoreKeeper) worker);
-            proposal.setStatus(StatusProposalEnum.PENDING);
-            proposal.setInventoryRequests(inventoryRequests);
-            proposal.setPurchaseOrders(purchaseOrders);
-
-            //Save it
-            proposal = proposalRepository.save(proposal);
-        } else {
-            //Update it
+        //Clean relationship
+        List<String> inventoryRequestNumbers = proposalDTO.getInventoryRequests().stream().map(e -> e.getInventoryRequestNumber()).collect(Collectors.toList());
+        List<InventoryRequest> toBeKeeped = proposal.getInventoryRequests().stream().filter(e -> inventoryRequestNumbers.contains(e.getInventoryRequestNumber())).collect(Collectors.toList());
+        List<InventoryRequest> toBeRemoved = proposal.getInventoryRequests().stream().filter(e -> !toBeKeeped.contains(e)).collect(Collectors.toList());
+        List<String> inventoryRequestNumberToBeAdded = inventoryRequestNumbers.stream().filter(e -> !toBeKeeped.stream().anyMatch(e1 -> e1.getInventoryRequestNumber().compareToIgnoreCase(e) == 0)).collect(Collectors.toList());
+        if(!inventoryRequestNumberToBeAdded.isEmpty()){
+            List<InventoryRequest> inventoryRequestsToBeAdded = bringAvailableInventoryRequests(inventoryRequestNumberToBeAdded);
+            addInventoryRequestForProposal(proposal, inventoryRequestsToBeAdded); //Remove add new items
         }
-        return proposal;
+
+        removeInventoryRequestFromProposal(proposal, toBeRemoved); //Remove old items
+
+        return proposalRepository.save(proposal);
+    }
+
+    private void addInventoryRequestForProposal(Proposal proposal,
+                                                List<InventoryRequest> toBeAdded) {
+        toBeAdded.forEach(e -> {
+            if(e.getStatus() != InventoryRequestStatusEnum.PENDING)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't assign the inventory request : " + e.getInventoryRequestNumber() + ", because is in " + e.getStatus() + " status");
+            e.setStatus(InventoryRequestStatusEnum.IN_PROGRESS);
+        });
+        proposal.getInventoryRequests().addAll(toBeAdded);
+    }
+
+    private void removeInventoryRequestFromProposal(Proposal proposal,
+                                                    List<InventoryRequest> toBeDeleted) {
+        if(toBeDeleted.isEmpty()) return;
+
+        //Remove proposal from inventory requests
+        toBeDeleted.forEach(e -> {
+            if(e.getStatus() != InventoryRequestStatusEnum.IN_PROGRESS && e.getStatus() != InventoryRequestStatusEnum.PENDING)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't remove inventory request : " + e.getInventoryRequestNumber() + ", because is in " + e.getStatus() + " status");
+
+            e.getProposals().remove(proposal);
+            if (e.getProposals().isEmpty()) e.setStatus(InventoryRequestStatusEnum.PENDING);
+        });
+
+        proposal.getInventoryRequests().removeAll(toBeDeleted);
+        inventoryRequestRepository.saveAll(toBeDeleted);
+    }
+
+    private Proposal createProposal(String userName,
+                                    ProposalDTO proposalDTO) throws Exception {
+        Proposal proposal = null;
+        User user = userRepository.findByUsername(userName);
+        Worker worker = user.getWorker();
+        if (worker == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Worker not found by UserName");
+
+        if (!(worker instanceof StoreKeeper))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The worker has to be a store keeper");
+
+        List<String> inventoryRequestNumbers = proposalDTO.getInventoryRequests().stream().map(e -> e.getInventoryRequestNumber()).collect(Collectors.toList());
+        List<InventoryRequest> inventoryRequests = bringAvailableInventoryRequests(inventoryRequestNumbers);
+        List<PurchaseOrder> purchaseOrders = mapNewPurchaseOrder((StoreKeeper) worker, proposalDTO.getPurchaseOrders());
+
+        //We update the status in inventory request related to proposals
+        inventoryRequests.forEach(e -> e.setStatus(InventoryRequestStatusEnum.IN_PROGRESS));
+        inventoryRequests = (List<InventoryRequest>) inventoryRequestRepository.saveAll(inventoryRequests);
+
+        //Save purchase orders
+        purchaseOrders = (List<PurchaseOrder>) purchaseOrderRepository.saveAll(purchaseOrders);
+
+        //Create Proposal
+        proposal = new Proposal();
+        proposal.setAuthor((StoreKeeper) worker);
+        proposal.setStatus(StatusProposalEnum.PENDING);
+        proposal.setInventoryRequests(inventoryRequests);
+        proposal.setPurchaseOrders(purchaseOrders);
+
+        //Save it
+        return proposalRepository.save(proposal);
     }
 
     private List<InventoryRequest> bringAvailableInventoryRequests(List<String> inventoryRequestNumbers) {
         List<InventoryRequest> inventoryRequests = inventoryRequestRepository.findInventoryRequestByInventoryRequestNumberInAndStatus(inventoryRequestNumbers, InventoryRequestStatusEnum.PENDING);
         if (inventoryRequests.isEmpty())
-            throw new ResponseStatusException(HttpStatus.CHECKPOINT, "There isn't inventory request with a PENDING status");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "There isn't inventory request with a PENDING status");
 
-        //We update the status in inventory request related to proposals
-        inventoryRequests.forEach(e -> e.setStatus(InventoryRequestStatusEnum.IN_PROGRESS));
-
-        return (List<InventoryRequest>) inventoryRequestRepository.saveAll(inventoryRequests);
+        return inventoryRequests;
     }
 
     private List<PurchaseOrder> mapNewPurchaseOrder(StoreKeeper author,

@@ -338,16 +338,17 @@ INSERT INTO db_yoviro.product (unit_measure, category, create_at, description, n
 INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now() - INTERVAL 1 DAY, 'IN_PROGRESS', 1, 7);
 INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now() - INTERVAL 2 DAY, 'IN_PROGRESS', 3, 7);
 INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now(), 'PENDING', 2, 8);
-    /*IN PROGRESS WITH A PROPOSAL APPROVED */
+/*IN PROGRESS WITH A PROPOSAL APPROVED */
 INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now() - INTERVAL 3 DAY, 'IN_PROGRESS', 1, 7);
 INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now(), 'IN_PROGRESS', 3, 7);
-
+INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now(), 'PENDING', 2, 8);
+INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now(), 'PENDING', 2, 8);
+INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now(), 'PENDING', 2, 8);
 
 /* REQUEST INVENTORY DETAIL */
 INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (21, 1, 1);
 INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (20, 2, 2);
 INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (20, 3, 4);
-
 INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (10, 4, 1);
 INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (20, 4, 2);
 INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (30, 4, 3);
@@ -356,6 +357,18 @@ INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, 
 INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (20, 5, 2);
 INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (30, 5, 3);
 INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (40, 5, 4);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (10, 6, 1);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (20, 6, 2);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (30, 6, 3);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (40, 6, 4);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (10, 7, 1);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (20, 7, 2);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (30, 7, 3);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (40, 7, 4);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (10, 8, 1);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (20, 8, 2);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (30, 8, 3);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (40, 8, 4);
 
 /* PROPOSAL */
 INSERT INTO db_yoviro.proposal (create_at, update_at, reason_for_denied, status, store_keeper_id, director_id) VALUES (now(),now(), null, 'PENDING', 9, null);

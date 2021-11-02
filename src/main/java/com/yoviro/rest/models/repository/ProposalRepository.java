@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProposalRepository extends PagingAndSortingRepository<Proposal, Long>, JpaSpecificationExecutor<Proposal> {
+    Proposal findProposalsByProposalNumber(String proposalNumber);
 }

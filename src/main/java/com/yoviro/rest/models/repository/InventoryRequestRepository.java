@@ -28,6 +28,7 @@ public interface InventoryRequestRepository extends PagingAndSortingRepository<I
     InventoryRequest findInventoryRequestByInventoryRequestNumber(String inventoryRequestNumber);
 
     List<InventoryRequest> findInventoryRequestByInventoryRequestNumberInAndStatus(List<String> inventoryRequestNumbers, InventoryRequestStatusEnum status);
+    List<InventoryRequest> findInventoryRequestByInventoryRequestNumberIn(List<String> inventoryRequestNumbers);
 
     @Transactional
     @Modifying
