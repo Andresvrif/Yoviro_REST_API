@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.List;
 
 public abstract class ContactDTO {
-    @JsonIgnore
     private Long id;
 
     @JsonIgnore

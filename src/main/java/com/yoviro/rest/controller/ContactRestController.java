@@ -11,7 +11,9 @@ import com.yoviro.rest.dto.PersonDTO;
 import com.yoviro.rest.dto.search.SearchCompanyDTO;
 import com.yoviro.rest.dto.search.SearchContactDTO;
 import com.yoviro.rest.dto.search.SearchPersonDTO;
+import com.yoviro.rest.models.entity.Company;
 import com.yoviro.rest.models.entity.Contact;
+import com.yoviro.rest.models.entity.OfficialId;
 import com.yoviro.rest.models.entity.Person;
 import com.yoviro.rest.service.interfaces.IContactService;
 import com.yoviro.rest.util.JSONUtil;
@@ -29,8 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -76,17 +77,22 @@ public class ContactRestController {
     }
 
     @GetMapping("/search")
-    public Map<String, Object> search(@RequestParam(required = true) String contactType,
+    public Map<String, Object> search(@RequestParam(required = false) String contactType,
                                       @RequestParam(required = false) String name,
                                       @RequestParam(required = false) String secondName,
                                       @RequestParam(required = false) String lastName,
                                       @RequestParam(required = false) String secondLastName,
-                                      @RequestParam(required = false) OfficialIdTypeEnum officialIDTypeEnum,
+                                      @RequestParam(required = false) OfficialIdTypeEnum officialIDType,
                                       @RequestParam(required = false) String officialIDNumber,
                                       @RequestParam(required = true) Boolean exactCoincidence,
                                       @RequestParam(required = true) String page) throws JsonProcessingException, JSONException {
-        Boolean isPerson = contactType.compareToIgnoreCase("PERSON") == 0;
-        Boolean isCompany = contactType.compareToIgnoreCase("COMPANY") == 0;
+        Boolean isPerson = Boolean.FALSE;
+        Boolean isCompany = Boolean.FALSE;
+        if (contactType != null) {
+            isPerson = contactType.compareToIgnoreCase("PERSON") == 0;
+            isCompany = contactType.compareToIgnoreCase("COMPANY") == 0;
+        }
+
         SearchContactDTO searchContactDTO = null;
         if (isPerson) {
             SearchPersonDTO searchPersonDTO = new SearchPersonDTO();
@@ -94,7 +100,7 @@ public class ContactRestController {
             searchPersonDTO.setSecondName(secondName);
             searchPersonDTO.setLastName(lastName);
             searchPersonDTO.setSecondLastName(secondLastName);
-            searchPersonDTO.setOfficialIDType(officialIDTypeEnum);
+            searchPersonDTO.setOfficialIDType(officialIDType);
             searchPersonDTO.setOfficialIDNumber(officialIDNumber);
             searchPersonDTO.setExactCoincidence(exactCoincidence);
 
@@ -103,10 +109,14 @@ public class ContactRestController {
             SearchCompanyDTO searchCompanyDTO = new SearchCompanyDTO();
             searchCompanyDTO.setName(name);
             searchCompanyDTO.setExactCoincidence(exactCoincidence);
-
             searchContactDTO = searchCompanyDTO;
         } else {
-            throw new IllegalArgumentException("Not defined contact type");
+            searchContactDTO = new SearchContactDTO() {
+            };
+
+            searchContactDTO.setName(name);
+            searchContactDTO.setOfficialIDType(officialIDType);
+            searchContactDTO.setOfficialIDNumber(officialIDNumber);
         }
 
         //Define Pageable
@@ -125,9 +135,40 @@ public class ContactRestController {
         if (isPerson) {
             response.put("contacts", pageContacts.getContent().stream().map(c -> modelMapper.map(c, PersonDTO.class)).collect(Collectors.toList()));
         } else if (isCompany) {
-            response.put("contacts", pageContacts.getContent().stream().map(c -> modelMapper.map(c, PersonDTO.class)).collect(Collectors.toList()));
+            response.put("contacts", pageContacts.getContent().stream().map(c -> modelMapper.map(c, CompanyDTO.class)).collect(Collectors.toList()));
         } else {
-            throw new IllegalArgumentException("Not defined contact type");
+            response.put("contacts", wrapGeneralContactInformation(pageContacts.getContent()));
+        }
+
+        return response;
+    }
+
+    private List<HashMap> wrapGeneralContactInformation(List<Contact> contacts) {
+        List response = new ArrayList<>();
+        Map content = null;
+        OfficialId officialId = null;
+
+        for (Contact contact : contacts) {
+            officialId = contact.getPrimaryOfficialID();
+            if (contact instanceof Person) {
+                content = Map.ofEntries(
+                        Map.entry("id", ((Person) contact).getId()),
+                        Map.entry("fullName", ((Person) contact).getFullName()),
+                        Map.entry("officialIdType", officialId.getOfficialIdType()),
+                        Map.entry("officialIdNumber", officialId.getOfficialIdNumber()),
+                        Map.entry("email", Optional.ofNullable(contact.getEmail()))
+                );
+            } else if (contact instanceof Company) {
+                content = Map.ofEntries(
+                        Map.entry("id", ((Company) contact).getId()),
+                        Map.entry("fullName", ((Company) contact).getName()),
+                        Map.entry("officialIdType", officialId.getOfficialIdType()),
+                        Map.entry("officialIdNumber", officialId.getOfficialIdNumber()),
+                        Map.entry("email", Optional.ofNullable(contact.getEmail()))
+                );
+            }
+
+            response.add(content);
         }
 
         return response;

@@ -40,8 +40,8 @@ public abstract class JobDTO {
                   AgreementDTO agreementDTO) {
         this.id = id;
         this.jobNumber = jobNumber;
-        this.startDate = startDate != null ? DateUtil.instanceEffectiveDateTime(DateUtil.instanceLocalDate(startDate, DateTimeFormatter.ISO_LOCAL_DATE)) : null;
-        this.endDate = endDate != null ? DateUtil.instanceEffectiveDateTime(DateUtil.instanceLocalDate(endDate, DateTimeFormatter.ISO_LOCAL_DATE)) : null;
+        this.startDate = startDate != null? DateUtil.instanceEffectiveDateTime(DateUtil.instanceLocalDate(startDate, DateTimeFormatter.ISO_LOCAL_DATE)) : null;
+        this.endDate = (endDate != null && !endDate.isEmpty())? DateUtil.instanceEffectiveDateTime(DateUtil.instanceLocalDate(endDate, DateTimeFormatter.ISO_LOCAL_DATE)) : null;
         this.effectiveDate = effectiveDate != null ? DateUtil.instanceEffectiveDateTime(DateUtil.instanceLocalDate(effectiveDate, DateTimeFormatter.ISO_LOCAL_DATE)) : null;
         this.resident = residentDTO;
         this.agreement = agreementDTO;

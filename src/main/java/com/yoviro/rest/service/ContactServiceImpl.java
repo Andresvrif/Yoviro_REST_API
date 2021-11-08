@@ -71,6 +71,11 @@ public class ContactServiceImpl implements IContactService {
         } else if (searchContactDTO instanceof SearchCompanyDTO) {
             Specification<Company> specification = SpecificationUtil.bySearchQuery(qry, Company.class, Boolean.TRUE);
             page = companyRepository.findAll(specification, pageable);
+        } else {
+            //Generic Search
+            //The SYSTEM is gonna search based in generic field like name, email & official id
+            Specification<Contact> specification = SpecificationUtil.bySearchQuery(qry, Contact.class, Boolean.TRUE);
+            page = contactRepository.findAll(specification, pageable);
         }
 
         return page;
@@ -82,7 +87,7 @@ public class ContactServiceImpl implements IContactService {
         } else if (searchContactDTO instanceof SearchCompanyDTO) {
             return instanceCompanyCriteria((SearchCompanyDTO) searchContactDTO);
         } else {
-            throw new IllegalArgumentException("NO EXISTE TIPO DE CRITERIO DE BUSQUEDA");
+            return instanceGeneralCriteria(searchContactDTO);
         }
     }
 
@@ -138,6 +143,30 @@ public class ContactServiceImpl implements IContactService {
             companyFilter.setOperator(criteria.getExactCoincidence() ? OperatorEnum.EQUALS : OperatorEnum.LIKE);
 
             filters.add(companyFilter);
+        }
+
+        return filters;
+    }
+
+    static List<SearchFilter> instanceGeneralCriteria(SearchContactDTO criteria) {
+        List<SearchFilter> filters = new ArrayList<>();
+        SearchFilter contactFilter;
+        if (criteria.getName() != null) {
+            contactFilter = new SearchFilter();
+            contactFilter.setProperty("name");
+            contactFilter.setValue(criteria.getName());
+            contactFilter.setOperator(criteria.getExactCoincidence() ? OperatorEnum.EQUALS : OperatorEnum.LIKE);
+
+            filters.add(contactFilter);
+        }
+
+        if (criteria.getName() != null) {
+            contactFilter = new SearchFilter();
+            contactFilter.setProperty("email");
+            contactFilter.setValue(criteria.getEmail());
+            contactFilter.setOperator(criteria.getExactCoincidence() ? OperatorEnum.EQUALS : OperatorEnum.LIKE);
+
+            filters.add(contactFilter);
         }
 
         return filters;
