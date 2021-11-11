@@ -72,6 +72,11 @@ public class ProposalServiceImpl implements IProposalService {
                 updateProposal(userName, proposalDTO);
     }
 
+    @Override
+    public Proposal findProposalByProposalNumber(String proposalNumber) {
+        return proposalRepository.findProposalsByProposalNumber(proposalNumber);
+    }
+
     private Proposal updateProposal(String userName,
                                     ProposalDTO proposalDTO) throws Exception {
         Proposal proposal = proposalRepository.findProposalsByProposalNumber(proposalDTO.getProposalNumber());

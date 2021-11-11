@@ -10,4 +10,5 @@ import org.springframework.stereotype.Service;
 public interface IProposalService {
     Page<Proposal> search(Pageable pageable, SearchProposalDTO criteria);
     Proposal createOrUpdate(String userName, ProposalDTO proposalDTO) throws Exception;
+    Proposal findProposalByProposalNumber(String proposalNumber);
 }

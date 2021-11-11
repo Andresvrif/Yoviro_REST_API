@@ -4,17 +4,13 @@ import com.yoviro.rest.config.AppConfig;
 import com.yoviro.rest.config.enums.OfficialIdTypeEnum;
 import com.yoviro.rest.config.enums.StatusProposalEnum;
 import com.yoviro.rest.dto.*;
-import com.yoviro.rest.dto.search.SearchProductDTO;
 import com.yoviro.rest.dto.search.SearchProposalDTO;
-import com.yoviro.rest.models.entity.InventoryRequest;
-import com.yoviro.rest.models.entity.OfficialId;
-import com.yoviro.rest.models.entity.Person;
-import com.yoviro.rest.models.entity.Proposal;
+import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.security.service.IJWTService;
-import com.yoviro.rest.service.interfaces.IProductService;
 import com.yoviro.rest.service.interfaces.IProposalService;
 import com.yoviro.rest.util.JSONUtil;
 import com.yoviro.rest.util.PageUtil;
+import com.yoviro.rest.util.StringUtil;
 import org.javamoney.moneta.Money;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/proposal")
@@ -104,8 +101,8 @@ public class ProposalRestController {
         JSONObject jsonObject = new JSONObject(json);
 
         //DTOs
-        List<InventoryRequestDTO> inventoryRequestDTOS = wrapInventoryRequests(jsonObject.getJSONArray("inventoryRequests"));
-        List<PurchaseOrderDTO> purchaseOrdersDTOS = wrapPurchaseOrders(jsonObject.getJSONArray("purchaseOrders"));
+        List<InventoryRequestDTO> inventoryRequestDTOS = wrapInventoryRequestDTOs(jsonObject.getJSONArray("inventoryRequests"));
+        List<PurchaseOrderDTO> purchaseOrdersDTOS = wrapPurchaseOrderDTOs(jsonObject.getJSONArray("purchaseOrders"));
 
         //Map Proposal
         ProposalDTO proposalDTO = new ProposalDTO();
@@ -120,7 +117,7 @@ public class ProposalRestController {
         return proposal.getProposalNumber();
     }
 
-    private List<InventoryRequestDTO> wrapInventoryRequests(JSONArray json) throws JSONException {
+    private List<InventoryRequestDTO> wrapInventoryRequestDTOs(JSONArray json) throws JSONException {
         ArrayList<InventoryRequestDTO> inventoryRequestDTOS = new ArrayList<>();
         InventoryRequestDTO inventoryRequestDTO = null;
         for (int i = 0; i < json.length(); i++) {
@@ -133,7 +130,7 @@ public class ProposalRestController {
         return inventoryRequestDTOS;
     }
 
-    private List<PurchaseOrderDTO> wrapPurchaseOrders(JSONArray json) throws JSONException {
+    private List<PurchaseOrderDTO> wrapPurchaseOrderDTOs(JSONArray json) throws JSONException {
         ArrayList<PurchaseOrderDTO> purchaseOrderDTOS = new ArrayList<>();
         JSONObject officialIdJson = null;
         JSONObject purcharOrderJson = null;
@@ -160,7 +157,7 @@ public class ProposalRestController {
             var totalPrice = Money.of(purcharOrderJson.getDouble("totalPrice"), "PEN");
 
             purchaseOrderDTO.setTotalPrice(totalPrice.getNumberStripped());
-            purchaseOrderDTO.setPurchaseOrderDetails(wrapPurchaseOrderDetails(purcharOrderJson.getJSONArray("details")));
+            purchaseOrderDTO.setPurchaseOrderDetails(wrapPurchaseOrderDetailDTOs(purcharOrderJson.getJSONArray("details")));
 
             purchaseOrderDTOS.add(purchaseOrderDTO);
         }
@@ -168,7 +165,7 @@ public class ProposalRestController {
         return purchaseOrderDTOS;
     }
 
-    private List<PurchaseOrderDetailDTO> wrapPurchaseOrderDetails(JSONArray json) throws JSONException {
+    private List<PurchaseOrderDetailDTO> wrapPurchaseOrderDetailDTOs(JSONArray json) throws JSONException {
         ArrayList<PurchaseOrderDetailDTO> detailDTOS = new ArrayList<>();
         ProductDTO productDTO = null;
         PurchaseOrderDetailDTO purchaseOrderDetailDTO = null;
@@ -190,4 +187,66 @@ public class ProposalRestController {
         return detailDTOS;
     }
 
+    @GetMapping("/details")
+    public Map<String, Object> details(@RequestParam(required = false) String proposalNumber) {
+        Proposal proposal = proposalService.findProposalByProposalNumber(proposalNumber);
+        if (proposal == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Proposal not found with that number");
+        }
+        return wrapProposalDetails(proposal);
+    }
+
+    private Map<String, Object> wrapProposalDetails(Proposal proposal) {
+        Map<String, Object> content;
+
+        //Wrap Inventory Requests
+        List<Map> inventoryRequestsJson = proposal.getInventoryRequests().stream().map(e -> wrapInventoryRequestJson(e)).collect(Collectors.toList());
+        List<Map> purchaseOrdersJson = proposal.getPurchaseOrders().stream().map(e -> wrapPurchaseOrderJson(e)).collect(Collectors.toList());
+        content = Map.ofEntries(
+                Map.entry("inventoryRequests", inventoryRequestsJson),
+                Map.entry("purchaseOrders", purchaseOrdersJson)
+        );
+
+        return content;
+    }
+
+    private Map<String, Object> wrapInventoryRequestJson(InventoryRequest inventoryRequest) {
+        List<InventoryRequestDetail> details = inventoryRequest.getDetails();
+        return Map.ofEntries(
+                Map.entry("inventoryRequestNumber", inventoryRequest.getInventoryRequestNumber()),
+                Map.entry("details", details.stream().map(e -> wrapInventoryRequestDetailJson(e)))
+        );
+    }
+
+    private Map wrapInventoryRequestDetailJson(InventoryRequestDetail detail) {
+        return Map.ofEntries(
+                Map.entry("sku", detail.getProduct().getSku()),
+                Map.entry("productName", StringUtil.capitalizeWord(detail.getProduct().getName())),
+                Map.entry("quantity", detail.getQuantity())
+        );
+    }
+
+    private Map wrapPurchaseOrderJson(PurchaseOrder purchaseOrder) {
+        Company company = purchaseOrder.getCompany();
+        OfficialId primaryOfficialId = company.getPrimaryOfficialID();
+        List<PurchaseOrderDetail> details = purchaseOrder.getPurcharseOrderDetails();
+        return Map.ofEntries(
+                Map.entry("purchaseOrderNumber", purchaseOrder.getPurchaseOrderNumber()),
+                Map.entry("totalPrice", purchaseOrder.getTotalPrice()),
+                Map.entry("details", details.stream().map(e -> wrapPurchaseOrderDetailJson(e))),
+                Map.entry("provider", Map.ofEntries(
+                        Map.entry("name", company.getName()),
+                        Map.entry("officialIdType", primaryOfficialId.getOfficialIdType()),
+                        Map.entry("officialIdNumber", primaryOfficialId.getOfficialIdNumber())
+                ))
+        );
+    }
+
+    private Map wrapPurchaseOrderDetailJson(PurchaseOrderDetail detail) {
+        return Map.ofEntries(
+                Map.entry("sku", detail.getProduct().getSku()),
+                Map.entry("productName", StringUtil.capitalizeWord(detail.getProduct().getName())),
+                Map.entry("quantity", detail.getQuantity())
+        );
+    }
 }
