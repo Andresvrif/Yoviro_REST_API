@@ -15,6 +15,7 @@ import org.javamoney.moneta.Money;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +37,9 @@ public class ProposalRestController {
 
     @Autowired
     private IJWTService jwtService;
+
+    @Autowired
+    ModelMapper modelMapper;
 
     @GetMapping("/search")
     public Map<String, Object> search(@RequestParam(required = false) String proposalNumber,
@@ -248,5 +252,43 @@ public class ProposalRestController {
                 Map.entry("productName", StringUtil.capitalizeWord(detail.getProduct().getName())),
                 Map.entry("quantity", detail.getQuantity())
         );
+    }
+
+    @PostMapping("/evaluate")
+    public void evaluate(@RequestHeader(name = "Authorization") String authorization,
+                         @RequestBody String json) throws JSONException {
+        //Retrieve userName from token
+        String token = jwtService.retrieveToken(authorization);
+        String userName = jwtService.getUserName(token);
+
+        //Map Evaluate Info
+        JSONObject jsonObject = new JSONObject(json);
+        Boolean hasProposalNumber = jsonObject.has("proposalNumber");
+        Boolean hasStatus = jsonObject.has("status");
+        Boolean hasReason = jsonObject.has("reasonForDenied");
+
+        if (!hasProposalNumber)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "proposalNumber is required");
+
+        if (!hasStatus)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "status is required");
+
+        String statusCode = jsonObject.getString("status");
+        StatusProposalEnum status = StatusProposalEnum.valueOf(statusCode);
+        if (status == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The status: " + statusCode + ", no exist");
+
+        if ((status == StatusProposalEnum.CANCELED || status == StatusProposalEnum.REJECTED) && !hasReason) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "reasonForDenied is required");
+        }
+
+        ProposalDTO proposalDTO = new ProposalDTO();
+        proposalDTO.setProposalNumber(jsonObject.getString("proposalNumber"));
+        proposalDTO.setStatus(status);
+        if (hasReason) {
+            proposalDTO.setReasonForDenied(jsonObject.getString("reasonForDenied"));
+        }
+
+        proposalService.updateStatus(userName, proposalDTO);
     }
 }

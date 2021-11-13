@@ -68,8 +68,7 @@ public class ProposalServiceImpl implements IProposalService {
     @Override
     public Proposal createOrUpdate(String userName,
                                    ProposalDTO proposalDTO) throws Exception {
-        return proposalDTO.getProposalNumber() == null ? createProposal(userName, proposalDTO) :
-                updateProposal(userName, proposalDTO);
+        return proposalDTO.getProposalNumber() == null ? createProposal(userName, proposalDTO) : updateProposal(userName, proposalDTO);
     }
 
     @Override
@@ -77,21 +76,46 @@ public class ProposalServiceImpl implements IProposalService {
         return proposalRepository.findProposalsByProposalNumber(proposalNumber);
     }
 
+    @Override
+    public Proposal updateStatus(String userName,
+                                 ProposalDTO proposalDTO) {
+        User user = userRepository.findByUsername(userName);
+        Worker worker = user.getWorker();
+        if (worker == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Worker not found by UserName");
+
+        if (!(worker instanceof Director))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The worker has to be a director");
+
+        Proposal proposal = proposalRepository.findProposalsByProposalNumber(proposalDTO.getProposalNumber());
+        if (proposal == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Isn't exist a proposal with number : " + proposalDTO.getProposalNumber());
+
+        //Update proposal Info
+        proposal.setEvaluator((Director) worker);
+        proposal.setStatus(proposalDTO.getStatus());
+        if (proposalDTO.getReasonForDenied() != null) {
+            proposal.setReasonForDenied(proposalDTO.getReasonForDenied());
+        }
+
+        return proposalRepository.save(proposal);
+    }
+
     private Proposal updateProposal(String userName,
                                     ProposalDTO proposalDTO) throws Exception {
         Proposal proposal = proposalRepository.findProposalsByProposalNumber(proposalDTO.getProposalNumber());
         if (proposal == null)
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Isn't exist a proposal with number : " + proposalDTO.getProposalNumber());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Isn't exist a proposal with number : " + proposalDTO.getProposalNumber());
 
         if (proposal.getStatus() != StatusProposalEnum.PENDING)
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Can't update a proposal with a status : " + proposal.getStatus());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't update a proposal with a status : " + proposal.getStatus());
 
         //Clean relationship
         List<String> inventoryRequestNumbers = proposalDTO.getInventoryRequests().stream().map(e -> e.getInventoryRequestNumber()).collect(Collectors.toList());
         List<InventoryRequest> toBeKeeped = proposal.getInventoryRequests().stream().filter(e -> inventoryRequestNumbers.contains(e.getInventoryRequestNumber())).collect(Collectors.toList());
         List<InventoryRequest> toBeRemoved = proposal.getInventoryRequests().stream().filter(e -> !toBeKeeped.contains(e)).collect(Collectors.toList());
         List<String> inventoryRequestNumberToBeAdded = inventoryRequestNumbers.stream().filter(e -> !toBeKeeped.stream().anyMatch(e1 -> e1.getInventoryRequestNumber().compareToIgnoreCase(e) == 0)).collect(Collectors.toList());
-        if(!inventoryRequestNumberToBeAdded.isEmpty()){
+        if (!inventoryRequestNumberToBeAdded.isEmpty()) {
             List<InventoryRequest> inventoryRequestsToBeAdded = bringAvailableInventoryRequests(inventoryRequestNumberToBeAdded);
             addInventoryRequestForProposal(proposal, inventoryRequestsToBeAdded); //Remove add new items
         }
@@ -104,7 +128,7 @@ public class ProposalServiceImpl implements IProposalService {
     private void addInventoryRequestForProposal(Proposal proposal,
                                                 List<InventoryRequest> toBeAdded) {
         toBeAdded.forEach(e -> {
-            if(e.getStatus() != InventoryRequestStatusEnum.PENDING)
+            if (e.getStatus() != InventoryRequestStatusEnum.PENDING)
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't assign the inventory request : " + e.getInventoryRequestNumber() + ", because is in " + e.getStatus() + " status");
             e.setStatus(InventoryRequestStatusEnum.IN_PROGRESS);
         });
@@ -113,11 +137,11 @@ public class ProposalServiceImpl implements IProposalService {
 
     private void removeInventoryRequestFromProposal(Proposal proposal,
                                                     List<InventoryRequest> toBeDeleted) {
-        if(toBeDeleted.isEmpty()) return;
+        if (toBeDeleted.isEmpty()) return;
 
         //Remove proposal from inventory requests
         toBeDeleted.forEach(e -> {
-            if(e.getStatus() != InventoryRequestStatusEnum.IN_PROGRESS && e.getStatus() != InventoryRequestStatusEnum.PENDING)
+            if (e.getStatus() != InventoryRequestStatusEnum.IN_PROGRESS && e.getStatus() != InventoryRequestStatusEnum.PENDING)
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't remove inventory request : " + e.getInventoryRequestNumber() + ", because is in " + e.getStatus() + " status");
 
             e.getProposals().remove(proposal);
