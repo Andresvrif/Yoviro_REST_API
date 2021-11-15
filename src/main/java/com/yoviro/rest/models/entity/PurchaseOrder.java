@@ -32,7 +32,7 @@ public class PurchaseOrder {
 
     @NotNull
     @NotEmpty
-    @OneToMany(mappedBy = "purchaseOrder", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "purchaseOrder", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<PurchaseOrderDetail> details = new ArrayList<>();
 
     @NotNull

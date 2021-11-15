@@ -74,6 +74,7 @@ public class ProposalRestController {
         Person evaluator = null; //Only director can evaluate proposals
         Person storeKeeper = null;
         for (Proposal proposal : proposals) {
+            evaluator = null;
             storeKeeper = proposal.getAuthor().getPerson();
 
             //Evaluate null evaluator
@@ -163,6 +164,9 @@ public class ProposalRestController {
 
             purchaseOrderDTO.setTotalPrice(totalPrice.getNumberStripped());
             purchaseOrderDTO.setPurchaseOrderDetails(wrapPurchaseOrderDetailDTOs(purcharOrderJson.getJSONArray("details")));
+            if (purcharOrderJson.has("purchaseOrderNumber")) {
+                purchaseOrderDTO.setPurchaseOrderNumber(purcharOrderJson.getString("purchaseOrderNumber"));
+            }
 
             purchaseOrderDTOS.add(purchaseOrderDTO);
         }

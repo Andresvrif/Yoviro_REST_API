@@ -21,11 +21,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +45,9 @@ public class ProposalServiceImpl implements IProposalService {
 
     @Autowired
     PurchaseOrderRepository purchaseOrderRepository;
+
+    @Autowired
+    PurchaseOrderDetailRepository purchaseOrderDetailRepository;
 
     @Autowired
     private InventoryRequestRepository inventoryRequestRepository;
@@ -110,6 +115,22 @@ public class ProposalServiceImpl implements IProposalService {
         if (proposal.getStatus() != StatusProposalEnum.PENDING)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't update a proposal with a status : " + proposal.getStatus());
 
+        //Update Inventory Request
+        handleUpdateInventoryRequest(proposal, proposalDTO);
+        handleUpdatePurchaseOrders(proposal, proposalDTO);
+
+        return proposalRepository.save(proposal);
+    }
+
+    /**
+     * Author: Andrés V.
+     * Desc : Handles update creation of inventory request like remove old items, add news or keep items to be updated
+     *
+     * @param proposal
+     * @param proposalDTO
+     */
+    private void handleUpdateInventoryRequest(Proposal proposal,
+                                              ProposalDTO proposalDTO) {
         //Clean relationship
         List<String> inventoryRequestNumbers = proposalDTO.getInventoryRequests().stream().map(e -> e.getInventoryRequestNumber()).collect(Collectors.toList());
         List<InventoryRequest> toBeKeeped = proposal.getInventoryRequests().stream().filter(e -> inventoryRequestNumbers.contains(e.getInventoryRequestNumber())).collect(Collectors.toList());
@@ -121,8 +142,101 @@ public class ProposalServiceImpl implements IProposalService {
         }
 
         removeInventoryRequestFromProposal(proposal, toBeRemoved); //Remove old items
+    }
 
-        return proposalRepository.save(proposal);
+    private void handleUpdatePurchaseOrders(Proposal proposal,
+                                            ProposalDTO proposalDTO) throws Exception {
+        //Define Trxs
+        List<String> purchaseOrderNumbers = proposalDTO.getPurchaseOrders().stream().filter(e -> e.getPurchaseOrderNumber() != null).map(e -> e.getPurchaseOrderNumber()).collect(Collectors.toList());
+        List<PurchaseOrder> toBeKeeped = proposal.getPurchaseOrders().stream().filter(e -> purchaseOrderNumbers.contains(e.getPurchaseOrderNumber())).collect(Collectors.toList());
+        List<PurchaseOrder> toBeRemoved = proposal.getPurchaseOrders().stream().filter(e -> !toBeKeeped.contains(e)).collect(Collectors.toList());
+        List<PurchaseOrderDTO> purchaseOrderToBeAdded = proposalDTO.getPurchaseOrders().stream().filter(e -> e.getPurchaseOrderNumber() == null).collect(Collectors.toList());
+
+        //Update Flow
+        updatePurchaseOrdersFromProposal(toBeKeeped, proposalDTO.getPurchaseOrders());
+
+        //Add FLow
+        if (!purchaseOrderToBeAdded.isEmpty()) {
+            List<PurchaseOrder> purchaseOrders = mapNewPurchaseOrder((StoreKeeper) proposal.getAuthor(), purchaseOrderToBeAdded);
+            //Save purchase orders
+            purchaseOrders = (List<PurchaseOrder>) purchaseOrderRepository.saveAll(purchaseOrders);
+            proposal.getPurchaseOrders().addAll(purchaseOrders);
+        }
+
+        removePurchaseOrderFromProposal(proposal, toBeRemoved); //Remove old items
+    }
+
+    private void updatePurchaseOrdersFromProposal(List<PurchaseOrder> purchaseOrdersToBeUpdate,
+                                                  List<PurchaseOrderDTO> purchaseOrdersInfo) {
+        PurchaseOrderDTO purchaseOrderDTOInfo;
+        for (PurchaseOrder toBeUpdate : purchaseOrdersToBeUpdate) {
+            purchaseOrderDTOInfo = purchaseOrdersInfo.stream().filter(e -> e.getPurchaseOrderNumber().compareToIgnoreCase(toBeUpdate.getPurchaseOrderNumber()) == 0).findFirst().get();
+            if (purchaseOrderDTOInfo == null) continue;
+
+            //Update Purchase Order
+            updatePurchaseOrderDetail(toBeUpdate, purchaseOrderDTOInfo);
+        }
+    }
+
+    private void updatePurchaseOrderDetail(PurchaseOrder purchaseOrder,
+                                           PurchaseOrderDTO purchaseOrderDTO) {
+        //Define Trxs
+        List<String> purchaseOrderDetailRefs = purchaseOrderDTO.getPurchaseOrderDetails().stream().map(e -> e.getProduct().getSku()).collect(Collectors.toList());
+        List<PurchaseOrderDetail> toBeKeeped = purchaseOrder.getPurcharseOrderDetails().stream().filter(e -> purchaseOrderDetailRefs.contains(e.getProduct().getSku())).collect(Collectors.toList());
+        List<PurchaseOrderDetail> toBeRemoved = purchaseOrder.getPurcharseOrderDetails().stream().filter(e -> !toBeKeeped.contains(e)).collect(Collectors.toList());
+
+        //Define items to be added
+        List<String> notConsider1 = toBeKeeped.stream().map(e -> e.getProduct().getSku()).collect(Collectors.toList());
+        List<String> notConsider2 = toBeRemoved.stream().map(e -> e.getProduct().getSku()).collect(Collectors.toList());
+        notConsider1.addAll(notConsider2);
+        HashSet<String> notConsider = new HashSet<String>(notConsider1);
+        List<PurchaseOrderDetailDTO> toBeAdded = purchaseOrderDTO.getPurchaseOrderDetails().stream().filter(e -> !notConsider.contains(e.getProduct().getSku())).collect(Collectors.toList());
+
+        //Adds
+        Product product;
+        PurchaseOrderDetail newDetail;
+        for (PurchaseOrderDetailDTO purchaseOrderDetailDTO : toBeAdded) {
+            product = productRepository.findBySku(purchaseOrderDetailDTO.getProduct().getSku());
+
+            newDetail = new PurchaseOrderDetail();
+            newDetail.setProduct(product);
+            newDetail.setQuantity(purchaseOrderDetailDTO.getQuantity());
+            newDetail.setPurchaseOrder(purchaseOrder);
+
+            purchaseOrder.getPurcharseOrderDetails().add(newDetail);
+        }
+
+        //Updates
+        PurchaseOrderDetailDTO detailInfoUpdate;
+        for (PurchaseOrderDetail purchaseOrderDetail : toBeKeeped) {
+            detailInfoUpdate = purchaseOrderDTO.getPurchaseOrderDetails().stream().filter(e -> e.getProduct().getSku().compareToIgnoreCase(purchaseOrderDetail.getProduct().getSku()) == 0).findFirst().get();
+            if (detailInfoUpdate == null) continue;
+            purchaseOrderDetail.setQuantity(detailInfoUpdate.getQuantity());
+        }
+
+        //Remove
+        toBeRemoved.forEach(e -> {
+            purchaseOrder.getPurcharseOrderDetails().remove(e);
+            purchaseOrderDetailRepository.delete(e);
+        });
+    }
+
+    private void removePurchaseOrderFromProposal(Proposal proposal,
+                                                 List<PurchaseOrder> toBeDeleted) {
+        if (toBeDeleted.isEmpty()) return;
+
+        //Remove proposal from inventory requests
+        toBeDeleted.forEach(e -> e.getProposals().remove(proposal)); //Break relantionship with PROPOSAL
+
+        proposal.getPurchaseOrders().removeAll(toBeDeleted);
+        purchaseOrderRepository.saveAll(toBeDeleted);
+
+        //If there isn't a proposal related with the purchase, remove it
+        toBeDeleted.forEach(e -> {
+            if (e.getProposals().isEmpty()) {
+                purchaseOrderRepository.delete(e);
+            }
+        });
     }
 
     private void addInventoryRequestForProposal(Proposal proposal,

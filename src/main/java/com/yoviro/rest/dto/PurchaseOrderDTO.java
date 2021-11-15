@@ -5,9 +5,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PurchaseOrderDTO {
+    private Long id;
+    private String purchaseOrderNumber;
     private BigDecimal totalPrice;
     private CompanyDTO company;
     private List<PurchaseOrderDetailDTO> purchaseOrderDetails = new ArrayList<>();
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getPurchaseOrderNumber() {
+        return purchaseOrderNumber;
+    }
+
+    public void setPurchaseOrderNumber(String purchaseOrderNumber) {
+        this.purchaseOrderNumber = purchaseOrderNumber;
+    }
 
     public BigDecimal getTotalPrice() {
         return totalPrice;

@@ -12,7 +12,7 @@ public class PurchaseOrderDetail {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, optional = false)
     @JoinColumn(name = "purchase_order_id")
     private PurchaseOrder purchaseOrder;
 
