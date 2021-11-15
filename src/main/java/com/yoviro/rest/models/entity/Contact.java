@@ -39,6 +39,7 @@ public abstract class Contact implements Serializable {
             fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.PERSIST,
+                    CascadeType.REFRESH,
                     CascadeType.REMOVE
             },
             orphanRemoval = true)

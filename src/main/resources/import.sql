@@ -184,7 +184,7 @@ INSERT INTO db_yoviro.resident (create_at, enable, contact_id) VALUES (DEFAULT, 
 INSERT INTO db_yoviro.resident (create_at, enable, contact_id) VALUES (DEFAULT, true, 21);
 
 /* ROLES */
-INSERT INTO db_yoviro.role (id, role_code) VALUES(1,'ROLE_ADMIN');
+INSERT INTO db_yoviro.role (id, role_code) VALUES(1,'ROLE_DIRECTOR');
 INSERT INTO db_yoviro.role (id, role_code) VALUES(2,'ROLE_USER');
 INSERT INTO db_yoviro.role (id, role_code) VALUES(3,'ROLE_NURSE');
 INSERT INTO db_yoviro.role (id, role_code) VALUES(4,'ROLE_STORE_KEEPER');

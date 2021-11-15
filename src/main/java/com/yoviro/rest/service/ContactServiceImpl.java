@@ -24,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.transaction.Transactional;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -178,6 +179,7 @@ public class ContactServiceImpl implements IContactService {
         return filters;
     }
 
+    @Transactional
     @Override
     public ContactDTO createOrUpdate(ContactDTO contactDTO) {
         if (contactDTO instanceof PersonDTO) {
@@ -229,40 +231,46 @@ public class ContactServiceImpl implements IContactService {
 
             //Update Official IDs
             createOrUpdateOfficialIDs(person, personDTO.getOfficialIds());
-
-            return null;
+            person = contactRepository.save(person);
+            return modelMapper.map(person, PersonDTO.class);
         }
     }
 
     private void createOrUpdateOfficialIDs(Person personToRelate,
                                            List<OfficialIdDTO> officialIdDTOS) {
-
         //IDs
         List<Long> officialIDs = officialIdDTOS.stream().filter(e -> e.getId() != null).map(e -> e.getId()).collect(Collectors.toList());
         List<OfficialId> toBeKeeped = personToRelate.getOfficialIds().stream().filter(e -> officialIDs.contains(e.getId())).collect(Collectors.toList());
         List<OfficialId> toBeRemoved = personToRelate.getOfficialIds().stream().filter(e -> !toBeKeeped.contains(e)).collect(Collectors.toList());
-                //personToRelate.getInventoryRequests().stream().filter(e -> !toBeKeeped.contains(e)).collect(Collectors.toList());
+        List<OfficialIdDTO> toBeAdded = officialIdDTOS.stream().filter(e -> e.getId() == null).collect(Collectors.toList());
 
-
-        //q documentos se agregan
-        List<OfficialIdDTO> documentsToBeAdded = officialIdDTOS.stream().filter(e -> e.getId() == null).collect(Collectors.toList());
-
-        //Q documentos se quedan
-        //Q documentos se borran
-
-        /*
+        //Adds
         OfficialId officialId;
-        Boolean isNew = Boolean.FALSE;
-        for (OfficialIdDTO officialIdDTO : officialIdDTOS) {
-            isNew = officialIdDTO.getId() == null;
-            if (isNew) {
-                officialId = modelMapper.map(officialIdDTO, OfficialId.class);
-                officialId.setContact(personToRelate);
-            } else {
+        for (OfficialIdDTO officialIdDTO : toBeAdded){
+            officialId = new OfficialId();
+            officialId.setContact(personToRelate);
+            officialId.setOfficialIdNumber(officialIdDTO.getOfficialIdNumber());
+            officialId.setOfficialIdType(officialIdDTO.getOfficialIdType());
+            officialId.setPrimaryOfficialId(officialIdDTO.getPrimaryOfficialId());
+            officialId = officialIdRepository.save(officialId);
 
-            }
+            personToRelate.getOfficialIds().add(officialId);
         }
-*/
+
+        //Updates
+        OfficialIdDTO updateInfo;
+        for (OfficialId officialIdToBeUpdated : toBeKeeped) {
+            updateInfo = officialIdDTOS.stream().filter(e -> e.getId() == officialIdToBeUpdated.getId()).findFirst().get();
+            if (updateInfo == null) continue;
+            officialIdToBeUpdated.setOfficialIdType(updateInfo.getOfficialIdType());
+            officialIdToBeUpdated.setOfficialIdNumber(updateInfo.getOfficialIdNumber());
+            officialIdToBeUpdated.setPrimaryOfficialId(updateInfo.getPrimaryOfficialId());
+        }
+
+        //Remove Flow
+        toBeRemoved.forEach(e -> {
+            officialIdRepository.delete(e);
+        });
     }
 
 
