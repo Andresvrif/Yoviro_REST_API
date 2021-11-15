@@ -6,7 +6,6 @@ import com.yoviro.rest.config.enums.OfficialIdTypeEnum;
 import com.yoviro.rest.models.entity.OfficialId;
 
 public class OfficialIdDTO {
-    @JsonIgnore
     private Long id;
     @JsonBackReference
     private ContactDTO contact;

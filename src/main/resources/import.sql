@@ -381,8 +381,8 @@ INSERT INTO db_yoviro.inventory_request_proposal (proposal_id, inventory_request
 INSERT INTO db_yoviro.inventory_request_proposal (proposal_id, inventory_request_id) VALUES (2, 5);
 
 /* PURCHASE ORDER */
-INSERT INTO db_yoviro.purchase_order (attachment_document, create_at, status, total_price, worker_id, company_id)VALUES (null, now(), 'QUOTED', 50.22, 7, 36);
-INSERT INTO db_yoviro.purchase_order (attachment_document, create_at, status, total_price, worker_id, company_id)VALUES (null, now(), 'QUOTED', 75.32, 7, 36);
+INSERT INTO db_yoviro.purchase_order (attachment_document, create_at, status, total_price, worker_id, company_id)VALUES (null, now(), 'QUOTED', 50.22, 9, 36);
+INSERT INTO db_yoviro.purchase_order (attachment_document, create_at, status, total_price, worker_id, company_id)VALUES (null, now(), 'QUOTED', 75.32, 9, 36);
 
 /* PURCHASE ORDER DETAIL */
 INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 10, 1, 1);

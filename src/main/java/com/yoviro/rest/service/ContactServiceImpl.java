@@ -8,11 +8,10 @@ import com.yoviro.rest.dto.PersonDTO;
 import com.yoviro.rest.dto.search.SearchCompanyDTO;
 import com.yoviro.rest.dto.search.SearchContactDTO;
 import com.yoviro.rest.dto.search.SearchPersonDTO;
-import com.yoviro.rest.models.entity.Company;
-import com.yoviro.rest.models.entity.Contact;
-import com.yoviro.rest.models.entity.Person;
+import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.models.repository.CompanyRepository;
 import com.yoviro.rest.models.repository.ContactRepository;
+import com.yoviro.rest.models.repository.OfficialIdRepository;
 import com.yoviro.rest.models.repository.PersonRepository;
 import com.yoviro.rest.models.repository.specification.handler.*;
 import com.yoviro.rest.service.interfaces.IContactService;
@@ -21,11 +20,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ContactServiceImpl implements IContactService {
@@ -41,6 +44,9 @@ public class ContactServiceImpl implements IContactService {
 
     @Autowired
     private CompanyRepository companyRepository;
+
+    @Autowired
+    private OfficialIdRepository officialIdRepository;
 
     @Override
     public List<ContactDTO> findAll() {
@@ -173,7 +179,16 @@ public class ContactServiceImpl implements IContactService {
     }
 
     @Override
-    public ContactDTO save(ContactDTO contactDTO) {
+    public ContactDTO createOrUpdate(ContactDTO contactDTO) {
+        if (contactDTO instanceof PersonDTO) {
+            return createOrUpdatePerson((PersonDTO) contactDTO);
+        } else if (contactDTO instanceof CompanyDTO) {
+            return null;
+        } else {
+            throw new ResponseStatusException(HttpStatus.CHECKPOINT, "Not contact type mapped");
+        }
+
+        /*
         if (contactDTO instanceof PersonDTO) {
             Person person = modelMapper.map(contactDTO, Person.class);
             person = contactRepository.save(person);
@@ -185,7 +200,71 @@ public class ContactServiceImpl implements IContactService {
         } else {
             throw new IllegalArgumentException("Type of ContactDTO not valid!, please review this object: " + contactDTO.getClass().getSimpleName());
         }
+        */
     }
+
+    private PersonDTO createOrUpdatePerson(PersonDTO personDTO) {
+        Boolean isNew = personDTO.getId() == null;
+        Person person;
+        Optional<Contact> optionalContact;
+
+        if (isNew) {
+            person = modelMapper.map(personDTO, Person.class);
+            person = contactRepository.save(person);
+            return modelMapper.map(person, PersonDTO.class);
+        } else {
+            optionalContact = contactRepository.findById(personDTO.getId());
+            if (optionalContact.isEmpty())
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Contact not found");
+
+            person = (Person) optionalContact.get();
+
+            //Map Person Info
+            person.setName(personDTO.getFirstName());
+            person.setSecondName(personDTO.getSecondName());
+            person.setLastName(personDTO.getLastName());
+            person.setSecondLastName(personDTO.getSecondLastName());
+            person.setPhoto(personDTO.getPhoto());
+            person.setEmail(personDTO.getEmail());
+
+            //Update Official IDs
+            createOrUpdateOfficialIDs(person, personDTO.getOfficialIds());
+
+            return null;
+        }
+    }
+
+    private void createOrUpdateOfficialIDs(Person personToRelate,
+                                           List<OfficialIdDTO> officialIdDTOS) {
+
+        //IDs
+        List<Long> officialIDs = officialIdDTOS.stream().filter(e -> e.getId() != null).map(e -> e.getId()).collect(Collectors.toList());
+        List<OfficialId> toBeKeeped = personToRelate.getOfficialIds().stream().filter(e -> officialIDs.contains(e.getId())).collect(Collectors.toList());
+        List<OfficialId> toBeRemoved = personToRelate.getOfficialIds().stream().filter(e -> !toBeKeeped.contains(e)).collect(Collectors.toList());
+                //personToRelate.getInventoryRequests().stream().filter(e -> !toBeKeeped.contains(e)).collect(Collectors.toList());
+
+
+        //q documentos se agregan
+        List<OfficialIdDTO> documentsToBeAdded = officialIdDTOS.stream().filter(e -> e.getId() == null).collect(Collectors.toList());
+
+        //Q documentos se quedan
+        //Q documentos se borran
+
+        /*
+        OfficialId officialId;
+        Boolean isNew = Boolean.FALSE;
+        for (OfficialIdDTO officialIdDTO : officialIdDTOS) {
+            isNew = officialIdDTO.getId() == null;
+            if (isNew) {
+                officialId = modelMapper.map(officialIdDTO, OfficialId.class);
+                officialId.setContact(personToRelate);
+            } else {
+
+            }
+        }
+*/
+    }
+
 
     @Override
     public void delete(Long id) {

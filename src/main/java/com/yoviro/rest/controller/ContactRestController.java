@@ -53,7 +53,7 @@ public class ContactRestController {
         Boolean isCompany = jsonObject.has("companyDTO");
         if (isPerson) {
             PersonDTO personDTO = objectMapper.readValue(jsonObject.get("personDTO").toString(), PersonDTO.class);
-            return contactService.save(personDTO);
+            return contactService.createOrUpdate(personDTO);
         } else if (isCompany) {
             return null;
         } else {
@@ -152,19 +152,21 @@ public class ContactRestController {
             officialId = contact.getPrimaryOfficialID();
             if (contact instanceof Person) {
                 content = Map.ofEntries(
-                        Map.entry("id", ((Person) contact).getId()),
+                        //Map.entry("id", (contact).getId()),
                         Map.entry("fullName", ((Person) contact).getFullName()),
                         Map.entry("officialIdType", officialId.getOfficialIdType()),
                         Map.entry("officialIdNumber", officialId.getOfficialIdNumber()),
-                        Map.entry("email", Optional.ofNullable(contact.getEmail()))
+                        Map.entry("email", Optional.ofNullable(contact.getEmail())),
+                        Map.entry("contactType", "PERSON")
                 );
             } else if (contact instanceof Company) {
                 content = Map.ofEntries(
-                        Map.entry("id", ((Company) contact).getId()),
+                        //Map.entry("id", (contact).getId()),
                         Map.entry("fullName", ((Company) contact).getName()),
                         Map.entry("officialIdType", officialId.getOfficialIdType()),
                         Map.entry("officialIdNumber", officialId.getOfficialIdNumber()),
-                        Map.entry("email", Optional.ofNullable(contact.getEmail()))
+                        Map.entry("email", Optional.ofNullable(contact.getEmail())),
+                        Map.entry("contactType", "COMPANY")
                 );
             }
 

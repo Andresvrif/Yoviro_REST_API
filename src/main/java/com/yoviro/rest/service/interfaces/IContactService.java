@@ -11,7 +11,7 @@ import java.util.List;
 public interface IContactService {
     public List<ContactDTO> findAll();
     public Page search(Pageable pageable, SearchContactDTO searchContactDTO);
-    public ContactDTO save(ContactDTO contactDTO);
+    public ContactDTO createOrUpdate(ContactDTO contactDTO);
     public void delete(Long id);
     public Contact findContactByOfficialId(OfficialIdTypeEnum officialIDTypeEnum, String officialIDNumber);
     public Contact getOrCreateContact(ContactDTO contactDTO) throws Exception;

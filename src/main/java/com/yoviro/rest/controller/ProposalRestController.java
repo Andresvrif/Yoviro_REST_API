@@ -11,6 +11,7 @@ import com.yoviro.rest.service.interfaces.IProposalService;
 import com.yoviro.rest.util.JSONUtil;
 import com.yoviro.rest.util.PageUtil;
 import com.yoviro.rest.util.StringUtil;
+import org.hibernate.jdbc.Work;
 import org.javamoney.moneta.Money;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -216,17 +217,25 @@ public class ProposalRestController {
 
     private Map<String, Object> wrapInventoryRequestJson(InventoryRequest inventoryRequest) {
         List<InventoryRequestDetail> details = inventoryRequest.getDetails();
+        Person author = inventoryRequest.getAuthor().getPerson();
+        Person resident = inventoryRequest.getResident().getPerson();
         return Map.ofEntries(
                 Map.entry("inventoryRequestNumber", inventoryRequest.getInventoryRequestNumber()),
+                Map.entry("createAt", inventoryRequest.getCreateAt()),
+                Map.entry("status", inventoryRequest.getStatus()),
+                Map.entry("author", StringUtil.capitalizeWord(author.getFullName())),
+                Map.entry("resident", StringUtil.capitalizeWord(resident.getFullName())),
                 Map.entry("details", details.stream().map(e -> wrapInventoryRequestDetailJson(e)))
         );
     }
 
     private Map wrapInventoryRequestDetailJson(InventoryRequestDetail detail) {
+        Product product = detail.getProduct();
         return Map.ofEntries(
-                Map.entry("sku", detail.getProduct().getSku()),
+                Map.entry("sku", product.getSku()),
                 Map.entry("productName", StringUtil.capitalizeWord(detail.getProduct().getName())),
-                Map.entry("quantity", detail.getQuantity())
+                Map.entry("quantity", detail.getQuantity()),
+                Map.entry("unitMeasure", product.getUnitMeasure())
         );
     }
 
@@ -238,6 +247,8 @@ public class ProposalRestController {
                 Map.entry("purchaseOrderNumber", purchaseOrder.getPurchaseOrderNumber()),
                 Map.entry("totalPrice", purchaseOrder.getTotalPrice()),
                 Map.entry("details", details.stream().map(e -> wrapPurchaseOrderDetailJson(e))),
+                Map.entry("status", purchaseOrder.getStatus()),
+                Map.entry("createAt", purchaseOrder.getCreateAt()),
                 Map.entry("provider", Map.ofEntries(
                         Map.entry("name", company.getName()),
                         Map.entry("officialIdType", primaryOfficialId.getOfficialIdType()),
@@ -249,6 +260,7 @@ public class ProposalRestController {
     private Map wrapPurchaseOrderDetailJson(PurchaseOrderDetail detail) {
         return Map.ofEntries(
                 Map.entry("sku", detail.getProduct().getSku()),
+                Map.entry("unitMeasure", detail.getProduct().getUnitMeasure()),
                 Map.entry("productName", StringUtil.capitalizeWord(detail.getProduct().getName())),
                 Map.entry("quantity", detail.getQuantity())
         );
