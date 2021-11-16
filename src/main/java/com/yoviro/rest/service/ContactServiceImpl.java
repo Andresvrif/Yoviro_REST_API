@@ -167,7 +167,7 @@ public class ContactServiceImpl implements IContactService {
             filters.add(contactFilter);
         }
 
-        if (criteria.getName() != null) {
+        if (criteria.getEmail() != null) {
             contactFilter = new SearchFilter();
             contactFilter.setProperty("email");
             contactFilter.setValue(criteria.getEmail());
