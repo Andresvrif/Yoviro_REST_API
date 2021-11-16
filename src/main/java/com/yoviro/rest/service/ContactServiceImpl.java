@@ -269,6 +269,7 @@ public class ContactServiceImpl implements IContactService {
 
         //Remove Flow
         toBeRemoved.forEach(e -> {
+            personToRelate.getOfficialIds().remove(e);
             officialIdRepository.delete(e);
         });
     }
