@@ -2,6 +2,7 @@ package com.yoviro.rest.controller;
 
 import com.yoviro.rest.batch.BatchConfiguration;
 import com.yoviro.rest.security.service.IJWTService;
+import it.burning.cron.CronExpressionDescriptor;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -9,10 +10,7 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
-import java.text.DateFormat;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -42,6 +40,9 @@ public class BatchRestController {
 
     @Resource(name = "batchAndSteps")
     private Map<String, String> batchAndSteps;
+
+    @Value("${batch.activities.crono}")
+    private String cronoBatchActivities;
 
     @PostMapping("/run")
     public String runBatch(@RequestHeader(name = "Authorization") String authorization,
@@ -77,6 +78,7 @@ public class BatchRestController {
 
         return Map.ofEntries(
                 Map.entry("batchCode", batchCode),
+                Map.entry("crono", CronExpressionDescriptor.getDescription(cronoBatchActivities)),
                 Map.entry("stepCode", stepExecution.getStepName()),
                 Map.entry("author", jobExecution.getJobParameters().getString(USER_NAME_KEY)),
                 Map.entry("readCount", stepExecution.getReadCount()),
