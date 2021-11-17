@@ -185,24 +185,10 @@ public class ContactServiceImpl implements IContactService {
         if (contactDTO instanceof PersonDTO) {
             return createOrUpdatePerson((PersonDTO) contactDTO);
         } else if (contactDTO instanceof CompanyDTO) {
-            return null;
+            return createOrUpdateCompany((CompanyDTO) contactDTO);
         } else {
             throw new ResponseStatusException(HttpStatus.CHECKPOINT, "Not contact type mapped");
         }
-
-        /*
-        if (contactDTO instanceof PersonDTO) {
-            Person person = modelMapper.map(contactDTO, Person.class);
-            person = contactRepository.save(person);
-            return modelMapper.map(person, PersonDTO.class);
-        } else if (contactDTO instanceof CompanyDTO) {
-            Company company = modelMapper.map(contactDTO, Company.class);
-            company = contactRepository.save(company);
-            return modelMapper.map(company, CompanyDTO.class);
-        } else {
-            throw new IllegalArgumentException("Type of ContactDTO not valid!, please review this object: " + contactDTO.getClass().getSimpleName());
-        }
-        */
     }
 
     private PersonDTO createOrUpdatePerson(PersonDTO personDTO) {
@@ -236,25 +222,25 @@ public class ContactServiceImpl implements IContactService {
         }
     }
 
-    private void createOrUpdateOfficialIDs(Person personToRelate,
+    private void createOrUpdateOfficialIDs(Contact contact,
                                            List<OfficialIdDTO> officialIdDTOS) {
         //IDs
         List<Long> officialIDs = officialIdDTOS.stream().filter(e -> e.getId() != null).map(e -> e.getId()).collect(Collectors.toList());
-        List<OfficialId> toBeKeeped = personToRelate.getOfficialIds().stream().filter(e -> officialIDs.contains(e.getId())).collect(Collectors.toList());
-        List<OfficialId> toBeRemoved = personToRelate.getOfficialIds().stream().filter(e -> !toBeKeeped.contains(e)).collect(Collectors.toList());
+        List<OfficialId> toBeKeeped = contact.getOfficialIds().stream().filter(e -> officialIDs.contains(e.getId())).collect(Collectors.toList());
+        List<OfficialId> toBeRemoved = contact.getOfficialIds().stream().filter(e -> !toBeKeeped.contains(e)).collect(Collectors.toList());
         List<OfficialIdDTO> toBeAdded = officialIdDTOS.stream().filter(e -> e.getId() == null).collect(Collectors.toList());
 
         //Adds
         OfficialId officialId;
-        for (OfficialIdDTO officialIdDTO : toBeAdded){
+        for (OfficialIdDTO officialIdDTO : toBeAdded) {
             officialId = new OfficialId();
-            officialId.setContact(personToRelate);
+            officialId.setContact(contact);
             officialId.setOfficialIdNumber(officialIdDTO.getOfficialIdNumber());
             officialId.setOfficialIdType(officialIdDTO.getOfficialIdType());
             officialId.setPrimaryOfficialId(officialIdDTO.getPrimaryOfficialId());
             officialId = officialIdRepository.save(officialId);
 
-            personToRelate.getOfficialIds().add(officialId);
+            contact.getOfficialIds().add(officialId);
         }
 
         //Updates
@@ -269,9 +255,37 @@ public class ContactServiceImpl implements IContactService {
 
         //Remove Flow
         toBeRemoved.forEach(e -> {
-            personToRelate.getOfficialIds().remove(e);
+            contact.getOfficialIds().remove(e);
             officialIdRepository.delete(e);
         });
+    }
+
+    private CompanyDTO createOrUpdateCompany(CompanyDTO companyDTO) {
+        Boolean isNew = companyDTO.getId() == null;
+        Company company;
+        Optional<Contact> optionalContact;
+
+        if (isNew) {
+            company = modelMapper.map(companyDTO, Company.class);
+            company = contactRepository.save(company);
+            return modelMapper.map(company, CompanyDTO.class);
+        } else {
+            optionalContact = contactRepository.findById(companyDTO.getId());
+            if (optionalContact.isEmpty())
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Contact not found");
+
+            company = (Company) optionalContact.get();
+
+            //Map Person Info
+            company.setName(companyDTO.getName());
+            company.setStartDate(companyDTO.getStartDate());
+            company.setEmail(companyDTO.getEmail());
+
+            //Update Official IDs
+            createOrUpdateOfficialIDs(company, companyDTO.getOfficialIds());
+            company = contactRepository.save(company);
+            return modelMapper.map(company, CompanyDTO.class);
+        }
     }
 
 

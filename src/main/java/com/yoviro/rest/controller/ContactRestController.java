@@ -55,7 +55,8 @@ public class ContactRestController {
             PersonDTO personDTO = objectMapper.readValue(jsonObject.get("personDTO").toString(), PersonDTO.class);
             return contactService.createOrUpdate(personDTO);
         } else if (isCompany) {
-            return null;
+            CompanyDTO companyDTO = objectMapper.readValue(jsonObject.get("companyDTO").toString(), CompanyDTO.class);
+            return contactService.createOrUpdate(companyDTO);
         } else {
             throw new IllegalArgumentException("Type of ContactDTO not valid!");
         }
