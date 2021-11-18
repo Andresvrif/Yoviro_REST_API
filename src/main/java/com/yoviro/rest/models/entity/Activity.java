@@ -8,6 +8,7 @@ import org.thymeleaf.util.DateUtils;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
 
 @Entity
@@ -36,6 +37,9 @@ public class Activity {
     @NotNull
     @Enumerated(EnumType.STRING)
     private ActivityStatusEnum status;
+
+    @NotNull
+    private LocalDateTime assignAt;
 
     public Long getId() {
         return id;
@@ -85,9 +89,25 @@ public class Activity {
         this.status = status;
     }
 
+    public LocalDateTime getAssignAt() {
+        return assignAt;
+    }
+
+    public void setAssignAt(LocalDateTime assignAt) {
+        this.assignAt = assignAt;
+    }
+
     @PrePersist
     public void PrePersist() {
         this.createAt = LocalDateTime.now();
+
+        //Define assign hour
+        LocalTime activityPatternHour = activityPattern.getHourFrequency();
+
+        this.assignAt = this.createAt
+                .withHour(activityPatternHour.getHour())
+                .withMinute(activityPatternHour.getMinute())
+                .withSecond(activityPatternHour.getSecond());
     }
 
     private static final long serialVersionUID = 1L;

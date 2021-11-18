@@ -28,16 +28,10 @@ public class ActivityServiceImpl implements IActivityService {
     }
 
     @Override
-    public List<Activity> findActivitiesAssignedForUserForToday(String userName) {
-        LocalDateTime currentTime = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
+    public List<Activity> findActivitiesAssignedForUserAtDate(String userName,
+                                                              LocalDate referenceDate) {
+        LocalDateTime currentTime = referenceDate.atStartOfDay();
         return findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(currentTime, currentTime.plusDays(1), userName);
-    }
-
-    @Override
-    public List<Activity> findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(LocalDateTime startDate,
-                                                                                         LocalDateTime endDate,
-                                                                                         String userName) {
-        return activityRepository.findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(startDate, endDate, userName);
     }
 
     @Override
@@ -53,6 +47,13 @@ public class ActivityServiceImpl implements IActivityService {
                 refDate.plusDays(1),
                 userName,
                 patternCode);
+    }
+
+    @Override
+    public List<Activity> findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(LocalDateTime startDateTime,
+                                                                                         LocalDateTime endDateTime,
+                                                                                         String userName) {
+        return activityRepository.findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(startDateTime, endDateTime, userName);
     }
 
     @Transactional

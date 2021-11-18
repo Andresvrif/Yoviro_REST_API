@@ -33,7 +33,7 @@ public class ActivityPatternItemProcessor implements ItemProcessor<ActivityPatte
         LocalDateTime currentDate = LocalDateTime.now();
         HashMap<User, List<Activity>> userDistribution = defineUserDistribution(users);
 
-
+        if (agreements.isEmpty()) return null;
         for (Agreement agreement : agreements) {
             if (!agreement.applyActivityPatternToBeAssigned(currentDate, activityPattern)) continue;
 

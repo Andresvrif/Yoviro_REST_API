@@ -2,6 +2,7 @@ package com.yoviro.rest.controller;
 
 import com.yoviro.rest.config.enums.ActivityStatusEnum;
 import com.yoviro.rest.models.entity.*;
+import com.yoviro.rest.security.service.IJWTService;
 import com.yoviro.rest.service.interfaces.IActivityService;
 import com.yoviro.rest.util.StringUtil;
 import org.json.JSONArray;
@@ -22,14 +23,26 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/activities")
 public class ActivityRestController {
     @Autowired
+    private IJWTService jwtService;
+
+    @Autowired
     IActivityService activityService;
 
     @Autowired
     ModelMapper modelMapper;
 
-    @GetMapping("/activitiesForToday")
-    public Map<String, Object> findActivitiesOfUser(@RequestParam(required = true) String userName) {
-        List<Activity> activities = activityService.findActivitiesAssignedForUserForToday(userName);
+    @GetMapping("/myActivities")
+    public Map<String, Object> myActivities(@RequestHeader(name = "Authorization") String authorization,
+                                            @RequestParam LocalDate startDate,
+                                            @RequestParam LocalDate endDate) {
+        //Retrieve userName from token
+        String token = jwtService.retrieveToken(authorization);
+        String userName = jwtService.getUserName(token);
+
+        //Stablish time
+        LocalDateTime startDateTime = startDate.atStartOfDay().minusSeconds(1);
+        LocalDateTime endDateTime = endDate.atStartOfDay();
+        List<Activity> activities = activityService.findAllByCreateAtAfterAndCreateAtBeforeAndAssignedUserUsername(startDateTime, endDateTime, userName);
 
         //Define Response
         Map<String, Object> response = new HashMap<String, Object>();
@@ -47,25 +60,31 @@ public class ActivityRestController {
     public List<Map<String, Object>> wrapActivityEvents(List<Activity> activities) {
         Map<String, Object> rowData;
         List<Map<String, Object>> dataContainer = new ArrayList<Map<String, Object>>();
-        HashSet<ActivityPattern> activityPatterns = (HashSet<ActivityPattern>) activities.stream().map(e -> e.getActivityPattern()).collect(Collectors.toSet());
+
+        //Map activities by day
+        HashMap<LocalDate, List<Activity>> activitiesByDay = new HashMap<>();
+        HashSet<LocalDate> daysWithActivities = (HashSet<LocalDate>) activities.stream().map(e -> e.getAssignAt().toLocalDate()).collect(Collectors.toSet());
+        daysWithActivities.forEach(day -> activitiesByDay.put(day, activities.stream().filter(e -> e.getAssignAt().toLocalDate().compareTo(day) == 0).collect(Collectors.toList())));
+
+        //Create activities for UI
+        LocalDateTime referenceDateTime;
+        HashSet<ActivityPattern> activityPatternsByDay;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        for (LocalDate day : activitiesByDay.keySet()) {
+            activityPatternsByDay = (HashSet<ActivityPattern>) activitiesByDay.get(day).stream().map(e -> e.getActivityPattern()).collect(Collectors.toSet());
+            for (ActivityPattern pattern : activityPatternsByDay) {
+                //Define date
+                referenceDateTime = day.atTime(pattern.getHourFrequency());
 
-        LocalDateTime localDateTime;
-        for (ActivityPattern activityPattern : activityPatterns) {
-            LocalTime activityPatternHour = activityPattern.getHourFrequency();
-            localDateTime = LocalDateTime.now()
-                    .withHour(activityPatternHour.getHour())
-                    .withMinute(activityPatternHour.getMinute())
-                    .withSecond(activityPatternHour.getSecond());
+                //Put data
+                rowData = new HashMap<String, Object>();
+                rowData.put("title", pattern.getSubject());
+                rowData.put("start", referenceDateTime.format(formatter));
+                rowData.put("patternCode", pattern.getPatternCode());
+                rowData.put("color", pattern.getColorCode());
 
-            //Put data
-            rowData = new HashMap<String, Object>();
-            rowData.put("title", activityPattern.getSubject());
-            rowData.put("start", localDateTime.format(formatter));
-            rowData.put("patternCode", activityPattern.getPatternCode());
-            rowData.put("color", activityPattern.getColorCode());
-
-            dataContainer.add(rowData);
+                dataContainer.add(rowData);
+            }
         }
 
         return dataContainer;
