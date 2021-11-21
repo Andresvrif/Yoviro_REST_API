@@ -212,6 +212,8 @@ public class ProposalRestController {
         List<Map> inventoryRequestsJson = proposal.getInventoryRequests().stream().map(e -> wrapInventoryRequestJson(e)).collect(Collectors.toList());
         List<Map> purchaseOrdersJson = proposal.getPurchaseOrders().stream().map(e -> wrapPurchaseOrderJson(e)).collect(Collectors.toList());
         content = Map.ofEntries(
+                Map.entry("status", proposal.getStatus()),
+                Map.entry("reasonForDenied", proposal.getReasonForDenied() == null ? Optional.empty() : proposal.getReasonForDenied()),
                 Map.entry("inventoryRequests", inventoryRequestsJson),
                 Map.entry("purchaseOrders", purchaseOrdersJson)
         );
