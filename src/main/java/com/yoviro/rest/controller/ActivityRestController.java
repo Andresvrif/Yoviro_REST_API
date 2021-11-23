@@ -162,4 +162,28 @@ public class ActivityRestController {
 
         activityService.updateStatusActivities(activities);
     }
+
+    @GetMapping("/summaryList")
+    public List<Map<String, Object>> summaryList() {
+        return wrapSummaryList(activityService.findAll());
+    }
+
+    public List<Map<String, Object>> wrapSummaryList(List<Activity> activities) {
+        List<Map<String, Object>> wrapActivities = new ArrayList<>();
+        Map<String, Object> rowData;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        for (Activity activity : activities) {
+            rowData = new HashMap<String, Object>();
+            rowData.put("userName", activity.getAssignedUser().getUsername());
+            rowData.put("assignAt", activity.getAssignAt().format(formatter));
+            rowData.put("status", activity.getStatus());
+            rowData.put("activityPattern", activity.getActivityPattern().getPatternCode());
+            rowData.put("resident", activity.getJob().getResident().getPerson().getFullName());
+
+            wrapActivities.add(rowData);
+        }
+
+        return wrapActivities;
+    }
 }

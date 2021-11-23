@@ -16,13 +16,16 @@ public class PurchaseOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String purchaseOrderNumber;
+    private String purchaseOrderNumber; //Número generado para manejo interno
+
+    private String referenceNumber; //Reference Number
 
     private String attachmentDocument;
 
     @Enumerated(EnumType.STRING)
     private PurcharseOrderEnum status;
 
+    @NotNull
     @ManyToOne
     private Company company;
 
@@ -150,6 +153,22 @@ public class PurchaseOrder {
     @PrePersist
     public void PrePersist() {
         this.createAt = LocalDateTime.now();
+    }
+
+    public String getReferenceNumber() {
+        return referenceNumber;
+    }
+
+    public void setReferenceNumber(String referenceNumber) {
+        this.referenceNumber = referenceNumber;
+    }
+
+    public List<PurchaseOrderDetail> getDetails() {
+        return details;
+    }
+
+    public void setDetails(List<PurchaseOrderDetail> details) {
+        this.details = details;
     }
 
     private static final long serialVersionUID = 1L;

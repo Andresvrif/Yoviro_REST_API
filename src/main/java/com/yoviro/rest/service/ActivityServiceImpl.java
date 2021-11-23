@@ -79,4 +79,9 @@ public class ActivityServiceImpl implements IActivityService {
         Optional<Activity> optionalActivity = activityRepository.findById(id);
         return optionalActivity.get();
     }
+
+    @Override
+    public List<Activity> findAll() {
+        return (List<Activity>) activityRepository.findAll();
+    }
 }

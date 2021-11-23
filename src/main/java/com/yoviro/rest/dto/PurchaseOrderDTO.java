@@ -7,6 +7,7 @@ import java.util.List;
 public class PurchaseOrderDTO {
     private Long id;
     private String purchaseOrderNumber;
+    private String referenceNumber; //Reference Number, número de referencia por parte del proveedor
     private BigDecimal totalPrice;
     private CompanyDTO company;
     private List<PurchaseOrderDetailDTO> purchaseOrderDetails = new ArrayList<>();
@@ -49,5 +50,13 @@ public class PurchaseOrderDTO {
 
     public void setPurchaseOrderDetails(List<PurchaseOrderDetailDTO> purchaseOrderDetails) {
         this.purchaseOrderDetails = purchaseOrderDetails;
+    }
+
+    public String getReferenceNumber() {
+        return referenceNumber;
+    }
+
+    public void setReferenceNumber(String referenceNumber) {
+        this.referenceNumber = referenceNumber;
     }
 }

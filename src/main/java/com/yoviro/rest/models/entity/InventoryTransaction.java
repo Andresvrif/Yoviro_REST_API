@@ -23,7 +23,7 @@ public abstract class InventoryTransaction {
     private Integer quantity;
 
     @NotNull
-    private BigDecimal unitValue;
+    private BigDecimal unitValue; //NO CONSIDERAR
 
     private LocalDateTime createAt;
 

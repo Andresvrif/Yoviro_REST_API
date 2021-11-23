@@ -16,6 +16,6 @@ public interface IActivityService {
 
 
     void updateStatusActivities(List<Activity> activities);
-
     Activity findById(Long id);
+    List<Activity> findAll();
 }
