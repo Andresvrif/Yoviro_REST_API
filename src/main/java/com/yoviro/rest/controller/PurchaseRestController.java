@@ -2,13 +2,11 @@ package com.yoviro.rest.controller;
 
 import com.yoviro.rest.config.AppConfig;
 import com.yoviro.rest.config.enums.PurcharseOrderEnum;
+import com.yoviro.rest.config.enums.StatusProposalEnum;
 import com.yoviro.rest.dto.search.SearchProposalDTO;
 import com.yoviro.rest.dto.search.SearchPurchaseOrderDTO;
 import com.yoviro.rest.handler.PurchaseOrderHandler;
-import com.yoviro.rest.models.entity.Company;
-import com.yoviro.rest.models.entity.Proposal;
-import com.yoviro.rest.models.entity.PurchaseOrder;
-import com.yoviro.rest.models.entity.StoreKeeper;
+import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.service.interfaces.IPurchaseOrderService;
 import com.yoviro.rest.util.JSONUtil;
 import com.yoviro.rest.util.PageUtil;
@@ -23,10 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/purchaseOrders")
@@ -86,7 +81,7 @@ public class PurchaseRestController {
                                       @RequestParam(required = true) String purchaseOrderNumber) {
         PurchaseOrder purchaseOrder = purchaseOrderService.findByPurcharseOrderNumber(purchaseOrderNumber);
         StoreKeeper storeKeeper = purchaseOrder.getAuthor();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         //Map Proposals related
         List<Map> proposals = wrapProposals(purchaseOrder);
 
@@ -104,13 +99,28 @@ public class PurchaseRestController {
     private List<Map> wrapProposals(PurchaseOrder purchaseOrder) {
         List<Map> content = new ArrayList<>();
         Map<String, Object> row = null;
+        String reasonForDenied = null;
+        List<Proposal> orderedProposals = purchaseOrder.getProposals();
+        orderedProposals.sort(Comparator.comparing(Proposal::getCreateAt));
+        Collections.reverse(orderedProposals);
 
-        for (Proposal proposal : purchaseOrder.getProposals()) {
-            row = Map.ofEntries(
-                    Map.entry("proposalNumber", proposal.getProposalNumber()),
-                    Map.entry("status", proposal.getStatus()),
-                    Map.entry("createAt", proposal.getCreateAt())
-            );
+        for (Proposal proposal : orderedProposals) {
+            System.out.println("proposal create At ---> " + proposal.getCreateAt());
+            reasonForDenied = proposal.getReasonForDenied();
+            if ((proposal.getStatus() == StatusProposalEnum.REJECTED || proposal.getStatus() == StatusProposalEnum.CANCELED) && reasonForDenied != null){
+                row = Map.ofEntries(
+                        Map.entry("proposalNumber", proposal.getProposalNumber()),
+                        Map.entry("status", proposal.getStatus()),
+                        Map.entry("createAt", proposal.getCreateAt()),
+                        Map.entry("reasonForDenied", reasonForDenied)
+                );
+            }else {
+                row = Map.ofEntries(
+                        Map.entry("proposalNumber", proposal.getProposalNumber()),
+                        Map.entry("status", proposal.getStatus()),
+                        Map.entry("createAt", proposal.getCreateAt())
+                );
+            }
             content.add(row);
         }
 

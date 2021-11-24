@@ -397,3 +397,22 @@ INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order
 /* PURCHASE ORDER WITH PROPOSAL ASSIGNED */
 INSERT INTO db_yoviro.purchase_order_proposal (proposal_id, purchase_order_id) VALUES (2, 1);
 INSERT INTO db_yoviro.purchase_order_proposal (proposal_id, purchase_order_id) VALUES (2, 2);
+
+/* PROPOSAL WITH HISTORICAL */
+/* INVENTORY REQUESTS - AUTHOR : dvila - ID : 9*/
+INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now() - INTERVAL 1 DAY, 'IN_PROGRESS', 1, 3);
+INSERT INTO db_yoviro.inventory_request_detail (quantity, inventory_request_id, product_id) VALUES (20, 9, 4);
+
+/* PURCHASE ORDER - AUTHOR : ghinojoza - ID : 3 */
+INSERT INTO db_yoviro.purchase_order (attachment_document, create_at, status, total_price, worker_id, company_id)VALUES (null, now(), 'QUOTED', 1500.00, 9, 36);
+INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 20, 3, 4);
+
+/* 1era PROPUESTA CANCELADA POR MUY CARA - CANCELADA POR MUY CARA */
+INSERT INTO db_yoviro.proposal (create_at, update_at, status, store_keeper_id, director_id, reason_for_denied) VALUES (now() - INTERVAL 1 DAY,now(), 'REJECTED', 9, 3, 'Precio exageradamente caro para 20 pastas dentales');
+INSERT INTO db_yoviro.inventory_request_proposal (proposal_id, inventory_request_id) VALUES (3, 9);
+INSERT INTO db_yoviro.purchase_order_proposal (proposal_id, purchase_order_id) VALUES (3, 3);
+
+/* 2da PROPUESTA APROBADA */
+INSERT INTO db_yoviro.proposal (create_at, update_at, status, store_keeper_id, director_id, reason_for_denied) VALUES (now(),now(), 'APPROVED', 9, 3, null);
+INSERT INTO db_yoviro.inventory_request_proposal (proposal_id, inventory_request_id) VALUES (4, 9);
+INSERT INTO db_yoviro.purchase_order_proposal (proposal_id, purchase_order_id) VALUES (4, 3);
