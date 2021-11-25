@@ -42,14 +42,16 @@ public class PurchaseRestController {
     @GetMapping("/summaryList")
     public Map<String, Object> summaryList(@RequestParam(required = false) String proposalNumber,
                                            @RequestParam(required = false) String purchaseOrderNumber,
+                                           @RequestParam(required = false) String referenceNumber,
                                            @RequestParam(required = false) PurcharseOrderEnum status,
                                            @RequestParam(required = true) String page) {
         //Map Search Criteria
         SearchPurchaseOrderDTO purchaseOrderCriteria = new SearchPurchaseOrderDTO();
         SearchProposalDTO proposalCriteria = new SearchProposalDTO();
-        purchaseOrderCriteria.setStatus(status);
-        purchaseOrderCriteria.setPurchaseOrderNumber(purchaseOrderNumber);
-        proposalCriteria.setProposalNumber(proposalNumber);
+        if (status != null) purchaseOrderCriteria.setStatus(status);
+        if (purchaseOrderNumber != null && !purchaseOrderNumber.trim().isEmpty()) purchaseOrderCriteria.setPurchaseOrderNumber(purchaseOrderNumber);
+        if (proposalNumber != null && !proposalNumber.trim().isEmpty()) proposalCriteria.setProposalNumber(proposalNumber);
+        if (referenceNumber != null && !referenceNumber.trim().isEmpty()) purchaseOrderCriteria.setReferenceNumber(referenceNumber);
 
         purchaseOrderCriteria.setProposalCriteria(proposalCriteria);
 
@@ -171,7 +173,7 @@ public class PurchaseRestController {
         proposalDTO.setPurchaseOrders(purchaseOrderDTOList);
 
         Proposal response = purchaseOrderService.updateReferencesNumbers(userName, proposalDTO);
-        if (response != null){
+        if (response != null) {
             System.out.println("response.getProposalNumber()-------------> " + response.getProposalNumber());
         }
         return response == null ? null : response.getProposalNumber();

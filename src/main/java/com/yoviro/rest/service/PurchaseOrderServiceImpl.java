@@ -138,7 +138,16 @@ public class PurchaseOrderServiceImpl implements IPurchaseOrderService {
         if (criteria.getPurchaseOrderNumber() != null) {
             purchaseOrderFilter = new SearchFilter();
             purchaseOrderFilter.setProperty("purchaseOrderNumber");
-            purchaseOrderFilter.setValue(criteria.getStatus());
+            purchaseOrderFilter.setValue(criteria.getPurchaseOrderNumber());
+            purchaseOrderFilter.setOperator(OperatorEnum.LIKE);
+
+            filters.add(purchaseOrderFilter);
+        }
+
+        if (criteria.getReferenceNumber() != null) {
+            purchaseOrderFilter = new SearchFilter();
+            purchaseOrderFilter.setProperty("referenceNumber");
+            purchaseOrderFilter.setValue(criteria.getReferenceNumber());
             purchaseOrderFilter.setOperator(OperatorEnum.LIKE);
 
             filters.add(purchaseOrderFilter);
