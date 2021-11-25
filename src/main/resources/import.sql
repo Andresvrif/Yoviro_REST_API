@@ -389,10 +389,10 @@ INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order
 INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 20, 1, 2);
 INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 30, 1, 3);
 INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 40, 1, 4);
-INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 10, 2, 1);
-INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 20, 2, 2);
-INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 30, 2, 3);
-INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 40, 2, 4);
+INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 11, 2, 1);
+INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 22, 2, 2);
+INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 33, 2, 3);
+INSERT INTO db_yoviro.purchase_order_detail (create_at, quantity, purchase_order_id, product_id) VALUES (now(), 44, 2, 4);
 
 /* PURCHASE ORDER WITH PROPOSAL ASSIGNED */
 INSERT INTO db_yoviro.purchase_order_proposal (proposal_id, purchase_order_id) VALUES (2, 1);

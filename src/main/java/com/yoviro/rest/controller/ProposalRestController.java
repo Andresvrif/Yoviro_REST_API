@@ -251,10 +251,12 @@ public class ProposalRestController {
         List<PurchaseOrderDetail> details = purchaseOrder.getPurcharseOrderDetails();
         return Map.ofEntries(
                 Map.entry("purchaseOrderNumber", purchaseOrder.getPurchaseOrderNumber()),
+                Map.entry("referenceNumber", purchaseOrder.getReferenceNumber() == null? Optional.empty() : purchaseOrder.getReferenceNumber()),
                 Map.entry("totalPrice", purchaseOrder.getTotalPrice()),
                 Map.entry("details", details.stream().map(e -> wrapPurchaseOrderDetailJson(e))),
                 Map.entry("status", purchaseOrder.getStatus()),
                 Map.entry("createAt", purchaseOrder.getCreateAt()),
+                Map.entry("reasonForDenied", purchaseOrder.getReasonForDenied() == null? Optional.empty() : purchaseOrder.getReasonForDenied()),
                 Map.entry("provider", Map.ofEntries(
                         Map.entry("name", company.getName()),
                         Map.entry("officialIdType", primaryOfficialId.getOfficialIdType()),

@@ -8,6 +8,7 @@ public class PurchaseOrderDTO {
     private Long id;
     private String purchaseOrderNumber;
     private String referenceNumber; //Reference Number, número de referencia por parte del proveedor
+    private String reasonForDenied;
     private BigDecimal totalPrice;
     private CompanyDTO company;
     private List<PurchaseOrderDetailDTO> purchaseOrderDetails = new ArrayList<>();
@@ -58,5 +59,13 @@ public class PurchaseOrderDTO {
 
     public void setReferenceNumber(String referenceNumber) {
         this.referenceNumber = referenceNumber;
+    }
+
+    public String getReasonForDenied() {
+        return reasonForDenied;
+    }
+
+    public void setReasonForDenied(String reasonForDenied) {
+        this.reasonForDenied = reasonForDenied;
     }
 }

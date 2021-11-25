@@ -25,6 +25,9 @@ public class PurchaseOrder {
     @Enumerated(EnumType.STRING)
     private PurcharseOrderEnum status;
 
+    @Column
+    private String reasonForDenied; //Can be rejected or canceled
+
     @NotNull
     @ManyToOne
     private Company company;
@@ -169,6 +172,14 @@ public class PurchaseOrder {
 
     public void setDetails(List<PurchaseOrderDetail> details) {
         this.details = details;
+    }
+
+    public String getReasonForDenied() {
+        return reasonForDenied;
+    }
+
+    public void setReasonForDenied(String reasonForDenied) {
+        this.reasonForDenied = reasonForDenied;
     }
 
     private static final long serialVersionUID = 1L;
