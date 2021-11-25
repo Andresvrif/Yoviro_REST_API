@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 public class SearchPurchaseOrderDTO {
     SearchProposalDTO proposalCriteria;
     PurcharseOrderEnum status;
+    String purchaseOrderNumber;
 
     public SearchProposalDTO getProposalCriteria() {
         return proposalCriteria;
@@ -21,5 +22,13 @@ public class SearchPurchaseOrderDTO {
 
     public void setStatus(PurcharseOrderEnum status) {
         this.status = status;
+    }
+
+    public String getPurchaseOrderNumber() {
+        return purchaseOrderNumber;
+    }
+
+    public void setPurchaseOrderNumber(String purchaseOrderNumber) {
+        this.purchaseOrderNumber = purchaseOrderNumber;
     }
 }

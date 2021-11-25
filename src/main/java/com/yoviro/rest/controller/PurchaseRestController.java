@@ -41,12 +41,14 @@ public class PurchaseRestController {
 
     @GetMapping("/summaryList")
     public Map<String, Object> summaryList(@RequestParam(required = false) String proposalNumber,
+                                           @RequestParam(required = false) String purchaseOrderNumber,
                                            @RequestParam(required = false) PurcharseOrderEnum status,
                                            @RequestParam(required = true) String page) {
         //Map Search Criteria
         SearchPurchaseOrderDTO purchaseOrderCriteria = new SearchPurchaseOrderDTO();
         SearchProposalDTO proposalCriteria = new SearchProposalDTO();
         purchaseOrderCriteria.setStatus(status);
+        purchaseOrderCriteria.setPurchaseOrderNumber(purchaseOrderNumber);
         proposalCriteria.setProposalNumber(proposalNumber);
 
         purchaseOrderCriteria.setProposalCriteria(proposalCriteria);
