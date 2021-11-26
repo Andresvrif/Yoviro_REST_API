@@ -48,6 +48,7 @@ public class PurchaseOrder {
     @OneToMany(mappedBy = "purchaseOrder", fetch = FetchType.LAZY)
     List<InputTransactionByPurchaseOrder> inputTransactionsByPurchaseOrder = new ArrayList<>();
 
+    //TODO no deberia ir esto, ya que una orde de compra satisface a uno o más
     @OneToMany(mappedBy = "purchaseOrder", fetch = FetchType.LAZY)
     List<OutputTransactionByPurchaseOrder> outputTransactionsByPurchaseOrder = new ArrayList<>();
 

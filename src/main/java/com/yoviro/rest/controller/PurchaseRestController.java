@@ -21,12 +21,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @RestController
@@ -49,9 +45,12 @@ public class PurchaseRestController {
         SearchPurchaseOrderDTO purchaseOrderCriteria = new SearchPurchaseOrderDTO();
         SearchProposalDTO proposalCriteria = new SearchProposalDTO();
         if (status != null) purchaseOrderCriteria.setStatus(status);
-        if (purchaseOrderNumber != null && !purchaseOrderNumber.trim().isEmpty()) purchaseOrderCriteria.setPurchaseOrderNumber(purchaseOrderNumber);
-        if (proposalNumber != null && !proposalNumber.trim().isEmpty()) proposalCriteria.setProposalNumber(proposalNumber);
-        if (referenceNumber != null && !referenceNumber.trim().isEmpty()) purchaseOrderCriteria.setReferenceNumber(referenceNumber);
+        if (purchaseOrderNumber != null && !purchaseOrderNumber.trim().isEmpty())
+            purchaseOrderCriteria.setPurchaseOrderNumber(purchaseOrderNumber);
+        if (proposalNumber != null && !proposalNumber.trim().isEmpty())
+            proposalCriteria.setProposalNumber(proposalNumber);
+        if (referenceNumber != null && !referenceNumber.trim().isEmpty())
+            purchaseOrderCriteria.setReferenceNumber(referenceNumber);
 
         purchaseOrderCriteria.setProposalCriteria(proposalCriteria);
 
@@ -94,9 +93,9 @@ public class PurchaseRestController {
                                       @RequestParam(required = true) String purchaseOrderNumber) {
         PurchaseOrder purchaseOrder = purchaseOrderService.findByPurcharseOrderNumber(purchaseOrderNumber);
         StoreKeeper storeKeeper = purchaseOrder.getAuthor();
-        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         //Map Proposals related
         List<Map> proposals = wrapProposals(purchaseOrder);
+        List<Map> details = wrapDetails(purchaseOrder);
 
         return Map.ofEntries(
                 Map.entry("purchaseOrderNumber", purchaseOrder.getPurchaseOrderNumber()),
@@ -105,8 +104,29 @@ public class PurchaseRestController {
                 Map.entry("totalPrice", purchaseOrder.getTotalPrice()),
                 Map.entry("provider", purchaseOrder.getCompany().getName()),
                 Map.entry("author", storeKeeper.getPerson().getFullName()),
-                Map.entry("proposals", proposals)
+                Map.entry("proposals", proposals),
+                Map.entry("details", details)
         );
+    }
+
+    private List<Map> wrapDetails(PurchaseOrder purchaseOrder) {
+        List<Map> content = new ArrayList<>();
+        Map<String, Object> row = null;
+        Product product = null;
+        for (PurchaseOrderDetail detail : purchaseOrder.getDetails()) {
+            product = null;
+            product = detail.getProduct();
+
+            row = Map.ofEntries(
+                    Map.entry("quantity", detail.getQuantity()),
+                    Map.entry("productName", product.getName()),
+                    Map.entry("sku", product.getSku()),
+                    Map.entry("unitMeasure", product.getUnitMeasure())
+            );
+
+            content.add(row);
+        }
+        return content;
     }
 
     private List<Map> wrapProposals(PurchaseOrder purchaseOrder) {
@@ -177,5 +197,27 @@ public class PurchaseRestController {
             System.out.println("response.getProposalNumber()-------------> " + response.getProposalNumber());
         }
         return response == null ? null : response.getProposalNumber();
+    }
+
+
+    @PutMapping("/receive")
+    public List<Map> markAsReceived(@RequestHeader(name = "Authorization") String authorization,
+                                                        @RequestParam(required = true) String purchaseOrderNumber) {
+        List<InventoryBalance> inventoryBalances = purchaseOrderService.markAsReceived(purchaseOrderNumber);
+        return wrapInventaryBalances(inventoryBalances);
+    }
+
+    private List<Map> wrapInventaryBalances(List<InventoryBalance> balances) {
+        List<Map> content = new ArrayList<>();
+        Map<String, Object> row = null;
+
+        for (InventoryBalance balance : balances) {
+            row = Map.ofEntries(
+                    Map.entry("productName", balance.getProduct().getName())
+            );
+            content.add(row);
+        }
+
+        return content;
     }
 }

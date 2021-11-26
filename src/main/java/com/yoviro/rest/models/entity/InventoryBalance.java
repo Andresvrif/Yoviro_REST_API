@@ -2,6 +2,7 @@ package com.yoviro.rest.models.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +17,10 @@ public class InventoryBalance {
     private Product product;
 
     @OneToMany(mappedBy = "balance", fetch = FetchType.LAZY)
-    private List<InventoryTransaction> inventoryTransactions = new ArrayList<>();
+    private List<InventoryTransactionDetail> details = new ArrayList<>();
 
     @NotNull
-    private Integer quantity;
+    private BigDecimal quantity;
 
     @NotNull
     private LocalDateTime createAt;
@@ -40,20 +41,24 @@ public class InventoryBalance {
         this.product = product;
     }
 
-    public List<InventoryTransaction> getInventoryTransactions() {
-        return inventoryTransactions;
+    public List<InventoryTransactionDetail> getDetails() {
+        return details;
     }
 
-    public void setInventoryTransactions(List<InventoryTransaction> inventoryTransactions) {
-        this.inventoryTransactions = inventoryTransactions;
+    public void setDetails(List<InventoryTransactionDetail> details) {
+        this.details = details;
     }
 
-    public Integer getQuantity() {
+    public BigDecimal getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
+    public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
     }
 
     public LocalDateTime getCreateAt() {
@@ -65,4 +70,9 @@ public class InventoryBalance {
     }
 
     private static final long serialVersionUID = 1L;
+
+    @PrePersist
+    public void PrePersist() {
+        this.createAt = LocalDateTime.now();
+    }
 }

@@ -1,6 +1,5 @@
 package com.yoviro.rest.service;
 
-import com.yoviro.rest.config.enums.InventoryRequestStatusEnum;
 import com.yoviro.rest.config.enums.PurcharseOrderEnum;
 import com.yoviro.rest.config.enums.StatusProposalEnum;
 import com.yoviro.rest.dto.ProposalDTO;
@@ -12,6 +11,7 @@ import com.yoviro.rest.models.repository.ProposalRepository;
 import com.yoviro.rest.models.repository.PurchaseOrderRepository;
 import com.yoviro.rest.models.repository.UserRepository;
 import com.yoviro.rest.models.repository.specification.handler.*;
+import com.yoviro.rest.service.interfaces.IInventoryBalanceService;
 import com.yoviro.rest.service.interfaces.IPurchaseOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,6 +37,9 @@ public class PurchaseOrderServiceImpl implements IPurchaseOrderService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    IInventoryBalanceService inventoryBalanceService;
 
     @Override
     public Page<PurchaseOrder> search(Pageable pageable,
@@ -109,6 +112,22 @@ public class PurchaseOrderServiceImpl implements IPurchaseOrderService {
         } else {
             return null;
         }
+    }
+
+    @Transactional
+    @Override
+    public List<InventoryBalance> markAsReceived(String purchaseOrderNumber) {
+        //Marks as received
+        PurchaseOrder purchaseOrder = purchaseOrderRepository.findByPurchaseOrderNumber(purchaseOrderNumber);
+        if (purchaseOrder.getStatus() != PurcharseOrderEnum.BOUGHT) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The purchas order with number " + purchaseOrderNumber + ", must has a BOUGHT status");
+        }
+
+        purchaseOrder.setStatus(PurcharseOrderEnum.RECEIVED);
+        purchaseOrderRepository.save(purchaseOrder);
+
+        //At this point, if everything was ok, the system should update the inventary
+        return inventoryBalanceService.processPurchaseOrder(purchaseOrder);
     }
 
     private StoreKeeper bringStoreKeeperFromUserName(String userName) {
