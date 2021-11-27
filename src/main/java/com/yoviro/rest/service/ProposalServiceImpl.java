@@ -3,10 +3,12 @@ package com.yoviro.rest.service;
 import com.yoviro.rest.config.enums.InventoryRequestStatusEnum;
 import com.yoviro.rest.config.enums.PurcharseOrderEnum;
 import com.yoviro.rest.config.enums.StatusProposalEnum;
+import com.yoviro.rest.dto.InventoryRequestDTO;
 import com.yoviro.rest.dto.ProposalDTO;
 import com.yoviro.rest.dto.PurchaseOrderDTO;
 import com.yoviro.rest.dto.PurchaseOrderDetailDTO;
 import com.yoviro.rest.dto.search.SearchProposalDTO;
+import com.yoviro.rest.handler.ProposalHandler;
 import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.models.repository.*;
 import com.yoviro.rest.models.repository.specification.handler.OperatorEnum;
@@ -29,6 +31,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,6 +84,7 @@ public class ProposalServiceImpl implements IProposalService {
         return proposalRepository.findProposalsByProposalNumber(proposalNumber);
     }
 
+    @Transactional
     @Override
     public Proposal updateStatus(String userName,
                                  ProposalDTO proposalDTO) {
@@ -96,15 +100,63 @@ public class ProposalServiceImpl implements IProposalService {
         if (proposal == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Isn't exist a proposal with number : " + proposalDTO.getProposalNumber());
 
-        //Update proposal Info
-        proposal.setEvaluator((Director) worker);
-        proposal.setStatus(proposalDTO.getStatus());
-        if (proposalDTO.getReasonForDenied() != null) {
-            proposal.setReasonForDenied(proposalDTO.getReasonForDenied());
+        if (proposal.getStatus() == StatusProposalEnum.REJECTED || proposal.getStatus() == StatusProposalEnum.CANCELED)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can evaluate a rejected or canceled proposal");
+
+        //Update Details
+        //Update Inventory request
+        Optional<InventoryRequest> optionalInventoryRequest;
+        InventoryRequest inventoryRequestToBeUpdated;
+        for (InventoryRequestDTO inventoryRequestDTO : proposalDTO.getInventoryRequests()) {
+            optionalInventoryRequest = proposal.getInventoryRequests().stream().filter(e -> e.getInventoryRequestNumber().compareToIgnoreCase(inventoryRequestDTO.getInventoryRequestNumber()) == 0).findFirst();
+
+            if (optionalInventoryRequest.isEmpty()) continue; //TODO check if the system should thrown an exception
+            inventoryRequestToBeUpdated = optionalInventoryRequest.get();
+
+            inventoryRequestToBeUpdated.setStatus(inventoryRequestDTO.getStatus());
+            if (inventoryRequestDTO.getReasonForDenied() != null) {
+                inventoryRequestToBeUpdated.setReasonForDenied(inventoryRequestDTO.getReasonForDenied());
+            }
         }
 
-        return proposalRepository.save(proposal);
+        //Update Purchase order
+        Optional<PurchaseOrder> optionalPurchaseOrder;
+        PurchaseOrder purchaseOrderToBeUpdated;
+        for (PurchaseOrderDTO purchaseOrderDTO : proposalDTO.getPurchaseOrders()) {
+            optionalPurchaseOrder = proposal.getPurchaseOrders().stream().filter(e -> e.getPurchaseOrderNumber().compareToIgnoreCase(purchaseOrderDTO.getPurchaseOrderNumber()) == 0).findFirst();
+            if (optionalPurchaseOrder.isEmpty()) continue; //TODO check if the system should thrown an exception
+            purchaseOrderToBeUpdated = optionalPurchaseOrder.get();
+
+            purchaseOrderToBeUpdated.setStatus(purchaseOrderDTO.getStatus());
+            if (purchaseOrderDTO.getReasonForDenied() != null) {
+                purchaseOrderToBeUpdated.setReasonForDenied(purchaseOrderDTO.getReasonForDenied());
+            }
+        }
+
+        //Save all details
+        inventoryRequestRepository.saveAll(proposal.getInventoryRequests());
+        purchaseOrderRepository.saveAll(proposal.getPurchaseOrders());
+
+        //Check if there is a cancelled element
+        Boolean isThereAInvReqRejected = proposal.getInventoryRequests().stream().anyMatch(e -> e.getStatus() == InventoryRequestStatusEnum.REJECTED);
+        Boolean isThereAPurchaseRejected = proposal.getPurchaseOrders().stream().anyMatch(e -> e.getStatus() == PurcharseOrderEnum.CANCELLED || e.getStatus() == PurcharseOrderEnum.REJECTED);
+
+        //If there isn't cancelled details, return the same proposal
+        if (!isThereAInvReqRejected && !isThereAPurchaseRejected) return proposal;
+
+        //It has a rejected or cancelled
+        proposal.setStatus(StatusProposalEnum.REJECTED);
+        proposal = proposalRepository.save(proposal);
+
+        //Copy it
+        Proposal newProposal = new Proposal();
+        newProposal.setStatus(StatusProposalEnum.PENDING);
+        newProposal.setAuthor(proposal.getAuthor());
+
+        ProposalHandler.transferCleanDetails(proposal, newProposal);
+        return proposalRepository.save(newProposal);
     }
+
 
     private Proposal updateProposal(String userName,
                                     ProposalDTO proposalDTO) throws Exception {

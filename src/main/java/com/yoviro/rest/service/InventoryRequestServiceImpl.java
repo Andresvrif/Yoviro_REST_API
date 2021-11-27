@@ -4,17 +4,16 @@ import com.yoviro.rest.config.enums.InventoryRequestStatusEnum;
 import com.yoviro.rest.dto.InventoryRequestDetailDTO;
 import com.yoviro.rest.dto.OfficialIdDTO;
 import com.yoviro.rest.dto.search.SearchInventoryRequestDTO;
+import com.yoviro.rest.dto.search.SearchProposalDTO;
 import com.yoviro.rest.models.entity.*;
 import com.yoviro.rest.models.repository.InventoryRequestDetailRepository;
 import com.yoviro.rest.models.repository.InventoryRequestRepository;
 import com.yoviro.rest.models.repository.UserRepository;
 import com.yoviro.rest.models.repository.projections.SummaryListInventoryRequestNurseProjection;
-import com.yoviro.rest.models.repository.specification.handler.OperatorEnum;
-import com.yoviro.rest.models.repository.specification.handler.SearchFilter;
-import com.yoviro.rest.models.repository.specification.handler.SearchQuery;
-import com.yoviro.rest.models.repository.specification.handler.SpecificationUtil;
+import com.yoviro.rest.models.repository.specification.handler.*;
 import com.yoviro.rest.service.interfaces.IInventoryRequestService;
 import com.yoviro.rest.service.interfaces.IProductService;
+import com.yoviro.rest.service.interfaces.IProposalService;
 import com.yoviro.rest.service.interfaces.IResidentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -45,6 +44,9 @@ public class InventoryRequestServiceImpl implements IInventoryRequestService {
 
     @Autowired
     private IProductService productService;
+
+    @Autowired
+    private IProposalService proposalService;
 
     @Override
     public Page<SummaryListInventoryRequestNurseProjection> summaryListByNurseUserName(String search,
@@ -118,11 +120,35 @@ public class InventoryRequestServiceImpl implements IInventoryRequestService {
     }
 
     @Override
-    public Page<InventoryRequest> search(Pageable pageable, SearchInventoryRequestDTO criteria) {
+    public Page<InventoryRequest> search(Pageable pageable,
+                                         SearchInventoryRequestDTO criteria) {
         SearchQuery qry = new SearchQuery();
-        List<SearchFilter> inventoryReqCriteria = instanceInventoryReqCriteria(criteria); //Proposal Filter
+        List<SearchFilter> inventoryReqCriteria = instanceInventoryReqCriteria(criteria); //Criteria
         qry.setSearchFilter(inventoryReqCriteria);
 
+        Specification<InventoryRequest> specification = SpecificationUtil.bySearchQuery(qry, InventoryRequest.class, Boolean.FALSE);
+        return inventoryRequestRepository.findAll(specification, pageable);
+    }
+
+    @Override
+    public Page<InventoryRequest> search(Pageable pageable,
+                                         SearchInventoryRequestDTO inventoryRequestCriteria,
+                                         SearchProposalDTO proposalCriteria) {
+        //Create Query
+        SearchQuery qry = new SearchQuery();
+        List<SearchFilter> inventoryRequestFilters = instanceInventoryReqCriteria(inventoryRequestCriteria); //Inventory criteria search
+        List<SearchFilter> proposalFilters = ProposalServiceImpl.instanceProposalCriteria(proposalCriteria); //Proposal crirteria search
+
+        //Join
+        JoinColumnProps joinColumnPropsProposal = new JoinColumnProps();
+        joinColumnPropsProposal.setJoinColumnName("proposals");
+        joinColumnPropsProposal.setSearchFilter(proposalFilters);
+
+        //Add filters  & criteria
+        qry.addJoinColumnProp(joinColumnPropsProposal);
+        qry.setSearchFilter(inventoryRequestFilters);
+
+        //Execute query
         Specification<InventoryRequest> specification = SpecificationUtil.bySearchQuery(qry, InventoryRequest.class, Boolean.FALSE);
         return inventoryRequestRepository.findAll(specification, pageable);
     }

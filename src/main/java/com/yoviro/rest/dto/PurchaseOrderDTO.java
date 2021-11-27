@@ -1,5 +1,7 @@
 package com.yoviro.rest.dto;
 
+import com.yoviro.rest.config.enums.PurcharseOrderEnum;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +13,7 @@ public class PurchaseOrderDTO {
     private String reasonForDenied;
     private BigDecimal totalPrice;
     private CompanyDTO company;
+    private PurcharseOrderEnum status;
     private List<PurchaseOrderDetailDTO> purchaseOrderDetails = new ArrayList<>();
 
     public Long getId() {
@@ -67,5 +70,13 @@ public class PurchaseOrderDTO {
 
     public void setReasonForDenied(String reasonForDenied) {
         this.reasonForDenied = reasonForDenied;
+    }
+
+    public PurcharseOrderEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(PurcharseOrderEnum status) {
+        this.status = status;
     }
 }

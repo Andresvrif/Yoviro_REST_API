@@ -335,9 +335,9 @@ INSERT INTO db_yoviro.product (unit_measure, category, create_at, description, n
 INSERT INTO db_yoviro.product (unit_measure, category, create_at, description, name) VALUES ('UNIT', 'PERSONAL_CARE', now() - INTERVAL 9 MONTH,'marca : colgate, pasta dental', 'pasta dental grande colgate');
 
 /* REQUEST INVENTORY */
-INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now() - INTERVAL 1 DAY, 'IN_PROGRESS', 1, 7);
-INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now() - INTERVAL 2 DAY, 'IN_PROGRESS', 3, 7);
-INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now(), 'PENDING', 2, 8);
+INSERT INTO db_yoviro.inventory_request (create_at, update_at, status, resident_id, worker_id) VALUES (now() - INTERVAL 1 DAY, now() - INTERVAL 2 DAY, 'IN_PROGRESS', 1, 7);
+INSERT INTO db_yoviro.inventory_request (create_at, update_at, status, resident_id, worker_id) VALUES (now() - INTERVAL 2 DAY, now() - INTERVAL 2 DAY, 'IN_PROGRESS', 3, 7);
+INSERT INTO db_yoviro.inventory_request (create_at, update_at, status, resident_id, worker_id) VALUES (now(), now(), 'PENDING', 2, 8);
 /*IN PROGRESS WITH A PROPOSAL APPROVED */
 INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now() - INTERVAL 3 DAY, 'IN_PROGRESS', 1, 7);
 INSERT INTO db_yoviro.inventory_request (create_at, status, resident_id, worker_id) VALUES (now(), 'IN_PROGRESS', 3, 7);

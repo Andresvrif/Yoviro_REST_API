@@ -1,7 +1,9 @@
 package com.yoviro.rest.controller;
 
 import com.yoviro.rest.config.AppConfig;
+import com.yoviro.rest.config.enums.InventoryRequestStatusEnum;
 import com.yoviro.rest.config.enums.OfficialIdTypeEnum;
+import com.yoviro.rest.config.enums.PurcharseOrderEnum;
 import com.yoviro.rest.config.enums.StatusProposalEnum;
 import com.yoviro.rest.dto.*;
 import com.yoviro.rest.dto.search.SearchProposalDTO;
@@ -213,6 +215,8 @@ public class ProposalRestController {
         List<Map> purchaseOrdersJson = proposal.getPurchaseOrders().stream().map(e -> wrapPurchaseOrderJson(e)).collect(Collectors.toList());
         content = Map.ofEntries(
                 Map.entry("status", proposal.getStatus()),
+                Map.entry("createAt", proposal.getCreateAt()),
+                Map.entry("updateAt", proposal.getUpdateAt()),
                 Map.entry("reasonForDenied", proposal.getReasonForDenied() == null ? Optional.empty() : proposal.getReasonForDenied()),
                 Map.entry("inventoryRequests", inventoryRequestsJson),
                 Map.entry("purchaseOrders", purchaseOrdersJson)
@@ -228,6 +232,7 @@ public class ProposalRestController {
         return Map.ofEntries(
                 Map.entry("inventoryRequestNumber", inventoryRequest.getInventoryRequestNumber()),
                 Map.entry("createAt", inventoryRequest.getCreateAt()),
+                Map.entry("updateAt", inventoryRequest.getUpdateAt()),
                 Map.entry("status", inventoryRequest.getStatus()),
                 Map.entry("author", StringUtil.capitalizeWord(author.getFullName())),
                 Map.entry("resident", StringUtil.capitalizeWord(resident.getFullName())),
@@ -251,12 +256,12 @@ public class ProposalRestController {
         List<PurchaseOrderDetail> details = purchaseOrder.getPurcharseOrderDetails();
         return Map.ofEntries(
                 Map.entry("purchaseOrderNumber", purchaseOrder.getPurchaseOrderNumber()),
-                Map.entry("referenceNumber", purchaseOrder.getReferenceNumber() == null? Optional.empty() : purchaseOrder.getReferenceNumber()),
+                Map.entry("referenceNumber", purchaseOrder.getReferenceNumber() == null ? Optional.empty() : purchaseOrder.getReferenceNumber()),
                 Map.entry("totalPrice", purchaseOrder.getTotalPrice()),
                 Map.entry("details", details.stream().map(e -> wrapPurchaseOrderDetailJson(e))),
                 Map.entry("status", purchaseOrder.getStatus()),
                 Map.entry("createAt", purchaseOrder.getCreateAt()),
-                Map.entry("reasonForDenied", purchaseOrder.getReasonForDenied() == null? Optional.empty() : purchaseOrder.getReasonForDenied()),
+                Map.entry("reasonForDenied", purchaseOrder.getReasonForDenied() == null ? Optional.empty() : purchaseOrder.getReasonForDenied()),
                 Map.entry("provider", Map.ofEntries(
                         Map.entry("name", company.getName()),
                         Map.entry("officialIdType", primaryOfficialId.getOfficialIdType()),
@@ -275,8 +280,8 @@ public class ProposalRestController {
     }
 
     @PostMapping("/evaluate")
-    public void evaluate(@RequestHeader(name = "Authorization") String authorization,
-                         @RequestBody String json) throws JSONException {
+    public String evaluate(@RequestHeader(name = "Authorization") String authorization,
+                           @RequestBody String json) throws JSONException {
         //Retrieve userName from token
         String token = jwtService.retrieveToken(authorization);
         String userName = jwtService.getUserName(token);
@@ -284,31 +289,54 @@ public class ProposalRestController {
         //Map Evaluate Info
         JSONObject jsonObject = new JSONObject(json);
         Boolean hasProposalNumber = jsonObject.has("proposalNumber");
-        Boolean hasStatus = jsonObject.has("status");
-        Boolean hasReason = jsonObject.has("reasonForDenied");
 
         if (!hasProposalNumber)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "proposalNumber is required");
 
-        if (!hasStatus)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "status is required");
 
-        String statusCode = jsonObject.getString("status");
-        StatusProposalEnum status = StatusProposalEnum.valueOf(statusCode);
-        if (status == null)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The status: " + statusCode + ", no exist");
-
-        if ((status == StatusProposalEnum.CANCELED || status == StatusProposalEnum.REJECTED) && !hasReason) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "reasonForDenied is required");
-        }
-
+        //Map info
+        //Map Proposal
         ProposalDTO proposalDTO = new ProposalDTO();
         proposalDTO.setProposalNumber(jsonObject.getString("proposalNumber"));
-        proposalDTO.setStatus(status);
-        if (hasReason) {
-            proposalDTO.setReasonForDenied(jsonObject.getString("reasonForDenied"));
+
+        //Map Inventory Request
+        JSONArray jsonArrayInventoryRequest = jsonObject.getJSONArray("inventoryRequests");
+        JSONObject jsonInventoryRequest;
+        InventoryRequestDTO inventoryRequestDTO;
+        for (int i = 0; i < jsonArrayInventoryRequest.length(); i++) {
+            jsonInventoryRequest = jsonArrayInventoryRequest.getJSONObject(i);
+
+            //Instance inventory request DTO
+            inventoryRequestDTO = new InventoryRequestDTO();
+            inventoryRequestDTO.setInventoryRequestNumber(jsonInventoryRequest.getString("requestNumber"));
+            inventoryRequestDTO.setStatus(InventoryRequestStatusEnum.valueOf(jsonInventoryRequest.getString("status")));
+            if (jsonInventoryRequest.has("reasonForDenied")) {
+                inventoryRequestDTO.setReasonForDenied(jsonInventoryRequest.getString("reasonForDenied"));
+            }
+
+            proposalDTO.getInventoryRequests().add(inventoryRequestDTO);
         }
 
-        proposalService.updateStatus(userName, proposalDTO);
+        //Map Purchase Order
+        JSONArray jsonArrayPurchaseOrder = jsonObject.getJSONArray("purchaseOrders");
+        JSONObject jsonPurchaseOrder;
+        PurchaseOrderDTO purchaseOrderDTO;
+        for (int i = 0; i < jsonArrayPurchaseOrder.length(); i++) {
+            jsonPurchaseOrder = jsonArrayPurchaseOrder.getJSONObject(i);
+
+            //Instance inventory request DTO
+            purchaseOrderDTO = new PurchaseOrderDTO();
+            purchaseOrderDTO.setPurchaseOrderNumber(jsonPurchaseOrder.getString("purchaseOrderNumber"));
+            purchaseOrderDTO.setStatus(PurcharseOrderEnum.valueOf(jsonPurchaseOrder.getString("status")));
+
+            if (jsonPurchaseOrder.has("reasonForDenied")) {
+                purchaseOrderDTO.setReasonForDenied(jsonPurchaseOrder.getString("reasonForDenied"));
+            }
+
+            proposalDTO.getPurchaseOrders().add(purchaseOrderDTO);
+        }
+
+        Proposal proposalEvaluated = proposalService.updateStatus(userName, proposalDTO);
+        return proposalEvaluated.getProposalNumber() == proposalDTO.getProposalNumber() ? null : proposalEvaluated.getProposalNumber();
     }
 }

@@ -145,6 +145,11 @@ public class InventoryRequest {
     @NotNull
     private LocalDateTime createAt;
 
+    @NotNull
+    private LocalDateTime updateAt;
+
+    private String reasonForDenied;
+
     public Long getId() {
         return id;
     }
@@ -209,10 +214,31 @@ public class InventoryRequest {
         this.createAt = createAt;
     }
 
+    public LocalDateTime getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(LocalDateTime updateAt) {
+        this.updateAt = updateAt;
+    }
+
     @PrePersist
     public void PrePersist() {
         this.createAt = LocalDateTime.now();
         this.status = InventoryRequestStatusEnum.PENDING;
+    }
+
+    @PreUpdate
+    public void PreUpdate() {
+        this.updateAt = LocalDateTime.now();
+    }
+
+    public String getReasonForDenied() {
+        return reasonForDenied;
+    }
+
+    public void setReasonForDenied(String reasonForDenied) {
+        this.reasonForDenied = reasonForDenied;
     }
 
     private static final long serialVersionUID = 1L;

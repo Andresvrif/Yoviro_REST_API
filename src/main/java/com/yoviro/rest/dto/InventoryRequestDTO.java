@@ -18,6 +18,7 @@ public class InventoryRequestDTO {
     protected InventoryRequestStatusEnum status;
     private List<InventoryRequestDetailDTO> details = new ArrayList<>();
     private List<ProposalDTO> proposals = new ArrayList<>();
+    private String reasonForDenied;
     protected LocalDateTime createAt;
 
     public Long getId() {
@@ -68,7 +69,21 @@ public class InventoryRequestDTO {
         this.details = details;
     }
 
+    public List<ProposalDTO> getProposals() {
+        return proposals;
+    }
 
+    public void setProposals(List<ProposalDTO> proposals) {
+        this.proposals = proposals;
+    }
+
+    public String getReasonForDenied() {
+        return reasonForDenied;
+    }
+
+    public void setReasonForDenied(String reasonForDenied) {
+        this.reasonForDenied = reasonForDenied;
+    }
 
     public LocalDateTime getCreateAt() {
         return createAt;
