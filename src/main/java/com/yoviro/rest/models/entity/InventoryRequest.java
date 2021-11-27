@@ -5,13 +5,10 @@ import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import static javax.persistence.CascadeType.*;
 
 @Entity
 @NamedQueries({
@@ -142,6 +139,10 @@ public class InventoryRequest {
     @ManyToMany(mappedBy = "inventoryRequests")
     private List<Proposal> proposals = new ArrayList<>();
 
+    //TODO no deberia ir esto, ya que una orde de compra satisface a uno o más
+    @OneToMany(mappedBy = "inventoryRequest", fetch = FetchType.LAZY)
+    List<OutputTransactionByInventoryRequest> outputTransactionsByPurchaseOrder = new ArrayList<>();
+
     @NotNull
     private LocalDateTime createAt;
 
@@ -239,6 +240,14 @@ public class InventoryRequest {
 
     public void setReasonForDenied(String reasonForDenied) {
         this.reasonForDenied = reasonForDenied;
+    }
+
+    public List<OutputTransactionByInventoryRequest> getOutputTransactionsByPurchaseOrder() {
+        return outputTransactionsByPurchaseOrder;
+    }
+
+    public void setOutputTransactionsByPurchaseOrder(List<OutputTransactionByInventoryRequest> outputTransactionsByPurchaseOrder) {
+        this.outputTransactionsByPurchaseOrder = outputTransactionsByPurchaseOrder;
     }
 
     private static final long serialVersionUID = 1L;

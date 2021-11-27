@@ -1,6 +1,7 @@
 package com.yoviro.rest.service;
 
 import com.yoviro.rest.config.enums.InventoryRequestStatusEnum;
+import com.yoviro.rest.dto.InventoryRequestDTO;
 import com.yoviro.rest.dto.InventoryRequestDetailDTO;
 import com.yoviro.rest.dto.OfficialIdDTO;
 import com.yoviro.rest.dto.search.SearchInventoryRequestDTO;
@@ -11,10 +12,7 @@ import com.yoviro.rest.models.repository.InventoryRequestRepository;
 import com.yoviro.rest.models.repository.UserRepository;
 import com.yoviro.rest.models.repository.projections.SummaryListInventoryRequestNurseProjection;
 import com.yoviro.rest.models.repository.specification.handler.*;
-import com.yoviro.rest.service.interfaces.IInventoryRequestService;
-import com.yoviro.rest.service.interfaces.IProductService;
-import com.yoviro.rest.service.interfaces.IProposalService;
-import com.yoviro.rest.service.interfaces.IResidentService;
+import com.yoviro.rest.service.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,6 +45,9 @@ public class InventoryRequestServiceImpl implements IInventoryRequestService {
 
     @Autowired
     private IProposalService proposalService;
+
+    @Autowired
+    IInventoryBalanceService inventoryBalanceService;
 
     @Override
     public Page<SummaryListInventoryRequestNurseProjection> summaryListByNurseUserName(String search,
@@ -151,6 +152,20 @@ public class InventoryRequestServiceImpl implements IInventoryRequestService {
         //Execute query
         Specification<InventoryRequest> specification = SpecificationUtil.bySearchQuery(qry, InventoryRequest.class, Boolean.FALSE);
         return inventoryRequestRepository.findAll(specification, pageable);
+    }
+
+    @Transactional
+    @Override
+    public void dispatches(List<InventoryRequestDTO> requests) {
+        //Save all dispatches as COMPLETED
+        List<String> inventoryRequestNumbers = requests.stream().map(e -> e.getInventoryRequestNumber()).collect(Collectors.toList());
+        List<InventoryRequest> inventoryRequests = inventoryRequestRepository.findInventoryRequestByInventoryRequestNumberIn(inventoryRequestNumbers);
+        inventoryRequests.forEach(e -> e.setStatus(InventoryRequestStatusEnum.COMPLETED));
+        inventoryRequests = (List<InventoryRequest>) inventoryRequestRepository.saveAll(inventoryRequests);
+
+        //After al dispatches, we should update balance
+        inventoryBalanceService.processInventoryRequests(inventoryRequests);
+
     }
 
     static List<SearchFilter> instanceInventoryReqCriteria(SearchInventoryRequestDTO criteria) {

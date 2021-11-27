@@ -48,10 +48,6 @@ public class PurchaseOrder {
     @OneToMany(mappedBy = "purchaseOrder", fetch = FetchType.LAZY)
     List<InputTransactionByPurchaseOrder> inputTransactionsByPurchaseOrder = new ArrayList<>();
 
-    //TODO no deberia ir esto, ya que una orde de compra satisface a uno o más
-    @OneToMany(mappedBy = "purchaseOrder", fetch = FetchType.LAZY)
-    List<OutputTransactionByPurchaseOrder> outputTransactionsByPurchaseOrder = new ArrayList<>();
-
     @NotNull
     private BigDecimal totalPrice;
 
@@ -128,14 +124,6 @@ public class PurchaseOrder {
 
     public void setInputTransactionsByPurchaseOrder(List<InputTransactionByPurchaseOrder> inputTransactionsByPurchaseOrder) {
         this.inputTransactionsByPurchaseOrder = inputTransactionsByPurchaseOrder;
-    }
-
-    public List<OutputTransactionByPurchaseOrder> getOutputTransactionsByPurchaseOrder() {
-        return outputTransactionsByPurchaseOrder;
-    }
-
-    public void setOutputTransactionsByPurchaseOrder(List<OutputTransactionByPurchaseOrder> outputTransactionsByPurchaseOrder) {
-        this.outputTransactionsByPurchaseOrder = outputTransactionsByPurchaseOrder;
     }
 
     public BigDecimal getTotalPrice() {

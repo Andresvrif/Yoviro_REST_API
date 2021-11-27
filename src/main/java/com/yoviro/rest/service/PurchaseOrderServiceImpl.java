@@ -124,7 +124,7 @@ public class PurchaseOrderServiceImpl implements IPurchaseOrderService {
         }
 
         purchaseOrder.setStatus(PurcharseOrderEnum.RECEIVED);
-        purchaseOrderRepository.save(purchaseOrder);
+        purchaseOrder = purchaseOrderRepository.save(purchaseOrder);
 
         //At this point, if everything was ok, the system should update the inventary
         return inventoryBalanceService.processPurchaseOrder(purchaseOrder);

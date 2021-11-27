@@ -5,6 +5,8 @@ import com.yoviro.rest.models.entity.Product;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface InventoryBalanceRepository extends PagingAndSortingRepository<InventoryBalance, Long> {
     InventoryBalance findByProduct(Product product);

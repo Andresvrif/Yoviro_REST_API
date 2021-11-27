@@ -19,7 +19,7 @@ public class InventoryBalance {
     @OneToMany(mappedBy = "balance", fetch = FetchType.LAZY)
     private List<InventoryTransactionDetail> details = new ArrayList<>();
 
-    @NotNull
+    //@NotNull
     private BigDecimal quantity;
 
     @NotNull

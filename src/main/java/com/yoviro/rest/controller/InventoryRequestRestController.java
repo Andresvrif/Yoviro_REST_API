@@ -238,13 +238,13 @@ public class InventoryRequestRestController {
         proposalCriteria.setProposalNumber(proposalNumber);
         proposalCriteria.setStatus(proposalStatus);
 
-        System.out.println("hasProposalCriteria -----------> " + hasProposalCriteria);
 
         //Define Page criteria
         Integer pageNumber = PageUtil.definePageNumber(page);
         Pageable pageableByInventoryReqNumber = PageRequest.of(pageNumber, AppConfig.PAGE_SIZE, Sort.by("inventoryRequestNumber").ascending());
         Page<InventoryRequest> pageResult = hasProposalCriteria ? inventoryRequestService.search(pageableByInventoryReqNumber, inventoryRequestCriteria, proposalCriteria) :
                 inventoryRequestService.search(pageableByInventoryReqNumber, inventoryRequestCriteria);
+        inventoryRequestService.search(pageableByInventoryReqNumber, inventoryRequestCriteria);
 
         //Define Response
         Map<String, Object> response = Map.ofEntries(
@@ -269,7 +269,7 @@ public class InventoryRequestRestController {
                     Map.entry("author", claimant.getFullName()),
                     Map.entry("createAt", inventoryRequest.getCreateAt()),
                     Map.entry("updateAt", inventoryRequest.getUpdateAt()),
-                    Map.entry("proposal", proposal == null? Optional.empty() :
+                    Map.entry("proposal", proposal == null ? Optional.empty() :
                             Map.ofEntries(
                                     Map.entry("proposalNumber", proposal.getProposalNumber() == null ? Optional.empty() : proposal.getProposalNumber()),
                                     Map.entry("status", proposal.getStatus())
@@ -324,5 +324,26 @@ public class InventoryRequestRestController {
         );
 
         return contentJson;
+    }
+
+    @PutMapping("/dispatch")
+    public void dispatch(@RequestBody String json) throws JSONException {
+        JSONObject jsonInventoryRequest;
+        JSONArray jsonInventoryRequests = new JSONArray(json);
+        InventoryRequestDTO inventoryRequestDTO;
+        List<InventoryRequestDTO> inventoryRequestsToBeUpdated = new ArrayList<>();
+        if (jsonInventoryRequests == null) return;
+        if (jsonInventoryRequests.length() == 0) return;
+
+        for (int i = 0; i < jsonInventoryRequests.length(); i++) {
+            inventoryRequestDTO = new InventoryRequestDTO();
+            jsonInventoryRequest = jsonInventoryRequests.getJSONObject(i);
+            inventoryRequestDTO.setInventoryRequestNumber(jsonInventoryRequest.getString("inventoryRequestNumber"));
+            inventoryRequestDTO.setStatus(InventoryRequestStatusEnum.valueOf(jsonInventoryRequest.getString("status")));
+
+            inventoryRequestsToBeUpdated.add(inventoryRequestDTO);
+        }
+
+        inventoryRequestService.dispatches(inventoryRequestsToBeUpdated);
     }
 }

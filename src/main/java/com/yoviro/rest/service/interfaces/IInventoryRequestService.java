@@ -1,5 +1,6 @@
 package com.yoviro.rest.service.interfaces;
 
+import com.yoviro.rest.dto.InventoryRequestDTO;
 import com.yoviro.rest.dto.InventoryRequestDetailDTO;
 import com.yoviro.rest.dto.OfficialIdDTO;
 import com.yoviro.rest.dto.search.SearchInventoryRequestDTO;
@@ -32,4 +33,6 @@ public interface IInventoryRequestService {
     Page<InventoryRequest> search(Pageable pageable,
                                   SearchInventoryRequestDTO inventoryRequestCriteria,
                                   SearchProposalDTO proposalCriteria);
+
+    void dispatches(List<InventoryRequestDTO> requests);
 }
